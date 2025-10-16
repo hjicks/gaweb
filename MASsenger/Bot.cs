@@ -1,12 +1,15 @@
-﻿public class Bot : BaseUser
+﻿namespace MASsenger
 {
-    public string Token { get; set; } = "";
-    public bool IsActive { get; set; } = false;
+    public class Bot : BaseUser
+    {
+        public string Token { get; set; } = "";
+        public bool IsActive { get; set; } = false;
 
-    // Foreign key relationships
-    public string Creator { get; set; } // User foreign key
+        // Foreign key relationships
+        public User Creator { get; set; } // User foreign key
 
-    // Navigation properties
-    public ICollection<Group> Groups { get; set; } = new List<Group>();
-    public ICollection<Channel> Channels { get; set; } = new List<Channel>();
+        // Navigation properties
+        public ICollection<Group> Groups { get; set; } = new List<Group>();
+        public ICollection<Channel> Channels { get; set; } = new List<Channel>();
+    }
 }
