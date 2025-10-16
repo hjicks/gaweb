@@ -11,7 +11,7 @@
         public int MembersCount { get; set; } = 1;
 
         // Foreign key relationships
-        public User Creator { get; set; }
+        public User? Creator { get; set; }
         public Group? Group { get; set; }
 
 

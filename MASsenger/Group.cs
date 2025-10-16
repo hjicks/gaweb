@@ -8,8 +8,7 @@
         public DateTime CreatedAt { get; set; }
 
         // Foreign key relationships
-        public Channel? Channel { get; set; }
-        public User Creator { get; set; }
+        public User? Creator { get; set; }
 
         // Navigation properties
         public ICollection<Bot> Bots { get; set; } = new List<Bot>();

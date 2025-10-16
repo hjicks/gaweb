@@ -6,7 +6,7 @@
         public bool IsActive { get; set; } = false;
 
         // Foreign key relationships
-        public User Creator { get; set; } // User foreign key
+        public User? Creator { get; set; } // User foreign key
 
         // Navigation properties
         public ICollection<Group> Groups { get; set; } = new List<Group>();
