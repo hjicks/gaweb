@@ -2,7 +2,7 @@
 {
     public class Bot : BaseUser
     {
-        public string Token { get; set; } = "";
+        public string Token { get; set; } = null!;
         public bool IsActive { get; set; } = false;
 
         // Navigation properties
