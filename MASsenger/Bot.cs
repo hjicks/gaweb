@@ -1,7 +1,10 @@
 ﻿public class Bot : BaseUser
 {
-    public string Token { get; set; }
-    public bool IsActive { get; set; }
+    public string Token { get; set; } = "";
+    public bool IsActive { get; set; } = false;
+
+    // Foreign key relationships
+    public string Creator { get; set; } // User foreign key
 
     // Navigation properties
     public ICollection<Group> Groups { get; set; } = new List<Group>();
