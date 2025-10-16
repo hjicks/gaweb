@@ -10,7 +10,11 @@
         public bool IsPublic { get; set; } = false;
         public int MembersCount { get; set; } = 1;
 
-        // Navigation properties
+        // Optional one-to-one relationship with group
+        public int? GroupId { get; set; }
+        public Group? Group { get; set; }
+
+        // Many-to-many relationships
         public ICollection<User> Members { get; set; } = new List<User>();
         public ICollection<Bot> Bots { get; set; } = new List<Bot>();
     }
