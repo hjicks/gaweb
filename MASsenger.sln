@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MASsenger", "MASsenger\MASsenger.csproj", "{FE0A7FB1-B56F-4F1F-BF5E-D69C7AC0C2DB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE0A7FB1-B56F-4F1F-BF5E-D69C7AC0C2DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE0A7FB1-B56F-4F1F-BF5E-D69C7AC0C2DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE0A7FB1-B56F-4F1F-BF5E-D69C7AC0C2DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE0A7FB1-B56F-4F1F-BF5E-D69C7AC0C2DB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AC56C273-D40C-4014-B5BF-BE3F6D77A4C7}
+	EndGlobalSection
+EndGlobal

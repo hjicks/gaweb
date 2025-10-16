@@ -1,0 +1,10 @@
+## Ignore Visual Studio temporary files and build results
+
+*.user
+*.csproj
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+[Mm]igrations/
+.vs/
