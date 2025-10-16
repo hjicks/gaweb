@@ -5,11 +5,7 @@
         public string Token { get; set; } = "";
         public bool IsActive { get; set; } = false;
 
-        // Foreign key relationships
-        public User? Creator { get; set; } // User foreign key
-
         // Navigation properties
-        public ICollection<Group> Groups { get; set; } = new List<Group>();
-        public ICollection<Channel> Channels { get; set; } = new List<Channel>();
+        public ICollection<User> Members { get; set; } = new List<User>();
     }
 }
