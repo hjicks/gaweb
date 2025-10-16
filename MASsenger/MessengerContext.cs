@@ -9,10 +9,16 @@ namespace MASsenger
 {
     internal class MessengerContext : DbContext
     {
-        public DbSet<Channel> Channels { get; set; }
-        public DbSet<Group> Groups { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Bot> Bots { get; set; }
+        public DbSet<Channel> Channels { get; set; } = null!;
+        public DbSet<Group> Groups { get; set; } = null!;
+        public DbSet<User> Users { get; set; } = null!;
+        public DbSet<Bot> Bots { get; set; } = null!;
+
+        // Fluent API, for future use
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //}
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Server=localhost;Database=MASsengerDB;Trusted_Connection=True;TrustServerCertificate=True;");
