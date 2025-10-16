@@ -1,30 +1,91 @@
-﻿namespace MASsenger
+﻿using System;
+
+namespace MASsenger
 {
     class Program
     {
 
-        static void Main()
+        private static void Main()
         {
-            using var context = new MessengerContext();
-
-            Console.WriteLine("Reading data from database...\n");
-
-            // Get the first channel
-            var channel = context.Channels.FirstOrDefault();
-
-            if (channel != null)
+            while (true)
             {
-                Console.WriteLine("Channel Details:");
-                Console.WriteLine($"Id: {channel.Id}");
-                Console.WriteLine($"Name: {channel.Name}");
-                Console.WriteLine($"Description: {channel.Description}");
-                Console.WriteLine($"Created At: {channel.CreatedAt}");
-                Console.WriteLine($"Is Public: {channel.IsPublic}\n");
+                Console.WriteLine("You can perform CRUD opearions. Which one do you prefer? (Enter c, r, u, d or e to exit.)");
+                string? op = Console.ReadLine();
+                using var context = new MessengerContext();
+                var channel = new Channel();
+
+                switch (op)
+                {
+                    case "c":
+                        Console.WriteLine("Enter channel name:");
+                        channel.Name = Console.ReadLine()!;
+                        Console.WriteLine("Enter channel description:");
+                        channel.Description = Console.ReadLine();
+                        Console.WriteLine("Enter channel photo url:");
+                        channel.Photo = Console.ReadLine();
+                        Console.WriteLine("Is the channel public? (y/n):");
+                        if (Console.ReadLine() == "y") channel.IsPublic = true;
+                        else channel.IsPublic = false;
+                        context.Add(channel);
+                        context.SaveChanges();
+                        Console.WriteLine();
+                        break;
+
+                    case "r":
+                        Console.WriteLine("Reading data from database...\n");
+                        var channels = context.Channels.ToList();
+                        if (channel != null)
+                        {
+                            Console.WriteLine("Channel Details:\n");
+                            foreach (var item in channels)
+                            {
+                                Console.WriteLine($"Id: {item.Id}");
+                                Console.WriteLine($"Name: {item.Name}");
+                                Console.WriteLine($"Description: {item.Description}");
+                                Console.WriteLine($"Photo: {item.Photo}");
+                                Console.WriteLine($"Created At: {item.CreatedAt}");
+                                Console.WriteLine($"Is Public: {item.IsPublic}\n");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("No channels found in the database.\n");
+                        }
+                        break;
+
+                    case "u":
+                        Console.WriteLine("Enter channel Id:");
+                        channel.Id = Int32.Parse(Console.ReadLine()!);
+                        Console.WriteLine("Enter channel name:");
+                        channel.Name = Console.ReadLine()!;
+                        Console.WriteLine("Enter channel description:");
+                        channel.Description = Console.ReadLine();
+                        Console.WriteLine("Enter channel photo url:");
+                        channel.Photo = Console.ReadLine();
+                        Console.WriteLine("Is the channel public? (y/n):");
+                        if (Console.ReadLine() == "y") channel.IsPublic = true;
+                        else channel.IsPublic = false;
+                        context.Update(channel);
+                        context.SaveChanges();
+                        Console.WriteLine();
+                        break;
+
+                    case "d":
+                        Console.WriteLine("Enter the channel Id that you want to remove:");
+                        channel.Id = Int32.Parse(Console.ReadLine()!);
+                        context.Remove(channel);
+                        context.SaveChanges();
+                        Console.WriteLine();
+                        break;
+
+                    default:
+                        if (op != "e") Console.WriteLine("Incorrect operation.\n");
+                        break;
+                }
+
+                if (op == "e") break;
             }
-            else
-            {
-                Console.WriteLine("No channels found in the database.");
-            }
+
         }
 
     }
