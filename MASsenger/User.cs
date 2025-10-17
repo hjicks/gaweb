@@ -2,6 +2,9 @@
 {
     public class User : BaseUser
     {
+        // Required many-to-one relationship with channel
+        public ICollection<Channel> ChannelsOwned { get; set; } = new List<Channel>();
+
         // Many-to-many relationships
         public ICollection<Channel> Channels { get; set; } = new List<Channel>();
         public ICollection<Group> Groups { get; set; } = new List<Group>();

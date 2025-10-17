@@ -26,6 +26,7 @@ namespace MASsenger
                         Console.WriteLine("Is the channel public? (y/n):");
                         if (Console.ReadLine() == "y") channel.IsPublic = true;
                         else channel.IsPublic = false;
+                        channel.OwnerId = 3;
                         context.Add(channel);
                         context.SaveChanges();
                         Console.WriteLine();
@@ -34,7 +35,7 @@ namespace MASsenger
                     case "r":
                         Console.WriteLine("Reading data from database...\n");
                         var channels = context.Channels.ToList();
-                        if (channel != null)
+                        if (channels.Count != 0)
                         {
                             Console.WriteLine("Channel Details:\n");
                             foreach (var item in channels)
@@ -44,7 +45,8 @@ namespace MASsenger
                                 Console.WriteLine($"Description: {item.Description}");
                                 Console.WriteLine($"Photo: {item.Photo}");
                                 Console.WriteLine($"Created At: {item.CreatedAt}");
-                                Console.WriteLine($"Is Public: {item.IsPublic}\n");
+                                Console.WriteLine($"Is Public: {item.IsPublic}");
+                                Console.WriteLine($"OwnerId: {item.OwnerId}\n");
                             }
                         }
                         else

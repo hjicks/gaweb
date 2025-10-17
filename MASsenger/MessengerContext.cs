@@ -14,10 +14,18 @@ namespace MASsenger
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Bot> Bots { get; set; } = null!;
 
-        // Fluent API, for future use
-        //protected override void OnModelCreating(ModelBuilder modelBuilder)
-        //{
-        //}
+        // Fluent API
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Channel>()
+                .HasMany(e => e.Members)
+                .WithMany(e => e.Channels);
+
+            modelBuilder.Entity<Channel>()
+                .HasOne(e => e.Owner)
+                .WithMany(e => e.ChannelsOwned)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
