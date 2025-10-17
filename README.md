@@ -12,3 +12,32 @@ $ cd gaweb
 $ dotnet build
 $ ./MASsenger/bin/Debug/MASsenger
 ```
+
+# Design
+
+Chat related classes:
+```
+BaseChat
+|
+|----> DirectChat
+|
+|           /----> ChannelChat
+\----> BaseChan
+            \----> GroupChat
+```
+
+User related classes:
+```
+BaseUser
+|
+|----> User
+\----> Bot
+```
+
+Msg and related classes:
+```
+BaseMsg
+|
+|---> Msg
+\---> FwdMsg
+```
