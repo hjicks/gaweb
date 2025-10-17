@@ -9,6 +9,7 @@ namespace MASsenger
 {
     internal class MessengerContext : DbContext
     {
+		public DbSet<DirectChat> DirectChats { get; set; } = null!;
         public DbSet<Channel> Channels { get; set; } = null!;
         public DbSet<Group> Groups { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
@@ -26,6 +27,11 @@ namespace MASsenger
                 .WithMany(e => e.ChannelsOwned)
                 .OnDelete(DeleteBehavior.Restrict);
 
+			// modelBuilder.Entity<Channel>()
+			// 	.HasOne(e => e.LinkedGroup)
+			// 	.WithOne(e => e.LinkedChannel)
+			// 	.HasForeignKey<LinkedGroup>(e => e.GroupId);
+
             modelBuilder.Entity<Group>()
                 .HasMany(e => e.Members)
                 .WithMany(e => e.Groups);
@@ -34,6 +40,11 @@ namespace MASsenger
                 .HasOne(e => e.Owner)
                 .WithMany(e => e.GroupsOwned)
                 .OnDelete(DeleteBehavior.Restrict);
+
+			// modelBuilder.Entity<Group>()
+			// 	.HasOne(e => e.LinkedChannel)
+			// 	.WithOne(e => e.LinkedGroup)
+			// 	.HasForeignKey<LinkedChannel>(e => e.ChannelId);
 
             modelBuilder.Entity<Bot>()
                 .HasMany(e => e.Members)
@@ -47,7 +58,8 @@ namespace MASsenger
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=localhost;Database=MASsengerDB;Trusted_Connection=True;TrustServerCertificate=True;");
+			//    optionsBuilder.UseSqlServer("Server=localhost;Database=MASsengerDB;Trusted_Connection=True;TrustServerCertificate=True;");
+			optionsBuilder.UseSqlite("Filename=MASsengerDB.db");
         }
     }
 }

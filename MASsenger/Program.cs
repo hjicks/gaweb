@@ -4,7 +4,6 @@ namespace MASsenger
 {
     class Program
     {
-
         private static void Main()
         {
             while (true)
@@ -21,12 +20,7 @@ namespace MASsenger
                         channel.Name = Console.ReadLine()!;
                         Console.WriteLine("Enter channel description:");
                         channel.Description = Console.ReadLine();
-                        Console.WriteLine("Enter channel photo url:");
-                        channel.Photo = Console.ReadLine();
-                        Console.WriteLine("Is the channel public? (y/n):");
-                        if (Console.ReadLine() == "y") channel.IsPublic = true;
-                        else channel.IsPublic = false;
-                        channel.OwnerId = 3;
+						
                         context.Add(channel);
                         context.SaveChanges();
                         Console.WriteLine();
@@ -43,10 +37,7 @@ namespace MASsenger
                                 Console.WriteLine($"Id: {item.Id}");
                                 Console.WriteLine($"Name: {item.Name}");
                                 Console.WriteLine($"Description: {item.Description}");
-                                Console.WriteLine($"Photo: {item.Photo}");
-                                Console.WriteLine($"Created At: {item.CreatedAt}");
-                                Console.WriteLine($"Is Public: {item.IsPublic}");
-                                Console.WriteLine($"OwnerId: {item.OwnerId}\n");
+                                Console.WriteLine($"Created At: {item.CreationTime}");
                             }
                         }
                         else
@@ -57,16 +48,10 @@ namespace MASsenger
 
                     case "u":
                         Console.WriteLine("Enter channel Id:");
-                        channel.Id = Int32.Parse(Console.ReadLine()!);
+                        channel.Id = UInt64.Parse(Console.ReadLine()!);
                         Console.WriteLine("Enter channel name:");
                         channel.Name = Console.ReadLine()!;
-                        Console.WriteLine("Enter channel description:");
-                        channel.Description = Console.ReadLine();
-                        Console.WriteLine("Enter channel photo url:");
-                        channel.Photo = Console.ReadLine();
-                        Console.WriteLine("Is the channel public? (y/n):");
-                        if (Console.ReadLine() == "y") channel.IsPublic = true;
-                        else channel.IsPublic = false;
+                        Console.WriteLine("Enter channel description:");;
                         context.Update(channel);
                         context.SaveChanges();
                         Console.WriteLine();
@@ -74,7 +59,7 @@ namespace MASsenger
 
                     case "d":
                         Console.WriteLine("Enter the channel Id that you want to remove:");
-                        channel.Id = Int32.Parse(Console.ReadLine()!);
+                        channel.Id = UInt64.Parse(Console.ReadLine()!);
                         context.Remove(channel);
                         context.SaveChanges();
                         Console.WriteLine();
