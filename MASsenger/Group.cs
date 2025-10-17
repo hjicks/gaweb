@@ -10,6 +10,10 @@
         // Optional one-to-one relationship with channel
         public Channel? Channel { get; set; }
 
+        // Required one-to-many relationship with user
+        public int OwnerId { get; set; }
+        public User Owner { get; set; } = null!;
+
         // Many-to-many relationships
         public ICollection<User> Members { get; set; } = new List<User>();
         public ICollection<Bot> Bots { get; set; } = new List<Bot>();

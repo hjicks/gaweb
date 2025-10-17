@@ -25,6 +25,24 @@ namespace MASsenger
                 .HasOne(e => e.Owner)
                 .WithMany(e => e.ChannelsOwned)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Group>()
+                .HasMany(e => e.Members)
+                .WithMany(e => e.Groups);
+
+            modelBuilder.Entity<Group>()
+                .HasOne(e => e.Owner)
+                .WithMany(e => e.GroupsOwned)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Bot>()
+                .HasMany(e => e.Members)
+                .WithMany(e => e.Bots);
+
+            modelBuilder.Entity<Bot>()
+                .HasOne(e => e.Owner)
+                .WithMany(e => e.BotsOwned)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
