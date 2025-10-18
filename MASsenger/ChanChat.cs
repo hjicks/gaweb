@@ -7,12 +7,12 @@ namespace MASsenger
 		public String? Description = null;
 		public File? ProfilePicture = null;
 
-		/* this shouldn't be null */
-		public BaseUser? Owner {set; get;} = null;
+		/* TODO: this shouldn't be null */
+		public BaseUser? Owner { set; get; } = null;
 		
 		/* TODO: admins might need annoations and permissions, like in tg */
-		public List<BaseUser> Admins {get; set;}
-		public List<BaseUser> Banned;
+		public List<BaseUser> Admins { get; set; }
+		public List<BaseUser> Banned { get; set; }
 
 		/* TODO: fix getters to return opposite value of each other(?) */
 		public bool IsGroup { get; }
