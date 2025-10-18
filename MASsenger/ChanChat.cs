@@ -2,10 +2,10 @@ namespace MASsenger
 {
 	public class ChanChat : BaseChat {
 		/* if it's null then it's not public */
-		public String? Name = null;
-		public String? Username = null;
-		public String? Description = null;
-		public File? ProfilePicture = null;
+		public String? Name { get; set; } = null;
+		public String? Username { get; set; } = null;
+		public String? Description { get; set; } = null;
+		public File? ProfilePicture { get; set; } = null;
 
 		/* TODO: this shouldn't be null */
 		public BaseUser? Owner { set; get; } = null;
