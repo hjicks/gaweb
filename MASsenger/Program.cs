@@ -11,7 +11,7 @@ namespace MASsenger
                 Console.WriteLine("You can perform CRUD opearions. Which one do you prefer? (Enter c, r, u, d or e to exit.)");
                 string? op = Console.ReadLine();
                 using var context = new MessengerContext();
-                var channel = new Channel();
+                var channel = new ChannelGroupChat();
 
                 switch (op)
                 {
@@ -28,22 +28,22 @@ namespace MASsenger
 
                     case "r":
                         Console.WriteLine("Reading data from database...\n");
-                        var channels = context.Channels.ToList();
-                        if (channels.Count != 0)
-                        {
-                            Console.WriteLine("Channel Details:\n");
-                            foreach (var item in channels)
-                            {
-                                Console.WriteLine($"Id: {item.Id}");
-                                Console.WriteLine($"Name: {item.Name}");
-                                Console.WriteLine($"Description: {item.Description}");
-                                Console.WriteLine($"Created At: {item.CreationTime}");
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("No channels found in the database.\n");
-                        }
+                        //var channels = context.Channels.ToList();
+                        //if (channels.Count != 0)
+                        //{
+                        //    Console.WriteLine("Channel Details:\n");
+                        //    foreach (var item in channels)
+                        //    {
+                        //        Console.WriteLine($"Id: {item.Id}");
+                        //        Console.WriteLine($"Name: {item.Name}");
+                        //        Console.WriteLine($"Description: {item.Description}");
+                        //        Console.WriteLine($"Created At: {item.CreationTime}");
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    Console.WriteLine("No channels found in the database.\n");
+                        //}
                         break;
 
                     case "u":
