@@ -1,6 +1,6 @@
 namespace MASsenger.Core.Entities
 {
-	public class DirectChat : BaseChat
+	public class PrivateChat : BaseChat
 	{
 		//public bool IsBot; /*
 		//					* Bots can't communicate with other bots,
