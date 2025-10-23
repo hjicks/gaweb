@@ -18,7 +18,7 @@ namespace MASsenger.Core.Entities
 		/* i do miss unions */
 		public bool IsDeleted;
 		public DateTime? DeletionTime = null;
-		public BaseUser Deleter { get; set; } = null!;
+		public BaseUser? Deleter { get; set; }
 
         public string Text { get; set; } = null!;
     }
