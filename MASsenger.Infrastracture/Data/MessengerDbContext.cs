@@ -1,9 +1,11 @@
 ﻿using MASsenger.Core.Entities;
+using MASsenger.Core.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace MASsenger.Infrastracture.Data
@@ -21,6 +23,16 @@ namespace MASsenger.Infrastracture.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<BaseUser>()
+                .HasDiscriminator<string>("Type")
+                .HasValue<User>("User")
+                .HasValue<Bot>("Bot");
+
+            modelBuilder.Entity<BaseChat>()
+                .HasDiscriminator<string>("Type")
+                .HasValue<ChannelGroupChat>("Channel")
+                .HasValue<ChannelGroupChat>("Group");
+
             modelBuilder.Entity<Bot>()
                 .HasMany(e => e.Members)
                 .WithMany(e => e.BotsJoined);

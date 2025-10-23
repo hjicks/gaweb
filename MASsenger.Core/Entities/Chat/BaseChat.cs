@@ -5,7 +5,6 @@ namespace MASsenger.Core.Entities
 	public class BaseChat {
 		public UInt64 Id { get; set; }
 
-		public ChatType Type;
 		public DateTime CreationTime;
 
         /*
