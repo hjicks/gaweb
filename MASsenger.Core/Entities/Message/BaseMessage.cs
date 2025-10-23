@@ -1,4 +1,5 @@
-namespace MASsenger {
+namespace MASsenger.Core.Entities
+{
 	public enum MessageType
 	{
 		DIRECT,

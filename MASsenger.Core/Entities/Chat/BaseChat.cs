@@ -1,4 +1,5 @@
-namespace MASsenger {
+namespace MASsenger.Core.Entities 
+{
 	/* there ought to be better ways of doing tagged unions */
 	public enum ChatType {
 		DIRECT,

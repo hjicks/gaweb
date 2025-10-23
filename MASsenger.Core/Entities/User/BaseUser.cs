@@ -1,4 +1,4 @@
-﻿namespace MASsenger
+﻿namespace MASsenger.Core.Entities
 {
     public enum UserType
     {

@@ -1,0 +1,23 @@
+﻿using MASsenger.Infrastracture.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MASsenger.Infrastracture
+{
+    public static class InfrastructureDI
+    {
+        public static IServiceCollection AddInfratructureDI(this IServiceCollection services)
+        {
+            services.AddDbContext<MessengerDbContext>(options =>
+            {
+                options.UseSqlite("Data source=C:\\Users\\mahdi\\source\\repos\\MASsenger\\MASsenger.Infrastracture\\Database\\\\MASsengerDB.db");
+            });
+            return services;
+        }
+    }
+}

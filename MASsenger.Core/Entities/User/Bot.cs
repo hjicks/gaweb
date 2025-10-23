@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MASsenger
+namespace MASsenger.Core.Entities
 {
     public class Bot : BaseUser
     {

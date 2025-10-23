@@ -1,4 +1,4 @@
-namespace MASsenger
+namespace MASsenger.Core.Entities
 {
 	public class ChannelGroupChat : BaseChat {
 		/* if it's null then it's not public */

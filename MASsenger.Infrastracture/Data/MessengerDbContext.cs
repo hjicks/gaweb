@@ -1,19 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MASsenger.Core.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MASsenger
+namespace MASsenger.Infrastracture.Data
 {
-    internal class MessengerContext : DbContext
+    public class MessengerDbContext : DbContext
     {
+        public MessengerDbContext(DbContextOptions<MessengerDbContext> options) : base(options)
+        {
+            
+        }
+
         public DbSet<BaseUser> BaseUsers { get; set; } = null!;
         public DbSet<BaseChat> BaseChats { get; set; } = null!;
         public DbSet<BaseMessage> BaseMessages { get; set; } = null!;
 
-        // Fluent API
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Bot>()
@@ -36,12 +41,6 @@ namespace MASsenger
             modelBuilder.Entity<ChannelGroupChat>()
                 .HasMany(e => e.Banned)
                 .WithMany(e => e.ChannelGroupsBannedFrom);
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            //    optionsBuilder.UseSqlServer("Server=localhost;Database=MASsengerDB;Trusted_Connection=True;TrustServerCertificate=True;");
-            optionsBuilder.UseSqlite("Filename=MASsengerDB.db");
         }
     }
 }
