@@ -1,10 +1,7 @@
-﻿namespace MASsenger.Core.Entities
+﻿using MASsenger.Core.Enums;
+
+namespace MASsenger.Core.Entities
 {
-    public enum UserType
-    {
-        USER,
-        BOT
-    }
     public class BaseUser
     {
         public UInt64 Id { get; set; }

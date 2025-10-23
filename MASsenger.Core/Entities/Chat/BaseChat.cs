@@ -1,13 +1,7 @@
+using MASsenger.Core.Enums;
+
 namespace MASsenger.Core.Entities 
 {
-	/* there ought to be better ways of doing tagged unions */
-	public enum ChatType {
-		DIRECT,
-		CHANNEL,
-		GROUP,
-		BOT
-	}
-
 	public class BaseChat {
 		public UInt64 Id { get; set; }
 

@@ -1,12 +1,7 @@
+using MASsenger.Core.Enums;
+
 namespace MASsenger.Core.Entities
 {
-	public enum MessageType
-	{
-		DIRECT,
-		CHANNEL,
-		GROUP,
-		BOT
-	}
 	public class BaseMessage
 	{
 		public UInt64 Id { get; set; } // id of the message inside of the group/chat/bot
