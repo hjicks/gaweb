@@ -15,7 +15,7 @@ namespace MASsenger.Infrastracture.Migrations
                 {
                     Id = table.Column<ulong>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Discriminator = table.Column<string>(type: "TEXT", nullable: false),
+                    Type = table.Column<string>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: true),
                     Username = table.Column<string>(type: "TEXT", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
@@ -42,7 +42,7 @@ namespace MASsenger.Infrastracture.Migrations
                     SenderId = table.Column<ulong>(type: "INTEGER", nullable: false),
                     DestinationId = table.Column<ulong>(type: "INTEGER", nullable: false),
                     SentTime = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    DeleterId = table.Column<ulong>(type: "INTEGER", nullable: false),
+                    DeleterId = table.Column<ulong>(type: "INTEGER", nullable: true),
                     Text = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -62,13 +62,12 @@ namespace MASsenger.Infrastracture.Migrations
                 {
                     Id = table.Column<ulong>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Type = table.Column<int>(type: "INTEGER", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Username = table.Column<string>(type: "TEXT", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     IsVerified = table.Column<bool>(type: "INTEGER", nullable: false),
-                    Discriminator = table.Column<string>(type: "TEXT", nullable: false),
+                    Type = table.Column<string>(type: "TEXT", nullable: false),
                     UserId = table.Column<ulong>(type: "INTEGER", nullable: true),
                     Token = table.Column<string>(type: "TEXT", nullable: true),
                     IsActive = table.Column<bool>(type: "INTEGER", nullable: true),
@@ -265,8 +264,7 @@ namespace MASsenger.Infrastracture.Migrations
                 table: "BaseMessages",
                 column: "DeleterId",
                 principalTable: "BaseUsers",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_BaseMessages_BaseUsers_SenderId",

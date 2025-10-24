@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MASsenger.Infrastracture.Migrations
 {
     [DbContext(typeof(MessengerDbContext))]
-    [Migration("20251023151935_MASsengerDBv1")]
-    partial class MASsengerDBv1
+    [Migration("20251024204426_MASsengerDBv2")]
+    partial class MASsengerDBv2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -85,7 +85,7 @@ namespace MASsenger.Infrastracture.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Discriminator")
+                    b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -93,7 +93,7 @@ namespace MASsenger.Infrastracture.Migrations
 
                     b.ToTable("BaseChats");
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("BaseChat");
+                    b.HasDiscriminator<string>("Type").HasValue("BaseChat");
                 });
 
             modelBuilder.Entity("MASsenger.Core.Entities.BaseMessage", b =>
@@ -102,7 +102,7 @@ namespace MASsenger.Infrastracture.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<ulong>("DeleterId")
+                    b.Property<ulong?>("DeleterId")
                         .HasColumnType("INTEGER");
 
                     b.Property<ulong>("DestinationId")
@@ -144,10 +144,6 @@ namespace MASsenger.Infrastracture.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.Property<bool>("IsVerified")
                         .HasColumnType("INTEGER");
 
@@ -155,8 +151,9 @@ namespace MASsenger.Infrastracture.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<ulong?>("UserId")
                         .HasColumnType("INTEGER");
@@ -170,7 +167,7 @@ namespace MASsenger.Infrastracture.Migrations
 
                     b.ToTable("BaseUsers");
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("BaseUser");
+                    b.HasDiscriminator<string>("Type").HasValue("BaseUser");
                 });
 
             modelBuilder.Entity("MASsenger.Core.Entities.Bot", b =>
@@ -215,7 +212,7 @@ namespace MASsenger.Infrastracture.Migrations
 
                     b.HasIndex("OwnerId");
 
-                    b.HasDiscriminator().HasValue("ChannelGroupChat");
+                    b.HasDiscriminator().HasValue("Group");
                 });
 
             modelBuilder.Entity("MASsenger.Core.Entities.User", b =>
@@ -294,9 +291,7 @@ namespace MASsenger.Infrastracture.Migrations
                 {
                     b.HasOne("MASsenger.Core.Entities.BaseUser", "Deleter")
                         .WithMany()
-                        .HasForeignKey("DeleterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DeleterId");
 
                     b.HasOne("MASsenger.Core.Entities.BaseChat", "Destination")
                         .WithMany("Messages")
