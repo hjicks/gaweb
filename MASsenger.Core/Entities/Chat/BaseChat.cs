@@ -5,7 +5,7 @@ namespace MASsenger.Core.Entities
 	public class BaseChat {
 		public UInt64 Id { get; set; }
 
-		public DateTime CreationTime;
+		public DateTime CreatedAt = DateTime.Now;
 
         /*
 		 * there might be insane amount of users/messages
