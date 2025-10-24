@@ -23,9 +23,9 @@ BaseChat
 |
 |----> PrivateChat
 |
-|           /----> ChannelChat
+|                   /----> ChannelChat
 \----> ChannelGroupChat
-            \----> GroupChat
+                    \----> GroupChat
 ```
 
 User related classes:
