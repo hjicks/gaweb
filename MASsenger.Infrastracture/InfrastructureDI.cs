@@ -21,6 +21,7 @@ namespace MASsenger.Infrastracture
             });
 
             services.AddScoped<IBaseUserRepository, BaseUserRepository>();
+            services.AddScoped<IBaseChatRepository, BaseChatRepository>();
             services.AddScoped<IBaseMessageRepository, BaseMessageRepository>();
 
             return services;
