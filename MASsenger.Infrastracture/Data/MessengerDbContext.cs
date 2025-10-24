@@ -18,6 +18,8 @@ namespace MASsenger.Infrastracture.Data
         }
 
         public DbSet<BaseUser> BaseUsers { get; set; } = null!;
+        public DbSet<User> Users { get; set; } = null!;
+        public DbSet<Bot> Bots { get; set; } = null!;  
         public DbSet<BaseChat> BaseChats { get; set; } = null!;
         public DbSet<BaseMessage> BaseMessages { get; set; } = null!;
 
