@@ -24,7 +24,7 @@ namespace MASsenger.Api.Controllers
             return Ok(baseUsers);
         }
 
-        [HttpPost("bot")]
+        [HttpPost("addBot")]
         public async Task<IActionResult> AddBotAsync([FromBody] BotDto bot, UInt64 ownerId)
         {
             var owner = await _baseUserRepository.GetUserByIdAsync(ownerId);
@@ -43,7 +43,7 @@ namespace MASsenger.Api.Controllers
             return BadRequest("Something went wrong while saving the bot.");
         }
 
-        [HttpPost("user")]
+        [HttpPost("addUser")]
         public async Task<IActionResult> AddUserAsync([FromBody] UserDto user)
         {
             var newUser = new User
