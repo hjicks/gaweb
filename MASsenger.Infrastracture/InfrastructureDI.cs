@@ -20,6 +20,7 @@ namespace MASsenger.Infrastracture
                 options.UseSqlite("Data source=C:\\Users\\mahdi\\source\\repos\\gaweb\\MASsenger.Infrastracture\\Database\\MASsengerDB.db");
             });
 
+            services.AddScoped<IBaseUserRepository, BaseUserRepository>();
             services.AddScoped<IBaseMessageRepository, BaseMessageRepository>();
 
             return services;
