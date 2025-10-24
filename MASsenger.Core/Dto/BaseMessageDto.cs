@@ -10,11 +10,6 @@ namespace MASsenger.Core.Dto
 {
     public class BaseMessageDto
     {
-        public UInt64 Id;
-        public MessageType Type { get; set; }
-        public BaseUser Sender { get; set; } = null!;
-        public BaseChat Destination { get; set; } = null!;
-        public DateTime SentTime { get; set; }
         public string Text { get; set; } = null!;
     }
 }
