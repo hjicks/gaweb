@@ -7,10 +7,10 @@ namespace MASsenger.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BaseMessagesController : ControllerBase
+    public class BaseMessageController : ControllerBase
     {
         private readonly IBaseMessageRepository _baseMessageRepository;
-        public BaseMessagesController(IBaseMessageRepository baseMessageRepository)
+        public BaseMessageController(IBaseMessageRepository baseMessageRepository)
         {
             _baseMessageRepository = baseMessageRepository;
         }
@@ -28,7 +28,6 @@ namespace MASsenger.Api.Controllers
                 SentTime = u.SentTime,
                 Text = u.Text
             }).ToList();
-            if (!ModelState.IsValid) return BadRequest(ModelState);
             return Ok(baseMessagesDtos);
         }
     }
