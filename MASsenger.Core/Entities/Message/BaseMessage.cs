@@ -8,7 +8,7 @@ namespace MASsenger.Core.Entities
 		public MessageType Type { get; set; }
         public BaseUser Sender { get; set; } = null!;
 		public BaseChat Destination { get; set; } = null!;
-		public DateTime SentTime { get; set; }
+		public DateTime SentTime { get; set; } = DateTime.Now;
 		//public BaseMessage? Reply = null;
 
 		// 1st is sent, 2nd is recivied, 3rd one is for seen
