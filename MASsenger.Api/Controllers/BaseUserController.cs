@@ -44,9 +44,15 @@ namespace MASsenger.Api.Controllers
         }
 
         [HttpPost("user")]
-        public async Task<IActionResult> AddUserAsync([FromBody] User user)
+        public async Task<IActionResult> AddUserAsync([FromBody] UserDto user)
         {
-            if (await _baseUserRepository.AddUserAsync(user)) return Ok("User added successfully.");
+            var newUser = new User
+            {
+                Name = user.Name,
+                Username = user.Username,
+                Description = user.Description
+            };
+            if (await _baseUserRepository.AddUserAsync(newUser)) return Ok("User added successfully.");
             return BadRequest("Something went wrong while saving the user.");
         }
     }
