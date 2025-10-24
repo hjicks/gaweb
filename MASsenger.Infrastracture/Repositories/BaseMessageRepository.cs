@@ -22,5 +22,19 @@ namespace MASsenger.Infrastracture.Repositories
         {
             return await _context.BaseMessages.ToListAsync();
         }
+
+        public Task<bool> AddBaseMessageAsync(BaseMessage baseMessage, User sender, BaseChat destinationChat)
+        {
+            baseMessage.Sender = sender;
+            baseMessage.Destination = destinationChat;
+            _context.BaseMessages.Add(baseMessage);
+            return Save();
+        }
+
+        public async Task<bool> Save()
+        {
+            var saved = await _context.SaveChangesAsync();
+            return saved > 0 ? true : false;
+        }
     }
 }
