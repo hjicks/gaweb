@@ -15,7 +15,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     options.JsonSerializerOptions.WriteIndented = true;
 });
-builder.Services.AddApiDI();
+builder.Services.AddApiDI(builder.Configuration);
 
 var app = builder.Build();
 

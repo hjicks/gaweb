@@ -6,10 +6,11 @@ namespace MASsenger.Api
 {
     public static class ApiDI
     {
-        public static IServiceCollection AddApiDI(this IServiceCollection services)
+        public static IServiceCollection AddApiDI(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddInfratructureDI()
-                      .AddApplicationDI();
+                    .AddApplicationDI()
+                    .AddCoreDI(configuration);
             return services;
         }
     }

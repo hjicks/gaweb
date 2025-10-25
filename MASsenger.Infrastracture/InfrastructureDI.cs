@@ -1,8 +1,10 @@
 ﻿using MASsenger.Core.Interfaces;
+using MASsenger.Core.Options;
 using MASsenger.Infrastracture.Data;
 using MASsenger.Infrastracture.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +17,9 @@ namespace MASsenger.Infrastracture
     {
         public static IServiceCollection AddInfratructureDI(this IServiceCollection services)
         {
-            services.AddDbContext<MessengerDbContext>(options =>
+            services.AddDbContext<MessengerDbContext>((provider, options) =>
             {
-                options.UseSqlite("Data source=C:\\Users\\mahdi\\source\\repos\\gaweb\\MASsenger.Infrastracture\\Database\\MASsengerDB.db");
+                options.UseSqlite(provider.GetRequiredService<IOptionsSnapshot<ConnectionStringOptions>>().Value.DefaultConnection);
             });
 
             services.AddScoped<IBaseUserRepository, BaseUserRepository>();
