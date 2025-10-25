@@ -41,5 +41,5 @@ BaseUser
 1. Revision of BaseMessage entity ([@hjicks](https://github.com/hjicks))
 2. Implement create and delete operations for BaseMessage entity using DTOs ([@hjicks](https://github.com/hjicks))
 3. Implement create and delete operations for BaseChat entity using DTOs ([@Salimiyan](https://github.com/Salimiyan))
-4. Add validation annotations for DTOs (@gang-of-three)
-5. Implement CQRS pattern with Mediatr package (@gang-of-three)
+4. Add validation annotations for DTOs <ins>(gang of three)</ins>
+5. Implement CQRS pattern with Mediatr package <ins>(gang of three)</ins>
