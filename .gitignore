@@ -1,8 +1,8 @@
 ## Ignore Visual Studio temporary files and build results
 
-*.user
 [Dd]ebug/
 [Rr]elease/
 [Bb]in/
 [Oo]bj/
 .vs/
+*.user
