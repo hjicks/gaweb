@@ -1,19 +1,20 @@
 ﻿using MASsenger.Core.Dto;
 using MASsenger.Core.Entities;
+using MASsenger.Core.Enums;
 using MASsenger.Core.Interfaces;
 using MediatR;
 
 namespace MASsenger.Application.Commands
 {
-    public record AddUserCommand(UserDto user) : IRequest<bool>;
-    public class AddUserCommandHandler : IRequestHandler<AddUserCommand, bool>
+    public record AddUserCommand(UserDto user) : IRequest<TransactionResultType>;
+    public class AddUserCommandHandler : IRequestHandler<AddUserCommand, TransactionResultType>
     {
         private readonly IBaseUserRepository _baseUserRepository;
         public AddUserCommandHandler(IBaseUserRepository baseUserRepository)
         {
             _baseUserRepository = baseUserRepository;
         }
-        public Task<bool> Handle(AddUserCommand request, CancellationToken cancellationToken)
+        public async Task<TransactionResultType> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
             var newUser = new User
             {
@@ -21,7 +22,8 @@ namespace MASsenger.Application.Commands
                 Username = request.user.Username,
                 Description = request.user.Description
             };
-            return _baseUserRepository.AddUserAsync(newUser);
+            if (await _baseUserRepository.AddUserAsync(newUser)) return TransactionResultType.Done;
+            return TransactionResultType.SaveChangesError;
         }
     }
 }
