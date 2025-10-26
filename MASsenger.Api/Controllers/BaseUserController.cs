@@ -1,6 +1,8 @@
-﻿using MASsenger.Core.Dto;
+﻿using MASsenger.Application.Commands;
+using MASsenger.Application.Queries;
+using MASsenger.Core.Dto;
 using MASsenger.Core.Entities;
-using MASsenger.Core.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MASsenger.Api.Controllers
@@ -9,50 +11,31 @@ namespace MASsenger.Api.Controllers
     [ApiController]
     public class BaseUserController : ControllerBase
     {
-        private readonly IBaseUserRepository _baseUserRepository;
-        public BaseUserController(IBaseUserRepository baseUserRepository)
+        private readonly ISender _sender;
+        public BaseUserController(ISender sender)
         {
-            _baseUserRepository = baseUserRepository;
+            _sender = sender;
         }
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<BaseUser>))]
         public async Task<IActionResult> GetBaseUsers()
         {
-            var baseUsers = await _baseUserRepository.GetBaseUsersAsync();
-
-            return Ok(baseUsers);
+            return Ok(await _sender.Send(new GetBaseUsersQuery()));
         }
 
         [HttpPost("addBot")]
         public async Task<IActionResult> AddBotAsync([FromBody] BotDto bot, UInt64 ownerId)
         {
-            var owner = await _baseUserRepository.GetUserByIdAsync(ownerId);
-            if (owner == null)
-                return BadRequest("Invalid Owner Id.");
-
-            var newBot = new Bot
-            {
-                Name = bot.Name,
-                Username = bot.Username,
-                Description = bot.Description,
-                Token = bot.Token
-            };
-
-            if (await _baseUserRepository.AddBotAsync(newBot, owner)) return Ok("Bot added successfully.");
+            if (await _sender.Send(new AddBotCommand(bot, ownerId)) == Core.Enums.TransactionResultType.Done) return Ok("Bot added successfully.");
+            else if (await _sender.Send(new AddBotCommand(bot, ownerId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid Owner Id.");
             return BadRequest("Something went wrong while saving the bot.");
         }
 
         [HttpPost("addUser")]
         public async Task<IActionResult> AddUserAsync([FromBody] UserDto user)
         {
-            var newUser = new User
-            {
-                Name = user.Name,
-                Username = user.Username,
-                Description = user.Description
-            };
-            if (await _baseUserRepository.AddUserAsync(newUser)) return Ok("User added successfully.");
+            if (await _sender.Send(new AddUserCommand(user)) == Core.Enums.TransactionResultType.Done) return Ok("User added successfully.");
             return BadRequest("Something went wrong while saving the user.");
         }
     }
