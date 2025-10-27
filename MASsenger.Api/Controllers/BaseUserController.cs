@@ -22,7 +22,7 @@ namespace MASsenger.Api.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<UserReadDto>))]
         public async Task<IActionResult> GetUsers()
         {
-            return Ok((await _sender.Send(new GetUsersQuery())).Select(u => new UserReadDto
+            return Ok((await _sender.Send(new GetAllUsersQuery())).Select(u => new UserReadDto
             {
                 Id = u.Id,
                 Name = u.Name,
