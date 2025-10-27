@@ -18,9 +18,9 @@ namespace MASsenger.Api.Controllers
             _sender = sender;
         }
 
-        [HttpGet]
+        [HttpGet("getAllUsers")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<UserReadDto>))]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetAllUsers()
         {
             return Ok((await _sender.Send(new GetAllUsersQuery())).Select(u => new UserReadDto
             {
@@ -31,14 +31,6 @@ namespace MASsenger.Api.Controllers
                 CreatedAt = u.CreatedAt,
                 IsVerified = u.IsVerified 
             }).ToList());
-        }
-
-        [HttpPost("addBot")]
-        public async Task<IActionResult> AddBotAsync([FromBody] BotCreateDto bot, UInt64 ownerId)
-        {
-            if (await _sender.Send(new AddBotCommand(bot, ownerId)) == Core.Enums.TransactionResultType.Done) return Ok("Bot added successfully.");
-            else if (await _sender.Send(new AddBotCommand(bot, ownerId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid Owner Id.");
-            return BadRequest("Something went wrong while saving the bot.");
         }
 
         [HttpPost("addUser")]
@@ -62,6 +54,31 @@ namespace MASsenger.Api.Controllers
             if (await _sender.Send(new DeleteUserCommand(userId)) == Core.Enums.TransactionResultType.Done) return Ok("User deleted successfully.");
             else if (await _sender.Send(new DeleteUserCommand(userId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
             return BadRequest("Something went wrong while deleting the user.");
+        }
+
+        [HttpGet("getAllBots")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BotReadDto>))]
+        public async Task<IActionResult> GetAllBots()
+        {
+            return Ok((await _sender.Send(new GetAllBotsQuery())).Select(u => new BotReadDto
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Username = u.Username,
+                Description = u.Description,
+                Token = u.Token,
+                CreatedAt = u.CreatedAt,
+                IsVerified = u.IsVerified,
+                IsActive = u.IsActive
+            }).ToList());
+        }
+
+        [HttpPost("addBot")]
+        public async Task<IActionResult> AddBotAsync([FromBody] BotCreateDto bot, UInt64 ownerId)
+        {
+            if (await _sender.Send(new AddBotCommand(bot, ownerId)) == Core.Enums.TransactionResultType.Done) return Ok("Bot added successfully.");
+            else if (await _sender.Send(new AddBotCommand(bot, ownerId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid Owner Id.");
+            return BadRequest("Something went wrong while saving the bot.");
         }
     }
 }
