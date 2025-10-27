@@ -13,29 +13,28 @@ namespace MASsenger.Infrastracture.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<BaseUser>> GetBaseUsersAsync()
-        {
-            return await _context.BaseUsers.ToListAsync();
-        }
-
         public async Task<IEnumerable<User>> GetUsersAsync()
         {
             return await _context.Users.ToListAsync();
         }
+
         public async Task<User?> GetUserByIdAsync(UInt64 userId)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         }
+
         public Task<bool> AddUserAsync(User user)
         {
             _context.Users.Add(user);
             return Save();
         }
+
         public Task<bool> UpdateUserAsync(User user)
         {
             _context.Users.Update(user);
             return Save();
         }
+
         public Task<bool> DeleteUserAsync(User user)
         {
             _context.Users.Remove(user);
