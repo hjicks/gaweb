@@ -2,11 +2,6 @@
 using MASsenger.Core.Interfaces;
 using MASsenger.Infrastracture.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MASsenger.Infrastracture.Repositories
 {
@@ -23,14 +18,27 @@ namespace MASsenger.Infrastracture.Repositories
             return await _context.BaseUsers.ToListAsync();
         }
 
+        public async Task<IEnumerable<User>> GetUsersAsync()
+        {
+            return await _context.Users.ToListAsync();
+        }
         public async Task<User?> GetUserByIdAsync(UInt64 userId)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         }
-
         public Task<bool> AddUserAsync(User user)
         {
             _context.Users.Add(user);
+            return Save();
+        }
+        public Task<bool> UpdateUserAsync(User user)
+        {
+            _context.Users.Update(user);
+            return Save();
+        }
+        public Task<bool> DeleteUserAsync(User user)
+        {
+            _context.Users.Remove(user);
             return Save();
         }
 
