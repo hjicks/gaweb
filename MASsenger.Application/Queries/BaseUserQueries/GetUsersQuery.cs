@@ -2,7 +2,7 @@
 using MASsenger.Core.Interfaces;
 using MediatR;
 
-namespace MASsenger.Application.Queries
+namespace MASsenger.Application.Queries.BaseUserQueries
 {
     public record GetUsersQuery() : IRequest<IEnumerable<User>>;
     public class GetUsersCommandHandler : IRequestHandler<GetUsersQuery, IEnumerable<User>>
