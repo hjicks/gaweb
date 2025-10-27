@@ -10,9 +10,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 
-namespace MASsenger.Application.Commands
+namespace MASsenger.Application.Commands.BaseUserCommands
 {
-    public record AddBotCommand(BotCreateDto bot, UInt64 ownerId) : IRequest<TransactionResultType>;
+    public record AddBotCommand(BotCreateDto bot, ulong ownerId) : IRequest<TransactionResultType>;
     public class AddBotCommandHandler : IRequestHandler<AddBotCommand, TransactionResultType>
     {
         private readonly IBaseUserRepository _baseUserRepository;

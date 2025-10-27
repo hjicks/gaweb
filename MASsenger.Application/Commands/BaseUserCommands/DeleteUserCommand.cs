@@ -2,9 +2,9 @@
 using MASsenger.Core.Interfaces;
 using MediatR;
 
-namespace MASsenger.Application.Commands
+namespace MASsenger.Application.Commands.BaseUserCommands
 {
-    public record DeleteUserCommand(UInt64 userId) : IRequest<TransactionResultType>;
+    public record DeleteUserCommand(ulong userId) : IRequest<TransactionResultType>;
     public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, TransactionResultType>
     {
         private readonly IBaseUserRepository _baseUserRepository;
