@@ -13,7 +13,7 @@ namespace MASsenger.Infrastracture.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<User>> GetUsersAsync()
+        public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
             return await _context.Users.ToListAsync();
         }
@@ -39,6 +39,15 @@ namespace MASsenger.Infrastracture.Repositories
         {
             _context.Users.Remove(user);
             return Save();
+        }
+        public async Task<IEnumerable<Bot>> GetAllBotsAsync()
+        {
+            return await _context.Bots.ToListAsync();
+        }
+
+        public async Task<Bot?> GetBotByIdAsync(UInt64 botId)
+        {
+            return await _context.Bots.FirstOrDefaultAsync(b => b.Id == botId);
         }
 
         public Task<bool> AddBotAsync(Bot bot, User user)
