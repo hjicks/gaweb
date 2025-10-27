@@ -1,4 +1,4 @@
-﻿using MASsenger.Core.Dto;
+﻿using MASsenger.Core.Dto.Update;
 using MASsenger.Core.Enums;
 using MASsenger.Core.Interfaces;
 using MediatR;
