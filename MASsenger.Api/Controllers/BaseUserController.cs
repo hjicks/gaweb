@@ -38,5 +38,21 @@ namespace MASsenger.Api.Controllers
             if (await _sender.Send(new AddUserCommand(user)) == Core.Enums.TransactionResultType.Done) return Ok("User added successfully.");
             return BadRequest("Something went wrong while saving the user.");
         }
+
+        [HttpPut("updateUser")]
+        public async Task<IActionResult> UpdateUserAsync(UserUpdateDto user)
+        {
+            if (await _sender.Send(new UpdateUserCommand(user)) == Core.Enums.TransactionResultType.Done) return Ok("User updated successfully.");
+            else if (await _sender.Send(new UpdateUserCommand(user)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
+            return BadRequest("Something went wrong while updating the user.");
+        }
+
+        [HttpDelete("deleteUser")]
+        public async Task<IActionResult> DeleteUserAsync(UInt64 userId)
+        {
+            if (await _sender.Send(new DeleteUserCommand(userId)) == Core.Enums.TransactionResultType.Done) return Ok("User deleted successfully.");
+            else if (await _sender.Send(new DeleteUserCommand(userId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
+            return BadRequest("Something went wrong while deleting the user.");
+        }
     }
 }
