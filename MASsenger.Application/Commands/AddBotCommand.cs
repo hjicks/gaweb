@@ -1,4 +1,4 @@
-﻿using MASsenger.Core.Dto;
+﻿using MASsenger.Core.Dto.Create;
 using MASsenger.Core.Entities;
 using MASsenger.Core.Enums;
 using MASsenger.Core.Interfaces;
@@ -12,7 +12,7 @@ using System.Transactions;
 
 namespace MASsenger.Application.Commands
 {
-    public record AddBotCommand(BotDto bot, UInt64 ownerId) : IRequest<TransactionResultType>;
+    public record AddBotCommand(BotCreateDto bot, UInt64 ownerId) : IRequest<TransactionResultType>;
     public class AddBotCommandHandler : IRequestHandler<AddBotCommand, TransactionResultType>
     {
         private readonly IBaseUserRepository _baseUserRepository;
