@@ -1,4 +1,4 @@
-﻿using MASsenger.Core.Dto;
+﻿using MASsenger.Core.Dto.Create;
 using MASsenger.Core.Entities;
 using MASsenger.Core.Enums;
 using MASsenger.Core.Interfaces;
@@ -6,7 +6,7 @@ using MediatR;
 
 namespace MASsenger.Application.Commands
 {
-    public record AddUserCommand(UserDto user) : IRequest<TransactionResultType>;
+    public record AddUserCommand(UserCreateDto user) : IRequest<TransactionResultType>;
     public class AddUserCommandHandler : IRequestHandler<AddUserCommand, TransactionResultType>
     {
         private readonly IBaseUserRepository _baseUserRepository;
