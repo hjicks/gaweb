@@ -1,6 +1,8 @@
 ﻿using MASsenger.Application.Commands;
 using MASsenger.Application.Queries;
-using MASsenger.Core.Dto;
+using MASsenger.Core.Dto.Create;
+using MASsenger.Core.Dto.Read;
+using MASsenger.Core.Dto.Update;
 using MASsenger.Core.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -18,14 +20,22 @@ namespace MASsenger.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<BaseUser>))]
-        public async Task<IActionResult> GetBaseUsers()
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UserReadDto>))]
+        public async Task<IActionResult> GetUsers()
         {
-            return Ok(await _sender.Send(new GetBaseUsersQuery()));
+            return Ok((await _sender.Send(new GetUsersQuery())).Select(u => new UserReadDto
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Username = u.Username,
+                Description = u.Description,
+                CreatedAt = u.CreatedAt,
+                IsVerified = u.IsVerified 
+            }).ToList());
         }
 
         [HttpPost("addBot")]
-        public async Task<IActionResult> AddBotAsync([FromBody] BotDto bot, UInt64 ownerId)
+        public async Task<IActionResult> AddBotAsync([FromBody] BotCreateDto bot, UInt64 ownerId)
         {
             if (await _sender.Send(new AddBotCommand(bot, ownerId)) == Core.Enums.TransactionResultType.Done) return Ok("Bot added successfully.");
             else if (await _sender.Send(new AddBotCommand(bot, ownerId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid Owner Id.");
@@ -33,7 +43,7 @@ namespace MASsenger.Api.Controllers
         }
 
         [HttpPost("addUser")]
-        public async Task<IActionResult> AddUserAsync([FromBody] UserDto user)
+        public async Task<IActionResult> AddUserAsync([FromBody] UserCreateDto user)
         {
             if (await _sender.Send(new AddUserCommand(user)) == Core.Enums.TransactionResultType.Done) return Ok("User added successfully.");
             return BadRequest("Something went wrong while saving the user.");
