@@ -4,7 +4,6 @@ namespace MASsenger.Core.Interfaces
 {
     public interface IBaseUserRepository
     {
-        Task<IEnumerable<BaseUser>> GetBaseUsersAsync();
         Task<IEnumerable<User>> GetUsersAsync();
         Task<User?> GetUserByIdAsync(UInt64 userId);
         Task<bool> AddUserAsync(User user);
