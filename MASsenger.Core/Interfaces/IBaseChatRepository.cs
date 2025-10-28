@@ -13,6 +13,8 @@ namespace MASsenger.Core.Interfaces
         Task<IEnumerable<ChannelGroupChat>> GetChannelGroupChatsAsync();
         Task<ChannelGroupChat?> GetChannelGroupChatByIdAsync(UInt64 chatId);
         Task<bool> AddChannelGroupChatAsync(ChannelGroupChat channelGroupChat, User owner);
+        Task<bool> UpdateChannelGroupChatAsync(ChannelGroupChat channelGroupChat);
+        Task<bool> DeleteChannelGroupChatAsync(ChannelGroupChat channelGroupChat);
         Task<bool> Save();
     }
 }

@@ -38,6 +38,16 @@ namespace MASsenger.Infrastracture.Repositories
             _context.ChannelGroupChats.Add(channelGroupChat);
             return Save();
         }
+        public Task<bool> UpdateChannelGroupChatAsync(ChannelGroupChat channelGroupChat)
+        {
+            _context.ChannelGroupChats.Update(channelGroupChat);
+            return Save();
+        }
+        public Task<bool> DeleteChannelGroupChatAsync(ChannelGroupChat channelGroupChat)
+        {
+            _context.ChannelGroupChats.Remove(channelGroupChat);
+            return Save();
+        }
 
         public async Task<bool> Save()
         {
