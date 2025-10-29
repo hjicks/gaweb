@@ -4,6 +4,10 @@
 [Rr]elease/
 [Bb]in/
 [Oo]bj/
-[Dd]atabase/
 .vs/
 *.user
+
+## Ignore database temporary files
+
+*.db-shm
+*.db-wal
