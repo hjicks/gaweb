@@ -62,6 +62,11 @@ namespace MASsenger.Infrastracture.Repositories
             _context.Bots.Add(bot);
             return Save();
         }
+        public Task<bool> UpdateBotAsync(Bot bot)
+        {
+            _context.Bots.Update(bot);
+            return Save();
+        }
 
         public async Task<bool> Save()
         {
