@@ -5,11 +5,6 @@ using MASsenger.Infrastracture.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MASsenger.Infrastracture
 {
@@ -20,6 +15,11 @@ namespace MASsenger.Infrastracture
             services.AddDbContext<MessengerDbContext>((provider, options) =>
             {
                 options.UseSqlite(provider.GetRequiredService<IOptionsSnapshot<ConnectionStringOptions>>().Value.DefaultConnection);
+            });
+
+            services.AddScoped<DapperDbContext>(provider =>
+            {
+                return new DapperDbContext(provider.GetRequiredService<IOptionsSnapshot<ConnectionStringOptions>>().Value.DefaultConnection);
             });
 
             services.AddScoped<IBaseUserRepository, BaseUserRepository>();
