@@ -12,6 +12,7 @@ namespace MASsenger.Core.Interfaces
         Task<IEnumerable<Bot>> GetAllBotsAsync();
         Task<Bot?> GetBotByIdAsync(UInt64 botId);
         Task<bool> AddBotAsync(Bot bot, User user);
+        Task<bool> UpdateBotAsync(Bot bot);
         Task<bool> Save();
     }
 }
