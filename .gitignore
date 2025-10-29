@@ -7,7 +7,8 @@
 .vs/
 *.user
 
-## Ignore database temporary files
+## Ignore database and its temporary files
 
+*.db
 *.db-shm
 *.db-wal
