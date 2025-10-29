@@ -1,4 +1,5 @@
-﻿using MASsenger.Core.Entities;
+﻿using Dapper;
+using MASsenger.Core.Entities;
 using MASsenger.Core.Interfaces;
 using MASsenger.Infrastracture.Data;
 using Microsoft.EntityFrameworkCore;
@@ -8,14 +9,18 @@ namespace MASsenger.Infrastracture.Repositories
     public class BaseUserRepository : IBaseUserRepository
     {
         private readonly MessengerDbContext _context;
-        public BaseUserRepository(MessengerDbContext context)
+        private readonly DapperDbContext _dapperDbContext;
+        public BaseUserRepository(MessengerDbContext context, DapperDbContext dapperDbContext)
         {
             _context = context;
+            _dapperDbContext = dapperDbContext;
         }
 
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            return await _context.Users.ToListAsync();
+            
+            string query = "SELECT * FROM BaseUsers WHERE Type == 'User'";
+            return (await _dapperDbContext.GetConnection().QueryAsync<User>(query)).ToList();
         }
 
         public async Task<User?> GetUserByIdAsync(UInt64 userId)
@@ -42,7 +47,8 @@ namespace MASsenger.Infrastracture.Repositories
         }
         public async Task<IEnumerable<Bot>> GetAllBotsAsync()
         {
-            return await _context.Bots.ToListAsync();
+            string query = "SELECT * FROM BaseUsers WHERE Type == 'Bot'";
+            return (await _dapperDbContext.GetConnection().QueryAsync<Bot>(query)).ToList();
         }
 
         public async Task<Bot?> GetBotByIdAsync(UInt64 botId)
