@@ -68,6 +68,11 @@ namespace MASsenger.Infrastracture.Repositories
             return Save();
         }
 
+        public Task<bool> DeleteBotAsync(Bot bot)
+        {
+            _context.Bots.Remove(bot);
+            return Save();
+        }
         public async Task<bool> Save()
         {
             var saved = await _context.SaveChangesAsync();

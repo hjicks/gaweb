@@ -88,5 +88,13 @@ namespace MASsenger.Api.Controllers
             else if (await _sender.Send(new UpdateBotCommand(bot)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid bot Id.");
             return BadRequest("Something went wrong while updating the bot.");
         }
+
+        [HttpDelete("deleteBot")]
+        public async Task<IActionResult> DeleteBotAsync(UInt64 botId)
+        {
+            if (await _sender.Send(new DeleteBotCommand(botId)) == Core.Enums.TransactionResultType.Done) return Ok("Bot deleted successfully.");
+            else if (await _sender.Send(new DeleteBotCommand(botId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid bot Id.");
+            return BadRequest("Something went wrong while deleting the bot.");
+        }
     }
 }
