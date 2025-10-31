@@ -30,7 +30,7 @@ namespace MASsenger.Api.Controllers
             //{
             //    Id = u.Id,
             //    Sender = u.Sender,
-            //    Destination = u.Destination,
+            //    DestinationID = u.Destination,
             //    SentTime = u.SentTime,
             //    Text = u.Text
             //}).ToList();
@@ -38,22 +38,44 @@ namespace MASsenger.Api.Controllers
         }
 
         [HttpPost("addMessage")]
-        public async Task<IActionResult> AddBaseMessageAsync([FromBody] BaseMessageDto baseMessage, UInt64 senderId, UInt64 destinationChatId)
+        public async Task<IActionResult> AddBaseMessageAsync([FromBody] BaseMessageDto baseMessage, UInt64 destinationId)
         {
-            var sender = await _baseUserRepository.GetUserByIdAsync(senderId);
-            if (sender == null)
-                return BadRequest("Invalid owner id.");
-            var destinationChat = await _baseChatRepository.GetBaseChatByIdAsync(destinationChatId);
+            var destinationChat = await _baseChatRepository.GetBaseChatByIdAsync(destinationId);
             if (destinationChat == null)
                 return BadRequest("Invalid chat id.");
 
             var newBaseMessage = new BaseMessage
             {
-                Text = baseMessage.Text
+                Text = baseMessage.Text,
+                Destination = destinationChat
             };
 
-            if (await _baseMessageRepository.AddBaseMessageAsync(newBaseMessage, sender, destinationChat)) return Ok("Message added successfully.");
+            if (await _baseMessageRepository.AddBaseMessageAsync(newBaseMessage)) return Ok("Message added successfully.");
             return BadRequest("Something went wrong while saving the message.");
+        }
+
+        [HttpPut("updateMessage")]
+        public async Task<IActionResult> AddUpdateAsync(UInt64 id, [FromBody] BaseMessageDto msg)
+        {
+            var dbMsg = await _baseMessageRepository.GetBaseMessageByIdAsync(id);
+            if (dbMsg == null)
+                return BadRequest("Invalid message Id.");
+
+            dbMsg.Text = msg.Text;
+
+            if (await _baseMessageRepository.UpdateBaseMessageAsync(dbMsg)) return Ok("Message updated successfully.");
+            return BadRequest("Something went wrong while saving the Message.");
+        }
+
+        [HttpDelete("deleteMessage")]
+        public async Task<IActionResult> AddDeleteAsync(UInt64 msgId)
+        {
+            var dbMsg = await _baseMessageRepository.GetBaseMessageByIdAsync(msgId);
+            if (dbMsg == null)
+                return BadRequest("Invalid user Id.");
+
+            if (await _baseMessageRepository.DeleteBaseMessageAsync(dbMsg)) return Ok("Message deleted successfully.");
+            return BadRequest("Something went wrong while deleting the message.");
         }
     }
 }

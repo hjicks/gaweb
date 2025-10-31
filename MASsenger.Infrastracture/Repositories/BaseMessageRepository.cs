@@ -23,14 +23,27 @@ namespace MASsenger.Infrastracture.Repositories
             return await _context.BaseMessages.ToListAsync();
         }
 
-        public Task<bool> AddBaseMessageAsync(BaseMessage baseMessage, User sender, BaseChat destinationChat)
+        public Task<bool> AddBaseMessageAsync(BaseMessage baseMessage)
         {
-            baseMessage.Sender = sender;
-            baseMessage.Destination = destinationChat;
+            Console.WriteLine(baseMessage.Destination.Id);
             _context.BaseMessages.Add(baseMessage);
             return Save();
         }
+        public Task<bool> UpdateBaseMessageAsync(BaseMessage message)
+        {
+            _context.BaseMessages.Update(message);
+            return Save();
+        }
+        public Task<bool> DeleteBaseMessageAsync(BaseMessage message)
+        {
+            _context.BaseMessages.Remove(message);
+            return Save();
+        }
 
+        public async Task<BaseMessage?> GetBaseMessageByIdAsync(UInt64 msgId)
+        {
+            return await _context.BaseMessages.FirstOrDefaultAsync(c => c.Id == msgId);
+        }
         public async Task<bool> Save()
         {
             var saved = await _context.SaveChangesAsync();
