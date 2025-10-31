@@ -10,6 +10,8 @@ namespace MASsenger.Core.Dto
 {
     public class BaseMessageDto
     {
-        public string Text { get; set; } = null!;
+        public UInt64 DestinationID { set;  get; }
+        public string Text { set;  get; } = null!;
+        public DateTime? SentTime { set;  get; } = null;
     }
 }

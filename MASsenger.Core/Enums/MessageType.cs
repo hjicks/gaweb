@@ -2,9 +2,7 @@
 {
     public enum MessageType
     {
-        DIRECT,
-        CHANNEL,
-        GROUP,
-        BOT
+        Message,
+        System,
     }
 }
