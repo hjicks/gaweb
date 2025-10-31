@@ -1,9 +1,13 @@
 ## Ignore Visual Studio temporary files and build results
 
-*.user
 [Dd]ebug/
 [Rr]elease/
 [Bb]in/
 [Oo]bj/
-[Mm]igrations/
 .vs/
+*.user
+
+## Ignore database temporary files
+
+*.db-shm
+*.db-wal
