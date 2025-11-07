@@ -1,5 +1,5 @@
-﻿using MASsenger.Core.Entities;
-using MASsenger.Core.Interfaces;
+﻿using MASsenger.Application.Interfaces;
+using MASsenger.Core.Entities;
 using MediatR;
 
 namespace MASsenger.Application.Queries.BaseUserQueries

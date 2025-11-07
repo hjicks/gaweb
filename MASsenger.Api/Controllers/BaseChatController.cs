@@ -1,8 +1,6 @@
-﻿using MASsenger.Core.Dto;
+﻿using MASsenger.Application.Dto;
+using MASsenger.Application.Interfaces;
 using MASsenger.Core.Entities;
-using MASsenger.Core.Interfaces;
-using MASsenger.Infrastracture.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MASsenger.Api.Controllers

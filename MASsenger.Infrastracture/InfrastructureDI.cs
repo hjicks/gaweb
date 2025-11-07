@@ -1,4 +1,4 @@
-﻿using MASsenger.Core.Interfaces;
+﻿using MASsenger.Application.Interfaces;
 using MASsenger.Core.Options;
 using MASsenger.Infrastracture.Data;
 using MASsenger.Infrastracture.Repositories;

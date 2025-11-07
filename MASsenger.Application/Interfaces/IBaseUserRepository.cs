@@ -1,6 +1,6 @@
 ﻿using MASsenger.Core.Entities;
 
-namespace MASsenger.Core.Interfaces
+namespace MASsenger.Application.Interfaces
 {
     public interface IBaseUserRepository
     {

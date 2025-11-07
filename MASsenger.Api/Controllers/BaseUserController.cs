@@ -1,8 +1,8 @@
 ﻿using MASsenger.Application.Commands.BaseUserCommands;
+using MASsenger.Application.Dto.Create;
+using MASsenger.Application.Dto.Read;
+using MASsenger.Application.Dto.Update;
 using MASsenger.Application.Queries.BaseUserQueries;
-using MASsenger.Core.Dto.Create;
-using MASsenger.Core.Dto.Read;
-using MASsenger.Core.Dto.Update;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
