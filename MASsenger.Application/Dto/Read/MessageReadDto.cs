@@ -2,9 +2,10 @@
 {
     public class MessageReadDto
     {
-        public ulong SenderID { get; }
-        public ulong DestinationID { get; }
-        public string? Text { get; }
-        public DateTime? SentTime { get; }
+        public ulong Id { get; set; }
+        public ulong SenderID { get; set; }
+        public ulong DestinationID { get; set; }
+        public string? Text { get; set; }
+        public DateTime? SentTime { get; set;  }
     }
 }

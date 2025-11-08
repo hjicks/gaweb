@@ -2,8 +2,9 @@
 {
     public class SystemMessageReadDto
     {
-        public ulong DestinationID { set; get; }
-        public string? Text { set; get; }
-        public DateTime? SentTime { set; get; }
+        public ulong Id { get; set; }
+        public ulong DestinationID {  get; set; }
+        public string? Text { get; set; }
+        public DateTime? SentTime { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MASsenger.Core.Entities;
+using MASsenger.Core.Entities.Message;
 using MASsenger.Core.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -23,6 +24,10 @@ namespace MASsenger.Infrastracture.Data
         public DbSet<BaseChat> BaseChats { get; set; } = null!;
         public DbSet<ChannelGroupChat> ChannelGroupChats { get; set; } = null!;
         public DbSet<BaseMessage> BaseMessages { get; set; } = null!;
+        public DbSet<SystemMessage> SystemMessages { get; set; } = null!;
+        public DbSet<Message> Messages { get; set; } = null!;
+        
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
