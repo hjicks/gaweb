@@ -9,14 +9,19 @@ namespace MASsenger.Application.Commands.BaseUserCommands
     public record AddBotCommand(BotCreateDto bot, ulong ownerId) : IRequest<TransactionResultType>;
     public class AddBotCommandHandler : IRequestHandler<AddBotCommand, TransactionResultType>
     {
-        private readonly IBaseUserRepository _baseUserRepository;
-        public AddBotCommandHandler(IBaseUserRepository baseUserRepository)
+        private readonly IRepository<Bot> _botRepository;
+        private readonly IRepository<User> _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public AddBotCommandHandler(IRepository<Bot> botRepository, IRepository<User> userRepository, IUnitOfWork unitOfWork)
         {
-            _baseUserRepository = baseUserRepository;
+            _botRepository = botRepository;
+            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<TransactionResultType> Handle(AddBotCommand request, CancellationToken cancellationToken)
         {
-            var owner = await _baseUserRepository.GetUserByIdAsync(request.ownerId);
+            var owner = await _userRepository.GetByIdAsync(request.ownerId);
             if (owner == null)
                 return TransactionResultType.ForeignKeyNotFound;
 
@@ -28,7 +33,10 @@ namespace MASsenger.Application.Commands.BaseUserCommands
                 Token = request.bot.Token
             };
 
-            if (await _baseUserRepository.AddBotAsync(newBot, owner)) return TransactionResultType.Done;
+            newBot.Owner = owner;
+            _botRepository.Add(newBot);
+            await _unitOfWork.SaveAsync();
+            if (true) return TransactionResultType.Done;
             return TransactionResultType.SaveChangesError;
         }
     }
