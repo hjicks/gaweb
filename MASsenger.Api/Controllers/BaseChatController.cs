@@ -10,12 +10,12 @@ namespace MASsenger.Api.Controllers
     public class BaseChatController : ControllerBase
     {
         private readonly IBaseChatRepository _baseChatRepository;
-        private readonly IBaseUserRepository _baseUserRepository;
+        private readonly IUserRepository _userRepository;
 
-        public BaseChatController(IBaseChatRepository baseChatRepository, IBaseUserRepository baseUserRepository)
+        public BaseChatController(IBaseChatRepository baseChatRepository, IUserRepository userRepository)
         {
             _baseChatRepository = baseChatRepository;
-            _baseUserRepository = baseUserRepository;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
@@ -30,7 +30,7 @@ namespace MASsenger.Api.Controllers
         [HttpPost("addChannelGroup")]
         public async Task<IActionResult> AddBotAsync([FromBody] ChannelGroupChatDto channelGroupChat, UInt64 ownerId, UInt64? linkedChannelGroupId)
         {
-            var owner = await _baseUserRepository.GetUserByIdAsync(ownerId);
+            var owner = await _userRepository.GetByIdAsync(ownerId);
             if (owner == null)
                 return BadRequest("Invalid Owner Id.");
 

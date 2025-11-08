@@ -4,22 +4,26 @@ using MASsenger.Core.Entities;
 using MASsenger.Core.Enums;
 using MediatR;
 
-namespace MASsenger.Application.Commands.BaseUserCommands
+namespace MASsenger.Application.Commands.BotCommands
 {
     public record AddBotCommand(BotCreateDto bot, ulong ownerId) : IRequest<TransactionResultType>;
     public class AddBotCommandHandler : IRequestHandler<AddBotCommand, TransactionResultType>
     {
-        private readonly IBaseUserRepository _baseUserRepository;
-        public AddBotCommandHandler(IBaseUserRepository baseUserRepository)
+        private readonly IBotRepository _botRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        public AddBotCommandHandler(IBotRepository botRepository, IUserRepository userRepository, IUnitOfWork unitOfWork)
         {
-            _baseUserRepository = baseUserRepository;
+            _botRepository = botRepository;
+            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
+
         public async Task<TransactionResultType> Handle(AddBotCommand request, CancellationToken cancellationToken)
         {
-            var owner = await _baseUserRepository.GetUserByIdAsync(request.ownerId);
+            var owner = await _userRepository.GetByIdAsync(request.ownerId);
             if (owner == null)
                 return TransactionResultType.ForeignKeyNotFound;
-
             var newBot = new Bot
             {
                 Name = request.bot.Name,
@@ -27,9 +31,10 @@ namespace MASsenger.Application.Commands.BaseUserCommands
                 Description = request.bot.Description,
                 Token = request.bot.Token
             };
-
-            if (await _baseUserRepository.AddBotAsync(newBot, owner)) return TransactionResultType.Done;
-            return TransactionResultType.SaveChangesError;
+            newBot.Owner = owner;
+            _botRepository.Add(newBot);
+            await _unitOfWork.SaveAsync();
+            return TransactionResultType.Done;
         }
     }
 }

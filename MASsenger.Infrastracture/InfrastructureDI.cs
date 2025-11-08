@@ -2,6 +2,7 @@
 using MASsenger.Core.Options;
 using MASsenger.Infrastracture.Data;
 using MASsenger.Infrastracture.Repositories;
+using MASsenger.Infrastracture.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -12,7 +13,7 @@ namespace MASsenger.Infrastracture
     {
         public static IServiceCollection AddInfratructureDI(this IServiceCollection services)
         {
-            services.AddDbContext<MessengerDbContext>((provider, options) =>
+            services.AddDbContext<EfDbContext>((provider, options) =>
             {
                 options.UseSqlite(provider.GetRequiredService<IOptionsSnapshot<ConnectionStringOptions>>().Value.DefaultConnection);
             });
@@ -22,7 +23,10 @@ namespace MASsenger.Infrastracture
                 return new DapperDbContext(provider.GetRequiredService<IOptionsSnapshot<ConnectionStringOptions>>().Value.DefaultConnection);
             });
 
-            services.AddScoped<IBaseUserRepository, BaseUserRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IBotRepository, BotRepository>();
             services.AddScoped<IBaseChatRepository, BaseChatRepository>();
             services.AddScoped<IBaseMessageRepository, BaseMessageRepository>();
 

@@ -10,13 +10,11 @@ namespace MASsenger.Api.Controllers
     public class BaseMessageController : ControllerBase
     {
         private readonly IBaseMessageRepository _baseMessageRepository;
-        private readonly IBaseUserRepository _baseUserRepository;
         private readonly IBaseChatRepository _baseChatRepository;
 
-        public BaseMessageController(IBaseMessageRepository baseMessageRepository, IBaseUserRepository baseUserRepository, IBaseChatRepository baseChatRepository)
+        public BaseMessageController(IBaseMessageRepository baseMessageRepository, IBaseChatRepository baseChatRepository)
         {
             _baseMessageRepository = baseMessageRepository;
-            _baseUserRepository = baseUserRepository;
             _baseChatRepository = baseChatRepository;
         }
 

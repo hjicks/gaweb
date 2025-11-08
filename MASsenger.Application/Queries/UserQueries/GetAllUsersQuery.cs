@@ -2,19 +2,19 @@
 using MASsenger.Core.Entities;
 using MediatR;
 
-namespace MASsenger.Application.Queries.BaseUserQueries
+namespace MASsenger.Application.Queries.UserQueries
 {
     public record GetAllUsersQuery() : IRequest<IEnumerable<User>>;
     public class GetUsersCommandHandler : IRequestHandler<GetAllUsersQuery, IEnumerable<User>>
     {
-        private readonly IBaseUserRepository _baseUserRepository;
-        public GetUsersCommandHandler(IBaseUserRepository baseUserRepository) 
+        private readonly IUserRepository _userRepository;
+        public GetUsersCommandHandler(IUserRepository userRepository) 
         {
-            _baseUserRepository = baseUserRepository;
+            _userRepository = userRepository;
         }
         public async Task<IEnumerable<User>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
         {
-            return await _baseUserRepository.GetAllUsersAsync();
+            return await _userRepository.GetAllAsync();
         }
     }
 }

@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace MASsenger.Infrastracture.Data
 {
-    public class MessengerDbContext : DbContext
+    public class EfDbContext : DbContext
     {
-        public MessengerDbContext(DbContextOptions<MessengerDbContext> options) : base(options)
+        public EfDbContext(DbContextOptions<EfDbContext> options) : base(options)
         {
             
         }

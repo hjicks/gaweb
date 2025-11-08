@@ -7,8 +7,8 @@ namespace MASsenger.Infrastracture.Repositories
 {
     public class BaseMessageRepository : IBaseMessageRepository
     {
-        private readonly MessengerDbContext _context;
-        public BaseMessageRepository(MessengerDbContext context)
+        private readonly EfDbContext _context;
+        public BaseMessageRepository(EfDbContext context)
         {
             _context = context;
         }
