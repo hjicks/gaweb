@@ -1,8 +1,10 @@
-﻿using MASsenger.Application.Commands.BaseUserCommands;
+﻿using MASsenger.Application.Commands.BotCommands;
+using MASsenger.Application.Commands.UserCommands;
 using MASsenger.Application.Dto.Create;
 using MASsenger.Application.Dto.Read;
 using MASsenger.Application.Dto.Update;
-using MASsenger.Application.Queries.BaseUserQueries;
+using MASsenger.Application.Queries.BotQueries;
+using MASsenger.Application.Queries.UserQueries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

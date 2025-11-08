@@ -2,24 +2,27 @@
 using MASsenger.Core.Enums;
 using MediatR;
 
-namespace MASsenger.Application.Commands.BaseUserCommands
+namespace MASsenger.Application.Commands.BotCommands
 {
     public record DeleteBotCommand(ulong botId) : IRequest<TransactionResultType>;
     public class DeleteBotCommandHandler : IRequestHandler<DeleteBotCommand, TransactionResultType>
     {
-        private readonly IBaseUserRepository _baseUserRepository;
-        public DeleteBotCommandHandler(IBaseUserRepository baseUserRepository)
+        private readonly IBotRepository _botRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        public DeleteBotCommandHandler(IBotRepository botRepository, IUnitOfWork unitOfWork)
         {
-            _baseUserRepository = baseUserRepository;
+            _botRepository = botRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<TransactionResultType> Handle(DeleteBotCommand request, CancellationToken cancellationToken)
         {
-            var bot = await _baseUserRepository.GetBotByIdAsync(request.botId);
+            var bot = await _botRepository.GetByIdAsync(request.botId);
             if (bot == null)
                 return TransactionResultType.ForeignKeyNotFound;
-            if (await _baseUserRepository.DeleteBotAsync(bot)) return TransactionResultType.Done;
-            return TransactionResultType.SaveChangesError;
+            _botRepository.Delete(bot);
+            await _unitOfWork.SaveAsync();
+            return TransactionResultType.Done;
         }
     }
 }
