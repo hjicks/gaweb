@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MASsenger.Core.Dto
+namespace MASsenger.Application.Dto
 {
     public class BaseMessageDto
     {

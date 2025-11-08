@@ -1,11 +1,6 @@
 ﻿using MASsenger.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MASsenger.Core.Interfaces
+namespace MASsenger.Application.Interfaces
 {
     public interface IBaseMessageRepository
     {

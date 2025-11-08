@@ -1,6 +1,6 @@
-﻿using MASsenger.Core.Dto.Update;
+﻿using MASsenger.Application.Dto.Update;
+using MASsenger.Application.Interfaces;
 using MASsenger.Core.Enums;
-using MASsenger.Core.Interfaces;
 using MediatR;
 
 namespace MASsenger.Application.Commands.BaseUserCommands

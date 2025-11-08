@@ -1,5 +1,5 @@
-﻿using MASsenger.Core.Enums;
-using MASsenger.Core.Interfaces;
+﻿using MASsenger.Application.Interfaces;
+using MASsenger.Core.Enums;
 using MediatR;
 
 namespace MASsenger.Application.Commands.BaseUserCommands

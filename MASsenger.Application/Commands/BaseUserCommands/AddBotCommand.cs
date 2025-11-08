@@ -1,14 +1,8 @@
-﻿using MASsenger.Core.Dto.Create;
+﻿using MASsenger.Application.Dto.Create;
+using MASsenger.Application.Interfaces;
 using MASsenger.Core.Entities;
 using MASsenger.Core.Enums;
-using MASsenger.Core.Interfaces;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
 
 namespace MASsenger.Application.Commands.BaseUserCommands
 {

@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Entities\Chat\" />
     <Folder Include="Entities\User\" />
-    <Folder Include="Interfaces\" />
   </ItemGroup>
 
   <ItemGroup>

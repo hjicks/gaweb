@@ -1,6 +1,6 @@
 ﻿using Dapper;
+using MASsenger.Application.Interfaces;
 using MASsenger.Core.Entities;
-using MASsenger.Core.Interfaces;
 using MASsenger.Infrastracture.Data;
 using Microsoft.EntityFrameworkCore;
 
