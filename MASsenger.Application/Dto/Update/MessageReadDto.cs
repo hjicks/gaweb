@@ -1,13 +1,11 @@
-﻿namespace MASsenger.Application.Dto.Update
+﻿namespace MASsenger.Application.Dto.Read
 {
     public class MessageUpdateDto
     {
-        public UInt64 Id { get; set; }
-
         /* 
          * IRC doesn't offer this, why should we?
          * maybe we should remove it.
          */
-        public string? Text { get; set;  }
+        public string? Text { get; }
     }
 }
