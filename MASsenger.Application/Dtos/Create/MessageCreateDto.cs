@@ -4,7 +4,7 @@
     {
         public Int32 SenderID { set; get; }
         public Int32 DestinationID { set; get; }
-        public string? Text { set; get; }
-        public DateTime? SentTime { set; get; }
+        public string Text { set; get; } = String.Empty;
+        public DateTime SentTime { set; get; } = DateTime.UtcNow;
     }
 }
