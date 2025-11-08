@@ -2,6 +2,7 @@
 using MASsenger.Core.Options;
 using MASsenger.Infrastracture.Data;
 using MASsenger.Infrastracture.Repositories;
+using MASsenger.Infrastracture.Uow;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -25,6 +26,8 @@ namespace MASsenger.Infrastracture
             services.AddScoped<IBaseUserRepository, BaseUserRepository>();
             services.AddScoped<IBaseChatRepository, BaseChatRepository>();
             services.AddScoped<IBaseMessageRepository, BaseMessageRepository>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }
