@@ -8,9 +8,9 @@ namespace MASsenger.Infrastracture.Repositories
 {
     public class BaseUserRepository : IBaseUserRepository
     {
-        private readonly MessengerDbContext _context;
+        private readonly EfDbContext _context;
         private readonly DapperDbContext _dapperDbContext;
-        public BaseUserRepository(MessengerDbContext context, DapperDbContext dapperDbContext)
+        public BaseUserRepository(EfDbContext context, DapperDbContext dapperDbContext)
         {
             _context = context;
             _dapperDbContext = dapperDbContext;

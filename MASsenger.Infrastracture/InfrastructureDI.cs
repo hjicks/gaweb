@@ -12,7 +12,7 @@ namespace MASsenger.Infrastracture
     {
         public static IServiceCollection AddInfratructureDI(this IServiceCollection services)
         {
-            services.AddDbContext<MessengerDbContext>((provider, options) =>
+            services.AddDbContext<EfDbContext>((provider, options) =>
             {
                 options.UseSqlite(provider.GetRequiredService<IOptionsSnapshot<ConnectionStringOptions>>().Value.DefaultConnection);
             });

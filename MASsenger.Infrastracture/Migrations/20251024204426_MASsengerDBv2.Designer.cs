@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MASsenger.Infrastracture.Migrations
 {
-    [DbContext(typeof(MessengerDbContext))]
+    [DbContext(typeof(EfDbContext))]
     [Migration("20251024204426_MASsengerDBv2")]
     partial class MASsengerDBv2
     {
