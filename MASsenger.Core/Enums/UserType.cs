@@ -2,7 +2,7 @@
 {
     public enum UserType
     {
-        USER,
-        BOT
+        User,
+        Bot
     }
 }
