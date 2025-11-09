@@ -1,4 +1,5 @@
 ﻿using MASsenger.Core.Entities;
+using MASsenger.Core.Entities.Message;
 using Microsoft.EntityFrameworkCore;
 
 namespace MASsenger.Infrastracture.Database
@@ -17,6 +18,8 @@ namespace MASsenger.Infrastracture.Database
         public DbSet<ChannelChat> ChannelChats { get; set; } = null!;
         public DbSet<PrivateChat> PrivateChats { get; set; } = null!;
         public DbSet<BaseMessage> BaseMessages { get; set; } = null!;
+        public DbSet<Message> Messages { get; set; } = null!;
+        public DbSet<SystemMessage> SystemMessages { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,6 +32,11 @@ namespace MASsenger.Infrastracture.Database
                 .HasDiscriminator<string>("Type")
                 .HasValue<ChannelChat>("Channel")
                 .HasValue<PrivateChat>("Private");
+
+            modelBuilder.Entity<BaseMessage>()
+                .HasDiscriminator<string>("Type")
+                .HasValue<Message>("Message")
+                .HasValue<SystemMessage>("SystemMessage");
 
             modelBuilder.Entity<Bot>()
                 .HasMany(e => e.Members)
