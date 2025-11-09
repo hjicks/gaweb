@@ -1,10 +1,8 @@
-﻿using MASsenger.Core.Enums;
-
-namespace MASsenger.Core.Entities
+﻿namespace MASsenger.Core.Entities
 {
     public class BaseUser
     {
-        public UInt64 Id { get; set; }
+        public Int32 Id { get; set; }
         public string Name { get; set; } = null!;
         public string? Username { get; set; }
         public string? Description { get; set; } /* acts also as bio */

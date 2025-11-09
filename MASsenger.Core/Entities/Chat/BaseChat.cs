@@ -1,9 +1,7 @@
-using MASsenger.Core.Enums;
-
 namespace MASsenger.Core.Entities 
 {
 	public class BaseChat {
-		public UInt64 Id { get; set; }
+		public Int32 Id { get; set; }
 
 		public DateTime CreatedAt = DateTime.Now;
 

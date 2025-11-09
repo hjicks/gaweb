@@ -4,7 +4,7 @@ using MediatR;
 
 namespace MASsenger.Application.Commands.BotCommands
 {
-    public record DeleteBotCommand(ulong botId) : IRequest<TransactionResultType>;
+    public record DeleteBotCommand(Int32 botId) : IRequest<TransactionResultType>;
     public class DeleteBotCommandHandler : IRequestHandler<DeleteBotCommand, TransactionResultType>
     {
         private readonly IBotRepository _botRepository;

@@ -51,7 +51,7 @@ namespace MASsenger.Api.Controllers
         }
 
         [HttpDelete("deleteUser")]
-        public async Task<IActionResult> DeleteUserAsync(UInt64 userId)
+        public async Task<IActionResult> DeleteUserAsync(Int32 userId)
         {
             if (await _sender.Send(new DeleteUserCommand(userId)) == Core.Enums.TransactionResultType.Done) return Ok("User deleted successfully.");
             else if (await _sender.Send(new DeleteUserCommand(userId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
@@ -76,7 +76,7 @@ namespace MASsenger.Api.Controllers
         }
 
         [HttpPost("addBot")]
-        public async Task<IActionResult> AddBotAsync([FromBody] BotCreateDto bot, UInt64 ownerId)
+        public async Task<IActionResult> AddBotAsync([FromBody] BotCreateDto bot, Int32 ownerId)
         {
             if (await _sender.Send(new AddBotCommand(bot, ownerId)) == Core.Enums.TransactionResultType.Done) return Ok("Bot added successfully.");
             else if (await _sender.Send(new AddBotCommand(bot, ownerId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid Owner Id.");
@@ -92,7 +92,7 @@ namespace MASsenger.Api.Controllers
         }
 
         [HttpDelete("deleteBot")]
-        public async Task<IActionResult> DeleteBotAsync(UInt64 botId)
+        public async Task<IActionResult> DeleteBotAsync(Int32 botId)
         {
             if (await _sender.Send(new DeleteBotCommand(botId)) == Core.Enums.TransactionResultType.Done) return Ok("Bot deleted successfully.");
             else if (await _sender.Send(new DeleteBotCommand(botId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid bot Id.");
