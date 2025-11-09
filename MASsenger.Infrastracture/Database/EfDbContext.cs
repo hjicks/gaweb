@@ -14,7 +14,7 @@ namespace MASsenger.Infrastracture.Database
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Bot> Bots { get; set; } = null!;  
         public DbSet<BaseChat> BaseChats { get; set; } = null!;
-        public DbSet<ChannelGroupChat> ChannelGroupChats { get; set; } = null!;
+        public DbSet<ChannelChat> ChannelChats { get; set; } = null!;
         public DbSet<BaseMessage> BaseMessages { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,8 +26,8 @@ namespace MASsenger.Infrastracture.Database
 
             modelBuilder.Entity<BaseChat>()
                 .HasDiscriminator<string>("Type")
-                .HasValue<ChannelGroupChat>("Channel")
-                .HasValue<ChannelGroupChat>("Group");
+                .HasValue<ChannelChat>("Channel")
+                .HasValue<PrivateChat>("Private");
 
             modelBuilder.Entity<Bot>()
                 .HasMany(e => e.Members)
@@ -38,17 +38,17 @@ namespace MASsenger.Infrastracture.Database
                 .WithMany(e => e.BotsOwned)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<ChannelGroupChat>()
+            modelBuilder.Entity<ChannelChat>()
                 .HasMany(e => e.Members)
-                .WithMany(e => e.ChannelGroupsJoined);
+                .WithMany(e => e.ChannelsJoined);
 
-            modelBuilder.Entity<ChannelGroupChat>()
+            modelBuilder.Entity<ChannelChat>()
                 .HasMany(e => e.Admins)
-                .WithMany(e => e.ChannelGroupsManaged);
+                .WithMany(e => e.ChannelsManaged);
 
-            modelBuilder.Entity<ChannelGroupChat>()
+            modelBuilder.Entity<ChannelChat>()
                 .HasMany(e => e.Banned)
-                .WithMany(e => e.ChannelGroupsBannedFrom);
+                .WithMany(e => e.ChannelsBannedFrom);
         }
     }
 }

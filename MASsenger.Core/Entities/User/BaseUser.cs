@@ -12,8 +12,8 @@ namespace MASsenger.Core.Entities
         public bool IsVerified { get; set; } = false;
 
         // many-to-many relationships
-        public ICollection<ChannelGroupChat> ChannelGroupsJoined = new List<ChannelGroupChat>();
-        public ICollection<ChannelGroupChat> ChannelGroupsManaged = new List<ChannelGroupChat>();
-        public ICollection<ChannelGroupChat> ChannelGroupsBannedFrom = new List<ChannelGroupChat>();
+        public ICollection<ChannelChat> ChannelsJoined = new List<ChannelChat>();
+        public ICollection<ChannelChat> ChannelsManaged = new List<ChannelChat>();
+        public ICollection<ChannelChat> ChannelsBannedFrom = new List<ChannelChat>();
     }
 }

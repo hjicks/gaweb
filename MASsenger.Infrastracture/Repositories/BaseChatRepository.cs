@@ -17,20 +17,20 @@ namespace MASsenger.Infrastracture.Repositories
             return await _context.BaseChats.FirstOrDefaultAsync(c => c.Id == chatId);
         }
 
-        public async Task<IEnumerable<ChannelGroupChat>> GetChannelGroupChatsAsync()
+        public async Task<IEnumerable<ChannelChat>> GetChannelGroupChatsAsync()
         {
-            return await _context.ChannelGroupChats.ToListAsync();
+            return await _context.ChannelChats.ToListAsync();
         }
 
-        public async Task<ChannelGroupChat?> GetChannelGroupChatByIdAsync(UInt64 chatId)
+        public async Task<ChannelChat?> GetChannelGroupChatByIdAsync(UInt64 chatId)
         {
-            return await _context.ChannelGroupChats.FirstOrDefaultAsync(c => c.Id == chatId);
+            return await _context.ChannelChats.FirstOrDefaultAsync(c => c.Id == chatId);
         }
 
-        public Task<bool> AddChannelGroupChatAsync(ChannelGroupChat channelGroupChat, User owner)
+        public Task<bool> AddChannelGroupChatAsync(ChannelChat channelGroupChat, User owner)
         {
             channelGroupChat.Owner = owner;
-            _context.ChannelGroupChats.Add(channelGroupChat);
+            _context.ChannelChats.Add(channelGroupChat);
             return Save();
         }
 

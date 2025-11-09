@@ -19,7 +19,7 @@ namespace MASsenger.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<ChannelGroupChat>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ChannelChat>))]
         public async Task<IActionResult> GetChannelGroupChats()
         {
             var ChannelGroupChats = await _baseChatRepository.GetChannelGroupChatsAsync();
@@ -34,7 +34,7 @@ namespace MASsenger.Api.Controllers
             if (owner == null)
                 return BadRequest("Invalid Owner Id.");
 
-            var newChannelGroupChat = new ChannelGroupChat
+            var newChannelGroupChat = new ChannelChat
             {
                 Name = channelGroupChat.Name,
                 Username = channelGroupChat.Username,
