@@ -21,8 +21,4 @@
     <ProjectReference Include="..\MASsenger.Application\MASsenger.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Database\" />
-  </ItemGroup>
-
 </Project>

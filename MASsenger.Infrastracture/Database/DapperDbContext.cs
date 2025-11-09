@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using System.Data;
 
-namespace MASsenger.Infrastracture.Data
+namespace MASsenger.Infrastracture.Database
 {
     public class DapperDbContext
     {

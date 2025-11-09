@@ -1,6 +1,6 @@
 ﻿using MASsenger.Application.Interfaces;
 using MASsenger.Core.Options;
-using MASsenger.Infrastracture.Data;
+using MASsenger.Infrastracture.Database;
 using MASsenger.Infrastracture.Repositories;
 using MASsenger.Infrastracture.Repositories.Base;
 using Microsoft.EntityFrameworkCore;

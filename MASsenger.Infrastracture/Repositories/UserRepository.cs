@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using MASsenger.Application.Interfaces;
 using MASsenger.Core.Entities;
-using MASsenger.Infrastracture.Data;
+using MASsenger.Infrastracture.Database;
 using MASsenger.Infrastracture.Repositories.Base;
 
 namespace MASsenger.Infrastracture.Repositories

@@ -1,5 +1,5 @@
 ﻿using MASsenger.Application.Interfaces;
-using MASsenger.Infrastracture.Data;
+using MASsenger.Infrastracture.Database;
 
 namespace MASsenger.Infrastracture.Repositories.Base
 {
