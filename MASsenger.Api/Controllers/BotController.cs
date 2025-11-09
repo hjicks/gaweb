@@ -22,17 +22,7 @@ namespace MASsenger.Api.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<BotReadDto>))]
         public async Task<IActionResult> GetAllBots()
         {
-            return Ok((await _sender.Send(new GetAllBotsQuery())).Select(u => new BotReadDto
-            {
-                Id = u.Id,
-                Name = u.Name,
-                Username = u.Username,
-                Description = u.Description,
-                Token = u.Token,
-                CreatedAt = u.CreatedAt,
-                IsVerified = u.IsVerified,
-                IsActive = u.IsActive
-            }).ToList());
+            return Ok(await _sender.Send(new GetAllBotsQuery()));
         }
 
         [HttpPost]

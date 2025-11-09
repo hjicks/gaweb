@@ -1,20 +1,30 @@
-﻿using MASsenger.Application.Interfaces;
-using MASsenger.Core.Entities;
+﻿using MASsenger.Application.Dtos.Read;
+using MASsenger.Application.Interfaces;
 using MediatR;
 
 namespace MASsenger.Application.Queries.BotQueries
 {
-    public record GetAllBotsQuery() : IRequest<IEnumerable<Bot>>;
-    public class GetBotsCommandHandler : IRequestHandler<GetAllBotsQuery, IEnumerable<Bot>>
+    public record GetAllBotsQuery() : IRequest<IEnumerable<BotReadDto>>;
+    public class GetAllBotsQueryHandler : IRequestHandler<GetAllBotsQuery, IEnumerable<BotReadDto>>
     {
         private readonly IBotRepository _botRepository;
-        public GetBotsCommandHandler(IBotRepository botRepository)
+        public GetAllBotsQueryHandler(IBotRepository botRepository)
         {
             _botRepository = botRepository;
         }
-        public async Task<IEnumerable<Bot>> Handle(GetAllBotsQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<BotReadDto>> Handle(GetAllBotsQuery request, CancellationToken cancellationToken)
         {
-            return await _botRepository.GetAllAsync();
+            return (await _botRepository.GetAllAsync()).Select(u => new BotReadDto
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Username = u.Username,
+                Description = u.Description,
+                Token = u.Token,
+                CreatedAt = u.CreatedAt,
+                IsVerified = u.IsVerified,
+                IsActive = u.IsActive
+            }).ToList();
         }
     }
 }

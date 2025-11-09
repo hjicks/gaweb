@@ -22,15 +22,7 @@ namespace MASsenger.Api.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<UserReadDto>))]
         public async Task<IActionResult> GetAllUsers()
         {
-            return Ok((await _sender.Send(new GetAllUsersQuery())).Select(u => new UserReadDto
-            {
-                Id = u.Id,
-                Name = u.Name,
-                Username = u.Username,
-                Description = u.Description,
-                CreatedAt = u.CreatedAt,
-                IsVerified = u.IsVerified 
-            }).ToList());
+            return Ok(await _sender.Send(new GetAllUsersQuery()));
         }
 
         [HttpPost]
