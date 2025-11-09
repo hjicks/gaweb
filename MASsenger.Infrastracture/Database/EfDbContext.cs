@@ -15,6 +15,7 @@ namespace MASsenger.Infrastracture.Database
         public DbSet<Bot> Bots { get; set; } = null!;  
         public DbSet<BaseChat> BaseChats { get; set; } = null!;
         public DbSet<ChannelChat> ChannelChats { get; set; } = null!;
+        public DbSet<PrivateChat> PrivateChats { get; set; } = null!;
         public DbSet<BaseMessage> BaseMessages { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
