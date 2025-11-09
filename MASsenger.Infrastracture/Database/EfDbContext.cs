@@ -1,5 +1,4 @@
 ﻿using MASsenger.Core.Entities;
-using MASsenger.Core.Entities.Message;
 using Microsoft.EntityFrameworkCore;
 
 namespace MASsenger.Infrastracture.Database

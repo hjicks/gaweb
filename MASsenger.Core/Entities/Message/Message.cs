@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MASsenger.Core.Entities.Message
+namespace MASsenger.Core.Entities
 {
     public class Message : BaseMessage
     {
