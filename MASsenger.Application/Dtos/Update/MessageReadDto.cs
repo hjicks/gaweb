@@ -1,4 +1,4 @@
-﻿namespace MASsenger.Application.Dto.Read
+﻿namespace MASsenger.Application.Dtos.Read
 {
     public class MessageUpdateDto
     {

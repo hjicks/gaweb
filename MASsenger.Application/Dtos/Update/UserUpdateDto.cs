@@ -1,10 +1,10 @@
-﻿namespace MASsenger.Application.Dto.Create
+﻿namespace MASsenger.Application.Dtos.Update
 {
-    public class BotCreateDto
+    public class UserUpdateDto
     {
+        public ulong Id { get; set; }
         public string Name { get; set; } = null!;
         public string? Username { get; set; }
         public string? Description { get; set; }
-        public string Token { get; set; } = null!;
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace MASsenger.Application.Dto.Update
+﻿namespace MASsenger.Application.Dtos.Update
 {
     public class BotUpdateDto
     {
