@@ -3,6 +3,6 @@
     public enum MessageType
     {
         Message,
-        System,
+        SystemMessage
     }
 }

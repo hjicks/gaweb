@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MASsenger.Application.Dto.Create
+namespace MASsenger.Application.Dtos.Create
 {
     public class UserCreateDto
     {

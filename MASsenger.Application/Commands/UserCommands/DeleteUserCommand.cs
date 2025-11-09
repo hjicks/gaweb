@@ -4,7 +4,7 @@ using MediatR;
 
 namespace MASsenger.Application.Commands.UserCommands
 {
-    public record DeleteUserCommand(ulong userId) : IRequest<TransactionResultType>;
+    public record DeleteUserCommand(Int32 userId) : IRequest<TransactionResultType>;
     public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, TransactionResultType>
     {
         private readonly IUserRepository _userRepository;

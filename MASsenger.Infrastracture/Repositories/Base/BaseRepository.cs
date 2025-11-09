@@ -12,7 +12,7 @@ namespace MASsenger.Infrastracture.Repositories.Base
             _efContext = efContext;
         }
 
-        public async Task<TEntity?> GetByIdAsync(UInt64 entityId)
+        public async Task<TEntity?> GetByIdAsync(Int32 entityId)
         {
             return await _efContext.Set<TEntity>().FindAsync(entityId);
         }

@@ -1,10 +1,8 @@
-﻿using MASsenger.Core.Enums;
-
-namespace MASsenger.Core.Entities
+﻿namespace MASsenger.Core.Entities
 {
     public class BaseUser
     {
-        public UInt64 Id { get; set; }
+        public Int32 Id { get; set; }
         public string Name { get; set; } = null!;
         public string? Username { get; set; }
         public string? Description { get; set; } /* acts also as bio */
@@ -12,8 +10,8 @@ namespace MASsenger.Core.Entities
         public bool IsVerified { get; set; } = false;
 
         // many-to-many relationships
-        public ICollection<ChannelGroupChat> ChannelGroupsJoined = new List<ChannelGroupChat>();
-        public ICollection<ChannelGroupChat> ChannelGroupsManaged = new List<ChannelGroupChat>();
-        public ICollection<ChannelGroupChat> ChannelGroupsBannedFrom = new List<ChannelGroupChat>();
+        public ICollection<ChannelChat> ChannelsJoined = new List<ChannelChat>();
+        public ICollection<ChannelChat> ChannelsManaged = new List<ChannelChat>();
+        public ICollection<ChannelChat> ChannelsBannedFrom = new List<ChannelChat>();
     }
 }

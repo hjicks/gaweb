@@ -1,4 +1,4 @@
-﻿using MASsenger.Application.Dto.Create;
+﻿using MASsenger.Application.Dtos.Create;
 using MASsenger.Application.Interfaces;
 using MASsenger.Core.Entities;
 using MASsenger.Core.Enums;
@@ -6,7 +6,7 @@ using MediatR;
 
 namespace MASsenger.Application.Commands.BotCommands
 {
-    public record AddBotCommand(BotCreateDto bot, ulong ownerId) : IRequest<TransactionResultType>;
+    public record AddBotCommand(BotCreateDto bot, Int32 ownerId) : IRequest<TransactionResultType>;
     public class AddBotCommandHandler : IRequestHandler<AddBotCommand, TransactionResultType>
     {
         private readonly IBotRepository _botRepository;

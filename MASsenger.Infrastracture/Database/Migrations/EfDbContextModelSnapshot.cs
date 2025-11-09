@@ -3,73 +3,71 @@ using System;
 using MASsenger.Infrastracture.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace MASsenger.Infrastracture.Migrations
+namespace MASsenger.Infrastracture.Database.Migrations
 {
     [DbContext(typeof(EfDbContext))]
-    [Migration("20251024204426_MASsengerDBv2")]
-    partial class MASsengerDBv2
+    partial class EfDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.36");
 
-            modelBuilder.Entity("BaseUserChannelGroupChat", b =>
+            modelBuilder.Entity("BaseUserChannelChat", b =>
                 {
-                    b.Property<ulong>("ChannelGroupsJoinedId")
+                    b.Property<int>("ChannelsJoinedId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<ulong>("MembersId")
+                    b.Property<int>("MembersId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("ChannelGroupsJoinedId", "MembersId");
+                    b.HasKey("ChannelsJoinedId", "MembersId");
 
                     b.HasIndex("MembersId");
 
-                    b.ToTable("BaseUserChannelGroupChat");
+                    b.ToTable("BaseUserChannelChat");
                 });
 
-            modelBuilder.Entity("BaseUserChannelGroupChat1", b =>
+            modelBuilder.Entity("BaseUserChannelChat1", b =>
                 {
-                    b.Property<ulong>("AdminsId")
+                    b.Property<int>("AdminsId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<ulong>("ChannelGroupsManagedId")
+                    b.Property<int>("ChannelsManagedId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("AdminsId", "ChannelGroupsManagedId");
+                    b.HasKey("AdminsId", "ChannelsManagedId");
 
-                    b.HasIndex("ChannelGroupsManagedId");
+                    b.HasIndex("ChannelsManagedId");
 
-                    b.ToTable("BaseUserChannelGroupChat1");
+                    b.ToTable("BaseUserChannelChat1");
                 });
 
-            modelBuilder.Entity("BaseUserChannelGroupChat2", b =>
+            modelBuilder.Entity("BaseUserChannelChat2", b =>
                 {
-                    b.Property<ulong>("BannedId")
+                    b.Property<int>("BannedId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<ulong>("ChannelGroupsBannedFromId")
+                    b.Property<int>("ChannelsBannedFromId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("BannedId", "ChannelGroupsBannedFromId");
+                    b.HasKey("BannedId", "ChannelsBannedFromId");
 
-                    b.HasIndex("ChannelGroupsBannedFromId");
+                    b.HasIndex("ChannelsBannedFromId");
 
-                    b.ToTable("BaseUserChannelGroupChat2");
+                    b.ToTable("BaseUserChannelChat2");
                 });
 
             modelBuilder.Entity("BotUser", b =>
                 {
-                    b.Property<ulong>("BotsJoinedId")
+                    b.Property<int>("BotsJoinedId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<ulong>("MembersId")
+                    b.Property<int>("MembersId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("BotsJoinedId", "MembersId");
@@ -81,7 +79,7 @@ namespace MASsenger.Infrastracture.Migrations
 
             modelBuilder.Entity("MASsenger.Core.Entities.BaseChat", b =>
                 {
-                    b.Property<ulong>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -98,17 +96,11 @@ namespace MASsenger.Infrastracture.Migrations
 
             modelBuilder.Entity("MASsenger.Core.Entities.BaseMessage", b =>
                 {
-                    b.Property<ulong>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<ulong?>("DeleterId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<ulong>("DestinationId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<ulong>("SenderId")
+                    b.Property<int>("DestinationId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("SentTime")
@@ -118,23 +110,22 @@ namespace MASsenger.Infrastracture.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeleterId");
-
                     b.HasIndex("DestinationId");
 
-                    b.HasIndex("SenderId");
-
                     b.ToTable("BaseMessages");
+
+                    b.HasDiscriminator<string>("Type").HasValue("BaseMessage");
                 });
 
             modelBuilder.Entity("MASsenger.Core.Entities.BaseUser", b =>
                 {
-                    b.Property<ulong>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -155,7 +146,7 @@ namespace MASsenger.Infrastracture.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<ulong?>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Username")
@@ -177,7 +168,7 @@ namespace MASsenger.Infrastracture.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("INTEGER");
 
-                    b.Property<ulong>("OwnerId")
+                    b.Property<int>("OwnerId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Token")
@@ -189,49 +180,65 @@ namespace MASsenger.Infrastracture.Migrations
                     b.HasDiscriminator().HasValue("Bot");
                 });
 
-            modelBuilder.Entity("MASsenger.Core.Entities.ChannelGroupChat", b =>
+            modelBuilder.Entity("MASsenger.Core.Entities.ChannelChat", b =>
                 {
                     b.HasBaseType("MASsenger.Core.Entities.BaseChat");
 
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<ulong?>("LinkedChannelGroupId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
-                    b.Property<ulong>("OwnerId")
+                    b.Property<int>("OwnerId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Username")
                         .HasColumnType("TEXT");
 
-                    b.HasIndex("LinkedChannelGroupId");
-
                     b.HasIndex("OwnerId");
 
-                    b.HasDiscriminator().HasValue("Group");
+                    b.HasDiscriminator().HasValue("Channel");
+                });
+
+            modelBuilder.Entity("MASsenger.Core.Entities.Message", b =>
+                {
+                    b.HasBaseType("MASsenger.Core.Entities.BaseMessage");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasIndex("SenderId");
+
+                    b.HasDiscriminator().HasValue("Message");
+                });
+
+            modelBuilder.Entity("MASsenger.Core.Entities.PrivateChat", b =>
+                {
+                    b.HasBaseType("MASsenger.Core.Entities.BaseChat");
+
+                    b.HasDiscriminator().HasValue("Private");
+                });
+
+            modelBuilder.Entity("MASsenger.Core.Entities.SystemMessage", b =>
+                {
+                    b.HasBaseType("MASsenger.Core.Entities.BaseMessage");
+
+                    b.HasDiscriminator().HasValue("SystemMessage");
                 });
 
             modelBuilder.Entity("MASsenger.Core.Entities.User", b =>
                 {
                     b.HasBaseType("MASsenger.Core.Entities.BaseUser");
 
-                    b.Property<ulong?>("BaseMessageId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasIndex("BaseMessageId");
-
                     b.HasDiscriminator().HasValue("User");
                 });
 
-            modelBuilder.Entity("BaseUserChannelGroupChat", b =>
+            modelBuilder.Entity("BaseUserChannelChat", b =>
                 {
-                    b.HasOne("MASsenger.Core.Entities.ChannelGroupChat", null)
+                    b.HasOne("MASsenger.Core.Entities.ChannelChat", null)
                         .WithMany()
-                        .HasForeignKey("ChannelGroupsJoinedId")
+                        .HasForeignKey("ChannelsJoinedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -242,7 +249,7 @@ namespace MASsenger.Infrastracture.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BaseUserChannelGroupChat1", b =>
+            modelBuilder.Entity("BaseUserChannelChat1", b =>
                 {
                     b.HasOne("MASsenger.Core.Entities.BaseUser", null)
                         .WithMany()
@@ -250,14 +257,14 @@ namespace MASsenger.Infrastracture.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MASsenger.Core.Entities.ChannelGroupChat", null)
+                    b.HasOne("MASsenger.Core.Entities.ChannelChat", null)
                         .WithMany()
-                        .HasForeignKey("ChannelGroupsManagedId")
+                        .HasForeignKey("ChannelsManagedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BaseUserChannelGroupChat2", b =>
+            modelBuilder.Entity("BaseUserChannelChat2", b =>
                 {
                     b.HasOne("MASsenger.Core.Entities.BaseUser", null)
                         .WithMany()
@@ -265,9 +272,9 @@ namespace MASsenger.Infrastracture.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MASsenger.Core.Entities.ChannelGroupChat", null)
+                    b.HasOne("MASsenger.Core.Entities.ChannelChat", null)
                         .WithMany()
-                        .HasForeignKey("ChannelGroupsBannedFromId")
+                        .HasForeignKey("ChannelsBannedFromId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -289,27 +296,13 @@ namespace MASsenger.Infrastracture.Migrations
 
             modelBuilder.Entity("MASsenger.Core.Entities.BaseMessage", b =>
                 {
-                    b.HasOne("MASsenger.Core.Entities.BaseUser", "Deleter")
-                        .WithMany()
-                        .HasForeignKey("DeleterId");
-
                     b.HasOne("MASsenger.Core.Entities.BaseChat", "Destination")
                         .WithMany("Messages")
                         .HasForeignKey("DestinationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MASsenger.Core.Entities.BaseUser", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Deleter");
-
                     b.Navigation("Destination");
-
-                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("MASsenger.Core.Entities.BaseUser", b =>
@@ -330,38 +323,31 @@ namespace MASsenger.Infrastracture.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("MASsenger.Core.Entities.ChannelGroupChat", b =>
+            modelBuilder.Entity("MASsenger.Core.Entities.ChannelChat", b =>
                 {
-                    b.HasOne("MASsenger.Core.Entities.ChannelGroupChat", "LinkedChannelGroup")
-                        .WithMany()
-                        .HasForeignKey("LinkedChannelGroupId");
-
                     b.HasOne("MASsenger.Core.Entities.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("LinkedChannelGroup");
-
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("MASsenger.Core.Entities.User", b =>
+            modelBuilder.Entity("MASsenger.Core.Entities.Message", b =>
                 {
-                    b.HasOne("MASsenger.Core.Entities.BaseMessage", null)
-                        .WithMany("SeenUsers")
-                        .HasForeignKey("BaseMessageId");
+                    b.HasOne("MASsenger.Core.Entities.BaseUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("MASsenger.Core.Entities.BaseChat", b =>
                 {
                     b.Navigation("Messages");
-                });
-
-            modelBuilder.Entity("MASsenger.Core.Entities.BaseMessage", b =>
-                {
-                    b.Navigation("SeenUsers");
                 });
 
             modelBuilder.Entity("MASsenger.Core.Entities.User", b =>
