@@ -4,7 +4,7 @@ using MASsenger.Core.Entities;
 using MASsenger.Core.Enums;
 using MediatR;
 
-namespace MASsenger.Application.Commands.UserCommands
+namespace MASsenger.Application.Commands.MessageCommands
 {
     public record AddMessageCommand(MessageCreateDto msg) : IRequest<TransactionResultType>;
     public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, TransactionResultType>

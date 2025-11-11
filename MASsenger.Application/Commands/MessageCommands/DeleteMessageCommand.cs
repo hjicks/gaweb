@@ -2,7 +2,7 @@
 using MASsenger.Core.Enums;
 using MediatR;
 
-namespace MASsenger.Application.Commands.BaseMessageCommands
+namespace MASsenger.Application.Commands.MessageCommands
 {
     public record DeleteMessageCommand(Int32 messageId) : IRequest<TransactionResultType>;
     public class DeleteMessageCommandHandler : IRequestHandler<DeleteMessageCommand, TransactionResultType>

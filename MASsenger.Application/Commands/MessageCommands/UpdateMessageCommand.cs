@@ -3,7 +3,7 @@ using MASsenger.Application.Interfaces;
 using MASsenger.Core.Enums;
 using MediatR;
 
-namespace MASsenger.Application.Commands.BaseMessageCommands
+namespace MASsenger.Application.Commands.MessageCommands
 {
     public record UpdateMessageCommand(MessageUpdateDto message) : IRequest<TransactionResultType>;
     public class UpdateMessageCommandHandler : IRequestHandler<UpdateMessageCommand, TransactionResultType>

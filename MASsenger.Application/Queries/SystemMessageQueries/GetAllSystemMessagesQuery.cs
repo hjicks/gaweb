@@ -2,7 +2,7 @@
 using MASsenger.Application.Interfaces;
 using MediatR;
 
-namespace MASsenger.Application.Queries.MessageQueries
+namespace MASsenger.Application.Queries.SystemMessageQueries
 {
     public record GetAllSystemMessagesQuery() : IRequest<IEnumerable<SystemMessageReadDto>>;
     public class GetAllSystemMessagesQueryHandler : IRequestHandler<GetAllSystemMessagesQuery, IEnumerable<SystemMessageReadDto>>
