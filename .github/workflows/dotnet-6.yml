@@ -5,9 +5,9 @@ name: .NET
 
 on:
   push:
-    branches: [ "main", "mh-revisions", "saeed-revisions", "saeed-r2" ]
+    branches: [ "main", "test" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "test" ]
 
 jobs:
   build:
