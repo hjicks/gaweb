@@ -1,6 +1,8 @@
 ﻿using MASsenger.Application.Commands.ChannelChatCommands;
 using MASsenger.Application.Dtos.Create;
+using MASsenger.Application.Dtos.Read;
 using MASsenger.Application.Dtos.Update;
+using MASsenger.Application.Queries.ChannelChatQueries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +17,13 @@ namespace MASsenger.Api.Controllers
         public ChannelChatController(ISender sender)
         {
             _sender = sender;
+        }
+
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ChannelChatReadDto>))]
+        public async Task<IActionResult> GetAllChannelChats()
+        {
+            return Ok(await _sender.Send(new GetAllChannelChatsQuery()));
         }
 
         [HttpPost]
