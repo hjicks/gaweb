@@ -1,15 +1,12 @@
 ﻿using MASsenger.Application.Commands.MessageCommands;
 using MASsenger.Application.Dtos.Create;
-using MASsenger.Application.Dtos.Login;
 using MASsenger.Application.Dtos.Read;
 using MASsenger.Application.Dtos.Update;
 using MASsenger.Application.Queries.MessageQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic;
 using Serilog;
-using System.Security.Claims;
 
 namespace MASsenger.Api.Controllers
 {
@@ -37,7 +34,7 @@ namespace MASsenger.Api.Controllers
         {
             if (await _sender.Send(new AddMessageCommand(msg)) == Core.Enums.TransactionResultType.Done)
             {
-                Log.Information($"Message added.");
+                Log.Information("Message added.");
                 return Ok("Message added successfully.");
             }
             return BadRequest("Something went wrong while saving the message.");
