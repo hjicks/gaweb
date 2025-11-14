@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace MASsenger.Application.Dtos.Read
 {
-    internal class PrivateChatReadDto
+    public class PrivateChatReadDto
     {
+        public Int32 Id { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }
