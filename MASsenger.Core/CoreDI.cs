@@ -1,11 +1,6 @@
 ﻿using MASsenger.Core.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MASsenger.Core
 {
@@ -14,6 +9,7 @@ namespace MASsenger.Core
         public static IServiceCollection AddCoreDI(this IServiceCollection services, IConfiguration configurtion)
         {
             services.Configure<ConnectionStringOptions>(configurtion.GetSection(ConnectionStringOptions.SectionName));
+            services.Configure<JwtOptions>(configurtion.GetSection(JwtOptions.SectionName));
             return services;
         }
     }
