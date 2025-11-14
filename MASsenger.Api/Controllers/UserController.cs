@@ -7,6 +7,8 @@ using MASsenger.Application.Queries.UserQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
+using System.Security.Claims;
 
 namespace MASsenger.Api.Controllers
 {
@@ -25,6 +27,7 @@ namespace MASsenger.Api.Controllers
         public async Task<IActionResult> Login(UserLoginDto userCred)
         {
             if (await _sender.Send(new LoginUserQuery(userCred)) == "error") return BadRequest("Something went wrong while logging in.");
+            Log.Information($"User {userCred.Username} logged in.");
             return Ok(await _sender.Send(new LoginUserQuery(userCred)));
         }
 
@@ -39,14 +42,22 @@ namespace MASsenger.Api.Controllers
         [HttpPost, AllowAnonymous]
         public async Task<IActionResult> AddUserAsync([FromBody] UserCreateDto user)
         {
-            if (await _sender.Send(new AddUserCommand(user)) == Core.Enums.TransactionResultType.Done) return Ok("User added successfully.");
+            if (await _sender.Send(new AddUserCommand(user)) == Core.Enums.TransactionResultType.Done)
+            {
+                Log.Information($"User {user.Username} added.");
+                return Ok("User added successfully.");
+            }
             return BadRequest("Something went wrong while saving the user.");
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateUserAsync(UserUpdateDto user)
         {
-            if (await _sender.Send(new UpdateUserCommand(user)) == Core.Enums.TransactionResultType.Done) return Ok("User updated successfully.");
+            if (await _sender.Send(new UpdateUserCommand(user)) == Core.Enums.TransactionResultType.Done)
+            {
+                Log.Information($"User {User.FindFirstValue(ClaimTypes.Name)} updated.");
+                return Ok("User updated successfully.");
+            }
             else if (await _sender.Send(new UpdateUserCommand(user)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
             return BadRequest("Something went wrong while updating the user.");
         }
@@ -54,7 +65,11 @@ namespace MASsenger.Api.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteUserAsync()
         {
-            if (await _sender.Send(new DeleteUserCommand()) == Core.Enums.TransactionResultType.Done) return Ok("User deleted successfully.");
+            if (await _sender.Send(new DeleteUserCommand()) == Core.Enums.TransactionResultType.Done)
+            {
+                Log.Information($"User {User.FindFirstValue(ClaimTypes.Name)} deleted.");
+                return Ok("User deleted successfully.");
+            }
             else if (await _sender.Send(new DeleteUserCommand()) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
             return BadRequest("Something went wrong while deleting the user.");
         }

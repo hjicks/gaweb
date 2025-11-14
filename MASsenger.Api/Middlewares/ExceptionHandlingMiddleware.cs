@@ -1,5 +1,5 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace MASsenger.Api.Middlewares
 {
@@ -32,6 +32,7 @@ namespace MASsenger.Api.Middlewares
                 context.Response.StatusCode =
                     StatusCodes.Status500InternalServerError;
 
+                Log.Information($"Exception occured.");
                 await context.Response.WriteAsJsonAsync(problemDetails);
             }
         }
