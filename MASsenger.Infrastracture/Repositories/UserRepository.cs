@@ -19,5 +19,11 @@ namespace MASsenger.Infrastracture.Repositories
             string query = "SELECT * FROM BaseUsers WHERE Type == 'User'";
             return (await _dapperDbContext.GetConnection().QueryAsync<User>(query)).ToList();
         }
+
+        public async Task<User> GetByUsernameAsync(string username)
+        {
+            string query = $"SELECT * FROM BaseUsers WHERE Username == '{username}'";
+            return await _dapperDbContext.GetConnection().QueryFirstAsync<User>(query);
+        }
     }
 }
