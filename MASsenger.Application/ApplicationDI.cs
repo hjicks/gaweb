@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using MASsenger.Application.Interfaces;
+using MASsenger.Core.Options;
+using MASsenger.Application.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace MASsenger.Application
 {
@@ -10,6 +14,16 @@ namespace MASsenger.Application
             {
                 configuration.RegisterServicesFromAssembly(typeof(ApplicationDI).Assembly);
             });
+
+            services.AddScoped<IJwtService, JwtService>(provider =>
+            {
+                return new JwtService(provider.GetRequiredService<IOptionsSnapshot<JwtOptions>>().Value.Key);
+            });
+
+            services.AddHttpContextAccessor();
+
+            services.AddScoped<IUserService, UserService>();
+
             return services;
         }
     }
