@@ -17,15 +17,11 @@ namespace MASsenger.Infrastracture.Repositories.Base
             return await _efContext.Set<TEntity>().FindAsync(entityId);
         }
 
-        public IQueryable<TEntity> GetQueryable()
-        {
-            return _efContext.Set<TEntity>();
-        }
-
         public void Add(TEntity entity)
         {
             _efContext.Set<TEntity>().Add(entity);
         }
+
         public void Update(TEntity entity)
         {
             _efContext.Set<TEntity>().Update(entity);
