@@ -13,5 +13,7 @@ namespace MASsenger.Application.Dtos.Create
         public string? Username { get; set; }
         [MaxLength(70)]
         public string? Description { get; set; }
+
+        public string Passwd = String.Empty;
     }
 }

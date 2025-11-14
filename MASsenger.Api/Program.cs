@@ -1,4 +1,5 @@
 using MASsenger.Api;
+using Microsoft.AspNetCore.Authentication;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,7 +29,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseAuthorization("BasicAuthentication").
+            AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>
+            ("BasicAuthentication", null);
 
 app.MapControllers();
 

@@ -33,6 +33,14 @@ namespace MASsenger.Api.Controllers
         }
 
         [HttpPut]
+        public async Task<IActionResult> UpdateUserPasswdAsync(UserPasswdUpdateDto user)
+        {
+            if (await _sender.Send(new UpdateUserPasswdCommand(user)) == Core.Enums.TransactionResultType.Done) return Ok("Password updated successfully.");
+            else if (await _sender.Send(new UpdateUserPasswdCommand(user)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
+            return BadRequest("Something went wrong while updating the user.");
+        }
+
+        [HttpPut]
         public async Task<IActionResult> UpdateUserAsync(UserUpdateDto user)
         {
             if (await _sender.Send(new UpdateUserCommand(user)) == Core.Enums.TransactionResultType.Done) return Ok("User updated successfully.");
