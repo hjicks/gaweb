@@ -29,8 +29,9 @@ namespace MASsenger.Application.Queries.UserQueries
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, dbUser.Username),
-                new Claim(ClaimTypes.Role, "User")
             };
+            if (dbUser.Username == "Admin") claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            claims.Add(new Claim(ClaimTypes.Role, "User"));
             return _jwtService.GetJwt(claims);
         }
     }
