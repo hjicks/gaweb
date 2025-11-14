@@ -2,6 +2,9 @@
 {
     public class User : BaseUser
     {
+        public byte[] PasswordHash { get; set; } = null!;
+        public byte[] PasswordSalt { get; set; } = null!;
+
         // one-to-many relationships
         public ICollection<Bot> BotsOwned { get; set; } = new List<Bot>();
         public ICollection<ChannelChat> ChannelsOwned = new List<ChannelChat>();

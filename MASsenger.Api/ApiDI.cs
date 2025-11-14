@@ -1,4 +1,5 @@
-﻿using MASsenger.Application;
+﻿using MASsenger.Api.Middlewares;
+using MASsenger.Application;
 using MASsenger.Core;
 using MASsenger.Infrastracture;
 
@@ -11,6 +12,9 @@ namespace MASsenger.Api
             services.AddInfratructureDI()
                     .AddApplicationDI()
                     .AddCoreDI(configuration);
+
+            services.AddTransient<ExceptionHandlingMiddleware>();
+
             return services;
         }
     }

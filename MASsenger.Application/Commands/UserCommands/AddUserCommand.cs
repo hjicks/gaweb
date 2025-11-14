@@ -3,6 +3,7 @@ using MASsenger.Application.Interfaces;
 using MASsenger.Core.Entities;
 using MASsenger.Core.Enums;
 using MediatR;
+using System.Security.Cryptography;
 
 namespace MASsenger.Application.Commands.UserCommands
 {
@@ -18,10 +19,13 @@ namespace MASsenger.Application.Commands.UserCommands
         }
         public async Task<TransactionResultType> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
+            using var hmac = new HMACSHA512();
             var newUser = new User
             {
                 Name = request.user.Name,
                 Username = request.user.Username,
+                PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(request.user.Password)),
+                PasswordSalt = hmac.Key,
                 Description = request.user.Description
             };
             _userRepository.Add(newUser);

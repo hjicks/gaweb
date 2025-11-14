@@ -16,7 +16,7 @@ namespace MASsenger.Infrastracture.Repositories
 
         public async Task<IEnumerable<PrivateChat>> GetAllAsync()
         {
-            string query = "SELECT * FROM BaseChats WHERE Type == 'PrivateChat'";
+            string query = "SELECT * FROM BaseChats WHERE Type == 'Private'";
             return (await _dapperDbContext.GetConnection().QueryAsync<PrivateChat>(query)).ToList();
         }
     }

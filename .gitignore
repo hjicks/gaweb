@@ -11,3 +11,6 @@
 
 *.db-shm
 *.db-wal
+
+## Ignore logs
+Logs/
