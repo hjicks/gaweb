@@ -30,6 +30,7 @@ namespace MASsenger.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<UserReadDto>))]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers()
         {
             return Ok(await _sender.Send(new GetAllUsersQuery()));
