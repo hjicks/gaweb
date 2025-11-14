@@ -3,6 +3,7 @@ using System;
 using MASsenger.Infrastracture.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MASsenger.Infrastracture.Database.Migrations
 {
     [DbContext(typeof(EfDbContext))]
-    partial class EfDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251113144908_MASsengerDBv2")]
+    partial class MASsengerDBv2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.36");
@@ -29,7 +31,7 @@ namespace MASsenger.Infrastracture.Database.Migrations
 
                     b.HasIndex("MembersId");
 
-                    b.ToTable("BaseUserChannelChat", (string)null);
+                    b.ToTable("BaseUserChannelChat");
                 });
 
             modelBuilder.Entity("BaseUserChannelChat1", b =>
@@ -44,7 +46,7 @@ namespace MASsenger.Infrastracture.Database.Migrations
 
                     b.HasIndex("ChannelsManagedId");
 
-                    b.ToTable("BaseUserChannelChat1", (string)null);
+                    b.ToTable("BaseUserChannelChat1");
                 });
 
             modelBuilder.Entity("BaseUserChannelChat2", b =>
@@ -59,7 +61,7 @@ namespace MASsenger.Infrastracture.Database.Migrations
 
                     b.HasIndex("ChannelsBannedFromId");
 
-                    b.ToTable("BaseUserChannelChat2", (string)null);
+                    b.ToTable("BaseUserChannelChat2");
                 });
 
             modelBuilder.Entity("BotUser", b =>
@@ -74,7 +76,7 @@ namespace MASsenger.Infrastracture.Database.Migrations
 
                     b.HasIndex("MembersId");
 
-                    b.ToTable("BotUser", (string)null);
+                    b.ToTable("BotUser");
                 });
 
             modelBuilder.Entity("MASsenger.Core.Entities.BaseChat", b =>
@@ -89,7 +91,7 @@ namespace MASsenger.Infrastracture.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BaseChats", (string)null);
+                    b.ToTable("BaseChats");
 
                     b.HasDiscriminator<string>("Type").HasValue("BaseChat");
                 });
@@ -118,7 +120,7 @@ namespace MASsenger.Infrastracture.Database.Migrations
 
                     b.HasIndex("DestinationId");
 
-                    b.ToTable("BaseMessages", (string)null);
+                    b.ToTable("BaseMessages");
 
                     b.HasDiscriminator<string>("Type").HasValue("BaseMessage");
                 });
@@ -156,7 +158,7 @@ namespace MASsenger.Infrastracture.Database.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("BaseUsers", (string)null);
+                    b.ToTable("BaseUsers");
 
                     b.HasDiscriminator<string>("Type").HasValue("BaseUser");
                 });

@@ -13,10 +13,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.36" />
+	<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MASsenger.Infrastracture\MASsenger.Infrastracture.csproj" />
   </ItemGroup>
-
 </Project>
