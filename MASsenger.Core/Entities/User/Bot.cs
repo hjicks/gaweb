@@ -2,7 +2,7 @@
 {
     public class Bot : BaseUser
     {
-        public string Token { get; set; } = null!;
+        public string Token { get; set; } = string.Empty;
         public bool IsActive { get; set; } = false;
 
         // required one-to-many relationship with user
