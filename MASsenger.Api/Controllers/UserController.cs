@@ -51,10 +51,10 @@ namespace MASsenger.Api.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> DeleteUserAsync(Int32 userId)
+        public async Task<IActionResult> DeleteUserAsync()
         {
-            if (await _sender.Send(new DeleteUserCommand(userId)) == Core.Enums.TransactionResultType.Done) return Ok("User deleted successfully.");
-            else if (await _sender.Send(new DeleteUserCommand(userId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
+            if (await _sender.Send(new DeleteUserCommand()) == Core.Enums.TransactionResultType.Done) return Ok("User deleted successfully.");
+            else if (await _sender.Send(new DeleteUserCommand()) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
             return BadRequest("Something went wrong while deleting the user.");
         }
     }
