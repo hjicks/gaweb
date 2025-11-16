@@ -1,0 +1,26 @@
+﻿<Project Sdk="MSTest.Sdk/3.6.4">
+
+  <ItemGroup>
+    <Content Include="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MASsenger.Api\MASsenger.Api.csproj" />
+    <ProjectReference Include="..\MASsenger.Application\MASsenger.Application.csproj" />
+    <ProjectReference Include="..\MASsenger.Infrastracture\MASsenger.Infrastracture.csproj" />
+    <ProjectReference Include="..\MASsenger.Core\MASsenger.Core.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseVSTest>true</UseVSTest>
+  </PropertyGroup>
+
+</Project>
