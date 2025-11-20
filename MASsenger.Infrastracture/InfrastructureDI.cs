@@ -15,12 +15,12 @@ namespace MASsenger.Infrastracture
         {
             services.AddDbContext<EfDbContext>((provider, options) =>
             {
-                options.UseSqlite(provider.GetRequiredService<IOptionsSnapshot<ConnectionStringOptions>>().Value.DefaultConnection);
+                options.UseSqlite(provider.GetRequiredService<IOptions<ConnectionStringOptions>>().Value.DefaultConnection);
             });
 
             services.AddScoped<DapperDbContext>(provider =>
             {
-                return new DapperDbContext(provider.GetRequiredService<IOptionsSnapshot<ConnectionStringOptions>>().Value.DefaultConnection);
+                return new DapperDbContext(provider.GetRequiredService<IOptions<ConnectionStringOptions>>().Value.DefaultConnection);
             });
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
