@@ -1,23 +1,27 @@
 ﻿using MASsenger.Application.Dtos.Create;
 using MASsenger.Application.Interfaces;
 using MASsenger.Core.Entities;
-using MASsenger.Core.Enums;
 using MediatR;
+using System.Security.Claims;
 using System.Security.Cryptography;
 
 namespace MASsenger.Application.Commands.UserCommands
 {
-    public record AddUserCommand(UserCreateDto user) : IRequest<TransactionResultType>;
-    public class AddUserCommandHandler : IRequestHandler<AddUserCommand, TransactionResultType>
+    public record AddUserCommand(UserCreateDto user) : IRequest<(string, string)>;
+    public class AddUserCommandHandler : IRequestHandler<AddUserCommand, (string, string)>
     {
         private readonly IUserRepository _userRepository;
+        private readonly ISessionRepository _sessionRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public AddUserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork)
+        private readonly IJwtService _jwtService; 
+        public AddUserCommandHandler(IUserRepository userRepository, ISessionRepository sessionRepository, IUnitOfWork unitOfWork, IJwtService jwtService)
         {
             _userRepository = userRepository;
+            _sessionRepository = sessionRepository;
             _unitOfWork = unitOfWork;
+            _jwtService = jwtService;
         }
-        public async Task<TransactionResultType> Handle(AddUserCommand request, CancellationToken cancellationToken)
+        public async Task<(string, string)> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
             using var hmac = new HMACSHA512();
             var newUser = new User
@@ -29,8 +33,22 @@ namespace MASsenger.Application.Commands.UserCommands
                 Description = request.user.Description
             };
             _userRepository.Add(newUser);
+
+            var session = new Session
+            {
+                User = newUser
+            };
+            await _sessionRepository.Add(session);
+           
             await _unitOfWork.SaveAsync();
-            return TransactionResultType.Done;
+
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, newUser.Username),
+            };
+            if (newUser.Username == "Admin") claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            claims.Add(new Claim(ClaimTypes.Role, "User"));
+            return (_jwtService.GetJwt(claims), session.Token.ToString());
         }
     }
 }
