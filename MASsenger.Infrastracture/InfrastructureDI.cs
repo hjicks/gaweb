@@ -31,6 +31,7 @@ namespace MASsenger.Infrastracture
             services.AddScoped<IPrivateChatRepository, PrivateChatRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<ISystemMessageRepository, SystemMessageRepository>();
+            services.AddScoped<ISessionRepository, SessionRepository>();
 
             return services;
         }
