@@ -1,21 +1,38 @@
 ﻿using MASsenger.Application.Commands.BotCommands;
 using MASsenger.Application.Dtos.Create;
+using MASsenger.Application.Dtos.Login;
 using MASsenger.Application.Dtos.Read;
 using MASsenger.Application.Dtos.Update;
 using MASsenger.Application.Queries.BotQueries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace MASsenger.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
+    /*
+     * only users, specifically, owners of the bots may deal with those endpoints,
+     * with exception the of Login()
+     */
+    [Authorize(Roles = "User")]
     public class BotController : ControllerBase
     {
         private readonly ISender _sender;
         public BotController(ISender sender)
         {
             _sender = sender;
+        }
+
+        [HttpPost("login"), AllowAnonymous]
+        public async Task<IActionResult> Login(BotLoginDto botCerd)
+        {
+            if (await _sender.Send(new LoginBotQuery(botCerd)) == "error") return BadRequest("Something went wrong while logging in.");
+            Log.Information($"Bot logged in.");
+            return Ok(await _sender.Send(new LoginBotQuery(botCerd)));
         }
 
         [HttpGet]
