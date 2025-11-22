@@ -32,7 +32,7 @@ namespace MASsenger.Application.Commands.UserCommands
                 PasswordSalt = hmac.Key,
                 Description = request.user.Description
             };
-            _userRepository.Add(newUser);
+            await _userRepository.Add(newUser);
 
             var session = new Session
             {
