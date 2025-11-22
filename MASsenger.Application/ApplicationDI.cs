@@ -40,7 +40,7 @@ namespace MASsenger.Application
 
             services.AddScoped<IJwtService, JwtService>(provider =>
             {
-                return new JwtService(provider.GetRequiredService<IOptionsSnapshot<JwtOptions>>().Value.Key);
+                return new JwtService(provider.GetRequiredService<IOptionsSnapshot<JwtOptions>>().Value);
             });
 
             services.AddHttpContextAccessor();
