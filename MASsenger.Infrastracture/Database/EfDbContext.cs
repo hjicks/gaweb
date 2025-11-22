@@ -19,6 +19,7 @@ namespace MASsenger.Infrastracture.Database
         public DbSet<BaseMessage> BaseMessages { get; set; } = null!;
         public DbSet<Message> Messages { get; set; } = null!;
         public DbSet<SystemMessage> SystemMessages { get; set; } = null!;
+        public DbSet<Session> Sessions { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

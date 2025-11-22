@@ -42,12 +42,15 @@ namespace MASsenger.Api.Controllers
         [HttpPost, AllowAnonymous]
         public async Task<IActionResult> AddUserAsync([FromBody] UserCreateDto user)
         {
-            if (await _sender.Send(new AddUserCommand(user)) == Core.Enums.TransactionResultType.Done)
+            (var jwt, var refreshToken) = await _sender.Send(new AddUserCommand(user));
+            var cookieOptions = new CookieOptions
             {
-                Log.Information($"User {user.Username} added.");
-                return Ok("User added successfully.");
-            }
-            return BadRequest("Something went wrong while saving the user.");
+                HttpOnly = true,
+                Expires = DateTimeOffset.Now.AddDays(7)
+            };
+            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
+            Log.Information($"User {user.Username} added.");
+            return Ok(jwt);
         }
 
         [HttpPut]
