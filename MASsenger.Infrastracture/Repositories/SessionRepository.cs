@@ -25,8 +25,9 @@ namespace MASsenger.Infrastracture.Repositories
 
         public async Task<Session> GetActiveSessionByUserIdAsync(Int32 userId)
         {
-            // failed dapper approach. the problem is conversion of string to guid.
+            // dapper approach fails. the problem is conversion of string to guid.
             // when dapper reads from db, it brings string but the type of session token is guid.
+            // this is because sqlite lacks UNIQUEIDENTIFIER. switching DBMS to a more sane one would solve the issue.
 
             //string query = $"SELECT * FROM Sessions WHERE UserId == {userId} AND IsExpired == false";
             //return await _dapperDbContext.GetConnection().QuerySingleAsync<Session>(query);
