@@ -36,7 +36,7 @@ namespace MASsenger.Application.Commands.ChannelChatCommands
                 Description = request.channelChat.Description,
             };
             newChannelChat.Owner = owner;
-            _channelChatRepository.Add(newChannelChat);
+            await _channelChatRepository.Add(newChannelChat);
             await _unitOfWork.SaveAsync();
             return TransactionResultType.Done;
         }

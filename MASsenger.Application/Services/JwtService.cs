@@ -1,4 +1,5 @@
 ﻿using MASsenger.Application.Interfaces;
+using MASsenger.Core.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -7,21 +8,21 @@ namespace MASsenger.Application.Services
 {
     internal class JwtService : IJwtService
     {
-        private readonly string _jwtKey;
-        public JwtService(string jwtKey)
+        private readonly JwtOptions _jwtOptions;
+        public JwtService(JwtOptions jwtOptions)
         {
-            _jwtKey = jwtKey;
+            _jwtOptions = jwtOptions;
         }
 
         public string GetJwt(List<Claim> claims)
         {
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_jwtKey));
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_jwtOptions.Key));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(5),
+                expires: DateTime.Now.AddMinutes(int.Parse(_jwtOptions.ExpiryInMins)),
                 signingCredentials: creds);
 
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);

@@ -17,9 +17,9 @@ namespace MASsenger.Infrastracture.Repositories.Base
             return await _efContext.Set<TEntity>().FindAsync(entityId);
         }
 
-        public void Add(TEntity entity)
+        public async Task Add(TEntity entity)
         {
-            _efContext.Set<TEntity>().Add(entity);
+            await _efContext.Set<TEntity>().AddAsync(entity);
         }
 
         public void Update(TEntity entity)

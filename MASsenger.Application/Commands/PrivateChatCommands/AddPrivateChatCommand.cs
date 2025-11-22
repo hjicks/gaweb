@@ -25,7 +25,7 @@ namespace MASsenger.Application.Commands.PrivateChatCommands
         public async Task<TransactionResultType> Handle(AddPrivateChatCommand request, CancellationToken cancellationToken)
         {
             var newPrivateChat = new PrivateChat();
-            _privateChatRepository.Add(newPrivateChat);
+            await _privateChatRepository.Add(newPrivateChat);
             await _unitOfWork.SaveAsync();
             return TransactionResultType.Done;
         }

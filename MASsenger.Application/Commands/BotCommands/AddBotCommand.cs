@@ -32,7 +32,7 @@ namespace MASsenger.Application.Commands.BotCommands
                 Token = request.bot.Token
             };
             newBot.Owner = owner;
-            _botRepository.Add(newBot);
+            await _botRepository.Add(newBot);
             await _unitOfWork.SaveAsync();
             return TransactionResultType.Done;
         }
