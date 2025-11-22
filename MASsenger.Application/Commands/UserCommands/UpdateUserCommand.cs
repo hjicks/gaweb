@@ -23,7 +23,7 @@ namespace MASsenger.Application.Commands.UserCommands
             var user = await _userRepository.GetByUsernameAsync(_userService.GetUsername());
             if (user == null)
                 return TransactionResultType.ForeignKeyNotFound;
-            using var hmac = new HMACSHA512();
+            using var hmac = new HMACSHA512(user.PasswordSalt);
             user.Name = request.user.Name;
             user.Username = request.user.Username;
             user.PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(request.user.Password));

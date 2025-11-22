@@ -8,6 +8,7 @@
         // one-to-many relationships
         public ICollection<Bot> BotsOwned { get; set; } = new List<Bot>();
         public ICollection<ChannelChat> ChannelsOwned = new List<ChannelChat>();
+        public ICollection<Session> UserSessions = new List<Session>();
 
         // many-to-many relationships
         public ICollection<Bot> BotsJoined { get; set; } = new List<Bot>();
