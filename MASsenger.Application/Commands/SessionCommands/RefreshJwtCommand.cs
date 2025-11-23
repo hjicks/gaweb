@@ -4,6 +4,11 @@ using System.Security.Claims;
 
 namespace MASsenger.Application.Commands.SessionCommands
 {
+    /*
+     * even though i named this as a command, this is actually a query.
+     * as we have no sane way to renew the refresh token for now,
+     * i named this a command so we can do that here as the last resort.
+    */
     public record RefreshJwtCommand(Int32 userId, Guid refreshToken) : IRequest<string>;
     public class RefreshJwtCommandHandler : IRequestHandler<RefreshJwtCommand, string>
     {
