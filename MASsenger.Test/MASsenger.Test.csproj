@@ -22,4 +22,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MASsenger.Application\MASsenger.Application.csproj" />
+  </ItemGroup>
+
 </Project>
