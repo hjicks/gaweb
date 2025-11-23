@@ -10,8 +10,8 @@
         public bool IsVerified { get; set; } = false;
 
         // many-to-many relationships
-        public ICollection<ChannelChat> ChannelsJoined = new List<ChannelChat>();
-        public ICollection<ChannelChat> ChannelsManaged = new List<ChannelChat>();
-        public ICollection<ChannelChat> ChannelsBannedFrom = new List<ChannelChat>();
+        public ICollection<ChannelChat> ChannelsJoined { get; set; } = new List<ChannelChat>();
+        public ICollection<ChannelChat> ChannelsManaged { get; set; } = new List<ChannelChat>();
+        public ICollection<ChannelChat> ChannelsBannedFrom { get; set; } = new List<ChannelChat>();
     }
 }
