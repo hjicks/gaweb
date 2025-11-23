@@ -6,6 +6,6 @@ namespace MASsenger.Core.Entities
         public BaseChat Destination { get; set; } = null!;
         public DateTime SentTime { get; set; } = DateTime.UtcNow;
 
-        public string Text { get; set; } = String.Empty;
+        public string Text { get; set; } = string.Empty;
     }
 }

@@ -3,6 +3,7 @@ using MASsenger.Api.Middlewares;
 using MASsenger.Application;
 using MASsenger.Core;
 using MASsenger.Infrastracture;
+using MASsenger.Infrastracture.Database;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    using var seedScope = app.Services.CreateScope();
+    var dbContext = seedScope.ServiceProvider.GetRequiredService<EfDbContext>();
+    await dbContext.Database.EnsureCreatedAsync();
+    await DevelopSeed.Seed(dbContext);
 }
 
 app.UseSerilogRequestLogging();
