@@ -39,12 +39,17 @@ namespace MASsenger.Infrastracture.Database
                 .HasValue<SystemMessage>("SystemMessage");
 
             modelBuilder.Entity<Bot>()
+                .HasOne(e => e.Owner)
+                .WithMany(e => e.BotsOwned)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Bot>()
                 .HasMany(e => e.Members)
                 .WithMany(e => e.BotsJoined);
 
-            modelBuilder.Entity<Bot>()
+            modelBuilder.Entity<ChannelChat>()
                 .HasOne(e => e.Owner)
-                .WithMany(e => e.BotsOwned)
+                .WithMany(e => e.ChannelsOwned)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ChannelChat>()
