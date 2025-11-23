@@ -4,8 +4,8 @@ namespace MASsenger.Core.Entities
     {
         public Int32 Id { get; set; } // id of the message inside of the chat/user
         public BaseChat Destination { get; set; } = null!;
-        public DateTime SentTime { get; set; } = DateTime.UtcNow;
+        public DateTimeOffset SentTime { get; set; } = DateTimeOffset.UtcNow;
 
-        public string Text { get; set; } = String.Empty;
+        public string Text { get; set; } = string.Empty;
     }
 }
