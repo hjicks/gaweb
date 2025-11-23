@@ -50,6 +50,13 @@ namespace MASsenger.Infrastracture.Database
                 };
                 await dbContext.Sessions.AddRangeAsync(adminSession, testerSession);
 
+                var privateChat = new PrivateChat()
+                {
+                    Starter = admin,
+                    Receiver = tester
+                };
+                await dbContext.PrivateChats.AddAsync(privateChat);
+
                 var channel = new ChannelChat()
                 {
                     Name = "Testers Channel",
@@ -68,13 +75,19 @@ namespace MASsenger.Infrastracture.Database
                 };
                 await dbContext.SystemMessages.AddAsync(systemMessage);
 
-                var message = new Message()
+                var channelMessage = new Message()
                 {
                     Text = "Hello World!",
                     Sender = tester,
                     Destination = channel
                 };
-                await dbContext.Messages.AddAsync(message);
+                var privateMessage = new Message()
+                {
+                    Text = "Welcome to MASsenger!",
+                    Sender = admin,
+                    Destination = privateChat
+                };
+                await dbContext.Messages.AddRangeAsync(channelMessage, privateMessage);
 
 
                 await dbContext.SaveChangesAsync();
