@@ -7,7 +7,7 @@
         public string? Username { get; set; }
         public string? Description { get; set; }
         public string Token { get; set; } = null!;
-        public DateTimeOffset CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
         public bool IsVerified { get; set; }
         public bool IsActive { get; set; } = false;
     }

@@ -3,7 +3,7 @@ namespace MASsenger.Core.Entities
 	public class BaseChat {
 		public Int32 Id { get; set; }
 
-		public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+		public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         /*
 		 * there might be insane amount of users/messages
