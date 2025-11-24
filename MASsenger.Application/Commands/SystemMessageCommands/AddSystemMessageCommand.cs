@@ -31,7 +31,7 @@ namespace MASsenger.Application.Commands.SystemMessageCommands
                 SentTime = request.msg.SentTime
             };
 
-            await _messageRepository.Add(newMessage);
+            await _messageRepository.AddAsync(newMessage);
             await _unitOfWork.SaveAsync();
             return TransactionResultType.Done;
         }
