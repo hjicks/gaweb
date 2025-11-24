@@ -26,9 +26,19 @@ namespace MASsenger.Api.Controllers
         [HttpPost("login"), AllowAnonymous]
         public async Task<IActionResult> Login(UserLoginDto userCred)
         {
-            if (await _sender.Send(new LoginUserQuery(userCred)) == "error") return BadRequest("Something went wrong while logging in.");
-            Log.Information($"User {userCred.Username} logged in.");
-            return Ok(await _sender.Send(new LoginUserQuery(userCred)));
+            var result = await _sender.Send(new LoginUserCommand(userCred));
+            if (result.Success)
+            {
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTimeOffset.Now.AddDays(7)
+                };
+                Response.Cookies.Append("refreshToken", result.Response.RefreshToken, cookieOptions);
+                Log.Information($"User {userCred.Username} logged in.");
+                return StatusCode((int)result.StatusCode, result.Response.Jwt);
+            }
+            return StatusCode((int)result.StatusCode, result.Response.Message);
         }
 
         [HttpGet]
@@ -56,24 +66,24 @@ namespace MASsenger.Api.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateUserAsync(UserUpdateDto user)
         {
-            if (await _sender.Send(new UpdateUserCommand(user)) == Core.Enums.TransactionResultType.Done)
+            if (await _sender.Send(new UpdateUserCommand(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)), user)) == Core.Enums.TransactionResultType.Done)
             {
-                Log.Information($"User {User.FindFirstValue(ClaimTypes.Name)} updated.");
+                Log.Information($"User {User.FindFirstValue(ClaimTypes.NameIdentifier)} updated.");
                 return Ok("User updated successfully.");
             }
-            else if (await _sender.Send(new UpdateUserCommand(user)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
+            else if (await _sender.Send(new UpdateUserCommand(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)), user)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
             return BadRequest("Something went wrong while updating the user.");
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteUserAsync()
         {
-            if (await _sender.Send(new DeleteUserCommand()) == Core.Enums.TransactionResultType.Done)
+            if (await _sender.Send(new DeleteUserCommand(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))) == Core.Enums.TransactionResultType.Done)
             {
-                Log.Information($"User {User.FindFirstValue(ClaimTypes.Name)} deleted.");
+                Log.Information($"User {User.FindFirstValue(ClaimTypes.NameIdentifier)} deleted.");
                 return Ok("User deleted successfully.");
             }
-            else if (await _sender.Send(new DeleteUserCommand()) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
+            else if (await _sender.Send(new DeleteUserCommand(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
             return BadRequest("Something went wrong while deleting the user.");
         }
     }

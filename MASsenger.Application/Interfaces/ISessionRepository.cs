@@ -2,10 +2,8 @@
 
 namespace MASsenger.Application.Interfaces
 {
-    public interface ISessionRepository
+    public interface ISessionRepository : IBaseRepository<Session>
     {
         Task<IEnumerable<Session>> GetAllAsync();
-        Task<Session> GetActiveSessionByUserIdAsync(Int32 userId);
-        Task Add(Session session);
     }
 }

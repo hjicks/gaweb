@@ -1,13 +1,7 @@
-﻿using MASsenger.Application.Dtos.Create;
-using MASsenger.Application.Interfaces;
+﻿using MASsenger.Application.Interfaces;
 using MASsenger.Core.Entities;
 using MASsenger.Core.Enums;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MASsenger.Application.Commands.PrivateChatCommands
 {
@@ -25,7 +19,7 @@ namespace MASsenger.Application.Commands.PrivateChatCommands
         public async Task<TransactionResultType> Handle(AddPrivateChatCommand request, CancellationToken cancellationToken)
         {
             var newPrivateChat = new PrivateChat();
-            await _privateChatRepository.Add(newPrivateChat);
+            await _privateChatRepository.AddAsync(newPrivateChat);
             await _unitOfWork.SaveAsync();
             return TransactionResultType.Done;
         }

@@ -3,11 +3,6 @@ using MASsenger.Application.Interfaces;
 using MASsenger.Core.Entities;
 using MASsenger.Core.Enums;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MASsenger.Application.Commands.ChannelChatCommands
 {
@@ -36,7 +31,7 @@ namespace MASsenger.Application.Commands.ChannelChatCommands
                 Description = request.channelChat.Description,
             };
             newChannelChat.Owner = owner;
-            await _channelChatRepository.Add(newChannelChat);
+            await _channelChatRepository.AddAsync(newChannelChat);
             await _unitOfWork.SaveAsync();
             return TransactionResultType.Done;
         }

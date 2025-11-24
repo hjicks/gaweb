@@ -32,21 +32,21 @@ namespace MASsenger.Application.Commands.UserCommands
                 PasswordSalt = hmac.Key,
                 Description = request.user.Description
             };
-            await _userRepository.Add(newUser);
+            await _userRepository.AddAsync(newUser);
 
             var session = new Session
             {
                 User = newUser
             };
-            await _sessionRepository.Add(session);
+            await _sessionRepository.AddAsync(session);
            
             await _unitOfWork.SaveAsync();
 
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, newUser.Username),
+                new Claim(ClaimTypes.NameIdentifier, newUser.Id.ToString()),
             };
-            if (newUser.Username == "Admin") claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            if (newUser.Id == 1) claims.Add(new Claim(ClaimTypes.Role, "Admin"));
             claims.Add(new Claim(ClaimTypes.Role, "User"));
             return (_jwtService.GetJwt(claims), session.Token.ToString());
         }
