@@ -1,6 +1,4 @@
 ﻿using MASsenger.Application.Commands.SessionCommands;
-using MASsenger.Application.Commands.UserCommands;
-using MASsenger.Application.Dtos.Create;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,12 +17,17 @@ namespace MASsenger.Api.Controllers
         }
 
         [HttpPost, AllowAnonymous]
-        public async Task<IActionResult> RefreshJwt([FromBody] Int32 userId)
+        public async Task<IActionResult> RefreshJwt([FromBody] Int32 sessionId)
         {
             Guid refreshToken = Guid.Parse(Request.Cookies["refreshToken"]);
-            var jwt = await _sender.Send(new RefreshJwtCommand(userId, refreshToken));
-            Log.Information($"Jwt of user with id {userId} renewed.");
-            return Ok(jwt);
+            var result = await _sender.Send(new RefreshJwtCommand(sessionId, refreshToken));
+            if (result.Success)
+            {
+                Log.Information($"Jwt of user with id {sessionId} renewed.");
+                return StatusCode((int)result.StatusCode, result.Response.Jwt);
+            }
+            Log.Information($"Unsuccessful attempt to refresh session {sessionId}.");
+            return StatusCode((int)result.StatusCode, result.Response.Message);
         }
     }
 }

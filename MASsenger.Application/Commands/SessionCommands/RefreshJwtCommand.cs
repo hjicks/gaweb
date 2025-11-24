@@ -1,4 +1,5 @@
 ﻿using MASsenger.Application.Interfaces;
+using MASsenger.Application.Responses;
 using MediatR;
 using System.Security.Claims;
 
@@ -9,33 +10,71 @@ namespace MASsenger.Application.Commands.SessionCommands
      * as we have no sane way to renew the refresh token for now,
      * i named this a command so we can do that here as the last resort.
     */
-    public record RefreshJwtCommand(Int32 userId, Guid refreshToken) : IRequest<string>;
-    public class RefreshJwtCommandHandler : IRequestHandler<RefreshJwtCommand, string>
+    public record RefreshJwtCommand(Int32 sessionId, Guid refreshToken) : IRequest<Result<TokensResponse>>;
+    public class RefreshJwtCommandHandler : IRequestHandler<RefreshJwtCommand, Result<TokensResponse>>
     {
-        private readonly IUserRepository _userRepository;
         private readonly ISessionRepository _sessionRepository;
         private readonly IJwtService _jwtService;
-        public RefreshJwtCommandHandler(IUserRepository userRepository, ISessionRepository sessionRepository, IJwtService jwtService)
+        public RefreshJwtCommandHandler(ISessionRepository sessionRepository, IJwtService jwtService)
         {
-            _userRepository = userRepository;
             _sessionRepository = sessionRepository;
             _jwtService = jwtService;
         }
-        public async Task<string> Handle(RefreshJwtCommand request, CancellationToken cancellationToken)
+        public async Task<Result<TokensResponse>> Handle(RefreshJwtCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByIdAsync(request.userId);
-            if (user == null) { return "Invalid User Id."; }
-            var session = await _sessionRepository.GetActiveSessionByUserIdAsync(request.userId);
-            if (session.Token != request.refreshToken) { return "Invalid Token"; }
-            if (session.ExpiresAt < DateTimeOffset.Now) { return "Token is expired."; }
+            var session = await _sessionRepository.GetByIdAsync(request.sessionId);
+            if (session == null)
+            {
+                return new Result<TokensResponse> 
+                {
+                    Success = false,
+                    StatusCode = System.Net.HttpStatusCode.NotFound,
+                    Response = new TokensResponse
+                    {
+                        Message = "Session not found."
+                    }
+                }; 
+            }
+            if (session.Token != request.refreshToken)
+            {
+                return new Result<TokensResponse>
+                {
+                    Success = false,
+                    StatusCode = System.Net.HttpStatusCode.Unauthorized,
+                    Response = new TokensResponse
+                    {
+                        Message = "FBI, open up!"
+                    }
+                };
+            }
+            if (session.ExpiresAt < DateTime.Now)
+            {
+                return new Result<TokensResponse>
+                {
+                    Success = false,
+                    StatusCode = System.Net.HttpStatusCode.Forbidden,
+                    Response = new TokensResponse
+                    {
+                        Message = "Session is expired, please login."
+                    }
+                };
+            }
             
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Name, session.User.Username),
             };
-            if (user.Username == "Admin") claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            if (session.User.Username == "Admin") claims.Add(new Claim(ClaimTypes.Role, "Admin"));
             claims.Add(new Claim(ClaimTypes.Role, "User"));
-            return _jwtService.GetJwt(claims);
+            return new Result<TokensResponse>
+            {
+                Success = true,
+                StatusCode= System.Net.HttpStatusCode.OK,
+                Response = new TokensResponse
+                {
+                    Jwt = _jwtService.GetJwt(claims),
+                }
+            };
         }
     }
 }
