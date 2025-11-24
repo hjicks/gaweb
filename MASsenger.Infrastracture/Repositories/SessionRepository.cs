@@ -9,11 +9,11 @@ namespace MASsenger.Infrastracture.Repositories
 {
     public class SessionRepository : ISessionRepository
     {
-        private readonly EfDbContext _efContext;
+        private readonly EfDbContext _efDbContext;
         private readonly DapperDbContext _dapperDbContext;
-        public SessionRepository(EfDbContext efContext, DapperDbContext dapperDbContext)
+        public SessionRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext)
         {
-            _efContext = efContext;
+            _efDbContext = efDbContext;
             _dapperDbContext = dapperDbContext;
         }
 
@@ -32,12 +32,12 @@ namespace MASsenger.Infrastracture.Repositories
             //string query = $"SELECT * FROM Sessions WHERE UserId == {userId} AND IsExpired == false";
             //return await _dapperDbContext.GetConnection().QuerySingleAsync<Session>(query);
 
-            return await _efContext.Sessions.Where(s => s.User.Id == userId && s.IsExpired == false).SingleAsync();
+            return await _efDbContext.Sessions.Where(s => s.User.Id == userId && s.IsExpired == false).SingleAsync();
         }
 
-        public async Task Add(Session session)
+        public async Task AddAsync(Session session)
         {
-            await _efContext.Sessions.AddAsync(session);
+            await _efDbContext.Sessions.AddAsync(session);
         }
     }
 }
