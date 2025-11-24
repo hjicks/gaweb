@@ -3,14 +3,17 @@ using MASsenger.Application.Interfaces;
 using MASsenger.Core.Entities;
 using MASsenger.Infrastracture.Database;
 using MASsenger.Infrastracture.Repositories.Base;
+using Microsoft.EntityFrameworkCore;
 
 namespace MASsenger.Infrastracture.Repositories
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
+        private readonly EfDbContext _efDbContext;
         private readonly DapperDbContext _dapperDbContext;
-        public UserRepository(EfDbContext efContext, DapperDbContext dapperDbContext) : base(efContext)
+        public UserRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext) : base(efDbContext)
         {
+            _efDbContext = efDbContext;
             _dapperDbContext = dapperDbContext;
         }
 
@@ -22,8 +25,7 @@ namespace MASsenger.Infrastracture.Repositories
 
         public async Task<User> GetByUsernameAsync(string username)
         {
-            string query = $"SELECT * FROM BaseUsers WHERE Username == '{username}'";
-            return await _dapperDbContext.GetConnection().QueryFirstAsync<User>(query);
+            return await _efDbContext.Users.Where(u => u.Username == username).SingleAsync();
         }
     }
 }
