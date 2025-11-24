@@ -13,12 +13,12 @@ namespace MASsenger.Application.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string GetUsername()
+        public string GetUserId()
         {
             var result = string.Empty;
             if (_httpContextAccessor.HttpContext != null)
             {
-                result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Name);
+                result = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             }
             return result;
         }

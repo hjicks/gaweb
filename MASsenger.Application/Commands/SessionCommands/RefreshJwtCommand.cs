@@ -62,9 +62,9 @@ namespace MASsenger.Application.Commands.SessionCommands
             
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, session.User.Username),
+                new Claim(ClaimTypes.NameIdentifier, session.UserId.ToString()),
             };
-            if (session.User.Username == "Admin") claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            if (session.UserId == 1) claims.Add(new Claim(ClaimTypes.Role, "Admin"));
             claims.Add(new Claim(ClaimTypes.Role, "User"));
             return new Result<TokensResponse>
             {

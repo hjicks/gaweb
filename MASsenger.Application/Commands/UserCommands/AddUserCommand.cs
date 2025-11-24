@@ -44,9 +44,9 @@ namespace MASsenger.Application.Commands.UserCommands
 
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, newUser.Username),
+                new Claim(ClaimTypes.NameIdentifier, newUser.Id.ToString()),
             };
-            if (newUser.Username == "Admin") claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            if (newUser.Id == 1) claims.Add(new Claim(ClaimTypes.Role, "Admin"));
             claims.Add(new Claim(ClaimTypes.Role, "User"));
             return (_jwtService.GetJwt(claims), session.Token.ToString());
         }

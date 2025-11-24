@@ -66,24 +66,24 @@ namespace MASsenger.Api.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateUserAsync(UserUpdateDto user)
         {
-            if (await _sender.Send(new UpdateUserCommand(user)) == Core.Enums.TransactionResultType.Done)
+            if (await _sender.Send(new UpdateUserCommand(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)), user)) == Core.Enums.TransactionResultType.Done)
             {
-                Log.Information($"User {User.FindFirstValue(ClaimTypes.Name)} updated.");
+                Log.Information($"User {User.FindFirstValue(ClaimTypes.NameIdentifier)} updated.");
                 return Ok("User updated successfully.");
             }
-            else if (await _sender.Send(new UpdateUserCommand(user)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
+            else if (await _sender.Send(new UpdateUserCommand(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)), user)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
             return BadRequest("Something went wrong while updating the user.");
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteUserAsync()
         {
-            if (await _sender.Send(new DeleteUserCommand()) == Core.Enums.TransactionResultType.Done)
+            if (await _sender.Send(new DeleteUserCommand(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))) == Core.Enums.TransactionResultType.Done)
             {
-                Log.Information($"User {User.FindFirstValue(ClaimTypes.Name)} deleted.");
+                Log.Information($"User {User.FindFirstValue(ClaimTypes.NameIdentifier)} deleted.");
                 return Ok("User deleted successfully.");
             }
-            else if (await _sender.Send(new DeleteUserCommand()) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
+            else if (await _sender.Send(new DeleteUserCommand(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
             return BadRequest("Something went wrong while deleting the user.");
         }
     }

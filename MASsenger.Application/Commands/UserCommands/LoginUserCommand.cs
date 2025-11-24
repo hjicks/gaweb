@@ -57,9 +57,9 @@ namespace MASsenger.Application.Commands.UserCommands
 
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, dbUser.Username),
+                new Claim(ClaimTypes.NameIdentifier, dbUser.Id.ToString()),
             };
-            if (dbUser.Username == "Admin") claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            if (dbUser.Id == 1) claims.Add(new Claim(ClaimTypes.Role, "Admin"));
             claims.Add(new Claim(ClaimTypes.Role, "User"));
             return new Result<TokensResponse>
             {
