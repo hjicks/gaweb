@@ -26,9 +26,19 @@ namespace MASsenger.Api.Controllers
         [HttpPost("login"), AllowAnonymous]
         public async Task<IActionResult> Login(UserLoginDto userCred)
         {
-            if (await _sender.Send(new LoginUserQuery(userCred)) == "error") return BadRequest("Something went wrong while logging in.");
-            Log.Information($"User {userCred.Username} logged in.");
-            return Ok(await _sender.Send(new LoginUserQuery(userCred)));
+            var result = await _sender.Send(new LoginUserCommand(userCred));
+            if (result.Success)
+            {
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTimeOffset.Now.AddDays(7)
+                };
+                Response.Cookies.Append("refreshToken", result.Response.RefreshToken, cookieOptions);
+                Log.Information($"User {userCred.Username} logged in.");
+                return StatusCode((int)result.StatusCode, result.Response.Jwt);
+            }
+            return StatusCode((int)result.StatusCode, result.Response.Message);
         }
 
         [HttpGet]
