@@ -6,6 +6,6 @@ namespace MASsenger.Application.Interfaces
     {
         Task<IEnumerable<Session>> GetAllAsync();
         Task<Session> GetActiveSessionByUserIdAsync(Int32 userId);
-        Task Add(Session session);
+        Task AddAsync(Session session);
     }
 }

@@ -38,7 +38,7 @@ namespace MASsenger.Application.Commands.UserCommands
             {
                 User = newUser
             };
-            await _sessionRepository.Add(session);
+            await _sessionRepository.AddAsync(session);
            
             await _unitOfWork.SaveAsync();
 
