@@ -19,7 +19,7 @@ namespace MASsenger.Api.Controllers
         [HttpPost, AllowAnonymous]
         public async Task<IActionResult> RefreshJwt([FromBody] Int32 sessionId)
         {
-            Guid refreshToken = Guid.Parse(Request.Cookies["refreshToken"]);
+            Guid.TryParse(Request.Cookies["refreshToken"], out Guid refreshToken);
             var result = await _sender.Send(new RefreshJwtCommand(sessionId, refreshToken));
             if (result.Success)
             {
