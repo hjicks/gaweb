@@ -1,4 +1,6 @@
-﻿using MASsenger.Core.Entities;
+﻿using MASsenger.Core.Entities.ChatEntities;
+using MASsenger.Core.Entities.MessageEntities;
+using MASsenger.Core.Entities.UserEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace MASsenger.Infrastracture.Database
@@ -12,14 +14,14 @@ namespace MASsenger.Infrastracture.Database
 
         public DbSet<BaseUser> BaseUsers { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
-        public DbSet<Bot> Bots { get; set; } = null!;  
+        public DbSet<Bot> Bots { get; set; } = null!;
+        public DbSet<Session> Sessions { get; set; } = null!;
         public DbSet<BaseChat> BaseChats { get; set; } = null!;
         public DbSet<ChannelChat> ChannelChats { get; set; } = null!;
         public DbSet<PrivateChat> PrivateChats { get; set; } = null!;
         public DbSet<BaseMessage> BaseMessages { get; set; } = null!;
         public DbSet<Message> Messages { get; set; } = null!;
         public DbSet<SystemMessage> SystemMessages { get; set; } = null!;
-        public DbSet<Session> Sessions { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

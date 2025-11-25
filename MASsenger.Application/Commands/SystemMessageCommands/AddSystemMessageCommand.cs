@@ -1,6 +1,7 @@
 ﻿using MASsenger.Application.Dtos.Create;
 using MASsenger.Application.Interfaces;
-using MASsenger.Core.Entities;
+using MASsenger.Core.Entities.ChatEntities;
+using MASsenger.Core.Entities.MessageEntities;
 using MASsenger.Core.Enums;
 using MediatR;
 
@@ -27,8 +28,7 @@ namespace MASsenger.Application.Commands.SystemMessageCommands
             var newMessage = new SystemMessage
             {
                 Destination = destination,
-                Text = request.msg.Text,
-                SentTime = request.msg.SentTime
+                Text = request.msg.Text
             };
 
             await _messageRepository.AddAsync(newMessage);

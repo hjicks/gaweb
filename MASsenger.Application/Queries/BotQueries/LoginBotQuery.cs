@@ -1,12 +1,10 @@
 ﻿using MASsenger.Application.Dtos.Login;
 using MASsenger.Application.Interfaces;
-using MASsenger.Core.Entities;
 using MediatR;
-using System.Security.Claims;
 
 namespace MASsenger.Application.Queries.BotQueries
 {
-    public record LoginBotQuery(BotLoginDto bot) : IRequest<string>;
+    public record LoginBotQuery(BotLoginDto Bot) : IRequest<string>;
     public class LoginBotQueryHandler : IRequestHandler<LoginBotQuery, string>
     {
         private readonly IBotRepository _botRepository;
@@ -18,17 +16,12 @@ namespace MASsenger.Application.Queries.BotQueries
         }
         public async Task<string> Handle(LoginBotQuery request, CancellationToken cancellationToken)
         {
-            Bot dbBot = await _botRepository.GetByIdAsync(request.bot.Id);
+            var dbBot = await _botRepository.GetByIdAsync(request.Bot.Id);
             if (dbBot == null) return "error";
 
-            if (dbBot.Token.SequenceEqual(request.bot.Token)) return "error";
+            if (dbBot.Token.SequenceEqual(request.Bot.Token)) return "error";
 
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Sid, dbBot.Id.ToString()),
-            };
-            claims.Add(new Claim(ClaimTypes.Role, "Bot"));
-            return _jwtService.GetJwt(claims);
+            return _jwtService.GetJwt(dbBot.Id, new List<string> { "Bot" });
         }
     }
 }

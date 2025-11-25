@@ -1,12 +1,13 @@
-﻿namespace MASsenger.Core.Entities
+﻿using MASsenger.Core.Entities.Base;
+using MASsenger.Core.Entities.ChatEntities;
+
+namespace MASsenger.Core.Entities.UserEntities
 {
-    public class BaseUser
+    public class BaseUser : BaseEntity
     {
-        public Int32 Id { get; set; }
         public string Name { get; set; } = null!;
         public string Username { get; set; } = null!;
         public string? Description { get; set; } /* acts also as bio */
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public bool IsVerified { get; set; } = false;
 
         // many-to-many relationships

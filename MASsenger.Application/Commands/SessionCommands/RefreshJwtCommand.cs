@@ -1,7 +1,6 @@
 ﻿using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
 using MediatR;
-using System.Security.Claims;
 
 namespace MASsenger.Application.Commands.SessionCommands
 {
@@ -10,7 +9,7 @@ namespace MASsenger.Application.Commands.SessionCommands
      * as we have no sane way to renew the refresh token for now,
      * i named this a command so we can do that here as the last resort.
     */
-    public record RefreshJwtCommand(Int32 sessionId, Guid refreshToken) : IRequest<Result<TokensResponse>>;
+    public record RefreshJwtCommand(Int32 SessionId, Guid RefreshToken) : IRequest<Result<TokensResponse>>;
     public class RefreshJwtCommandHandler : IRequestHandler<RefreshJwtCommand, Result<TokensResponse>>
     {
         private readonly ISessionRepository _sessionRepository;
@@ -22,58 +21,35 @@ namespace MASsenger.Application.Commands.SessionCommands
         }
         public async Task<Result<TokensResponse>> Handle(RefreshJwtCommand request, CancellationToken cancellationToken)
         {
-            var session = await _sessionRepository.GetByIdAsync(request.sessionId);
+            var session = await _sessionRepository.GetByIdAsync(request.SessionId);
             if (session == null)
-            {
-                return new Result<TokensResponse> 
+                return new Result<TokensResponse>
                 {
                     Success = false,
                     StatusCode = System.Net.HttpStatusCode.NotFound,
-                    Response = new TokensResponse
-                    {
-                        Message = "Session not found."
-                    }
+                    Description = "Session not found."
                 }; 
-            }
-            if (session.Token != request.refreshToken)
-            {
+            if (session.Token != request.RefreshToken)
                 return new Result<TokensResponse>
                 {
                     Success = false,
                     StatusCode = System.Net.HttpStatusCode.Unauthorized,
-                    Response = new TokensResponse
-                    {
-                        Message = "FBI, open up!"
-                    }
+                    Description = "FBI, open up!"
                 };
-            }
             if (session.ExpiresAt < DateTime.Now)
-            {
                 return new Result<TokensResponse>
                 {
                     Success = false,
                     StatusCode = System.Net.HttpStatusCode.Forbidden,
-                    Response = new TokensResponse
-                    {
-                        Message = "Session is expired, please login."
-                    }
+                    Description = "Session is expired, please login."
                 };
-            }
-            
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, session.UserId.ToString()),
-            };
-            if (session.UserId == 1) claims.Add(new Claim(ClaimTypes.Role, "Admin"));
-            claims.Add(new Claim(ClaimTypes.Role, "User"));
+
+            var roles = session.UserId == 1 ? new List<string> { "Admin", "User" } : new List<string> { "User" };
             return new Result<TokensResponse>
             {
                 Success = true,
                 StatusCode= System.Net.HttpStatusCode.OK,
-                Response = new TokensResponse
-                {
-                    Jwt = _jwtService.GetJwt(claims),
-                }
+                Response = new TokensResponse(_jwtService.GetJwt(session.UserId, roles))
             };
         }
     }

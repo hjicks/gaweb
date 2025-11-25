@@ -1,10 +1,10 @@
-namespace MASsenger.Core.Entities 
+using MASsenger.Core.Entities.Base;
+using MASsenger.Core.Entities.MessageEntities;
+
+namespace MASsenger.Core.Entities.ChatEntities
 {
-	public class BaseChat {
-		public Int32 Id { get; set; }
-
-		public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
+	public class BaseChat : BaseEntity
+	{
         /*
 		 * there might be insane amount of users/messages
 		 * if API calls .len() everytime overhead would be unimagineable

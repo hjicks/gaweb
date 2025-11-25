@@ -1,4 +1,6 @@
-﻿using MASsenger.Core.Entities;
+﻿using MASsenger.Core.Entities.ChatEntities;
+using MASsenger.Core.Entities.MessageEntities;
+using MASsenger.Core.Entities.UserEntities;
 using System.Security.Cryptography;
 
 namespace MASsenger.Infrastracture.Database
