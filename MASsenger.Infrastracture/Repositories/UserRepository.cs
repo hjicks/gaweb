@@ -23,9 +23,9 @@ namespace MASsenger.Infrastracture.Repositories
             return (await _dapperDbContext.GetConnection().QueryAsync<User>(query)).ToList();
         }
 
-        public async Task<User> GetByUsernameAsync(string username)
+        public async Task<User?> GetByUsernameAsync(string username)
         {
-            return await _efDbContext.Users.Where(u => u.Username == username).SingleAsync();
+            return await _efDbContext.Users.Where(u => u.Username == username).SingleOrDefaultAsync();
         }
     }
 }

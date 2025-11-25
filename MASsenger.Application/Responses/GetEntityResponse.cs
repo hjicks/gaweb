@@ -4,5 +4,10 @@
 
     {
         public IEnumerable<TEntity> Entities { get; set; } = Enumerable.Empty<TEntity>(); 
+
+        public GetEntityResponse(IEnumerable<TEntity> entities) 
+        {
+            Entities = entities;
+        }
     }
 }

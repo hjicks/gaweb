@@ -2,6 +2,6 @@
 {
     public interface IJwtService
     {
-        string GetJwt(Int32 userId, string role);
+        string GetJwt(Int32 userId, IEnumerable<string> roles);
     }
 }

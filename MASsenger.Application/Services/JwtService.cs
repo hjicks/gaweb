@@ -14,7 +14,7 @@ namespace MASsenger.Application.Services
             _jwtOptions = jwtOptions;
         }
 
-        public string GetJwt(Int32 baseUserId, string role)
+        public string GetJwt(Int32 baseUserId, IEnumerable<string> roles)
         {
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_jwtOptions.Key));
 
@@ -22,9 +22,12 @@ namespace MASsenger.Application.Services
 
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, baseUserId.ToString()),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(ClaimTypes.NameIdentifier, baseUserId.ToString())
             };
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var token = new JwtSecurityToken(
                 claims: claims,

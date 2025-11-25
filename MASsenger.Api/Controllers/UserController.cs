@@ -32,12 +32,13 @@ namespace MASsenger.Api.Controllers
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
-                    Expires = DateTimeOffset.Now.AddDays(7)
+                    Expires = DateTime.Now.AddDays(7)
                 };
                 Response.Cookies.Append("refreshToken", result.Response.RefreshToken, cookieOptions);
                 Log.Information($"User {userCred.Username} logged in.");
                 return StatusCode((int)result.StatusCode, result.Response.Jwt);
             }
+            Log.Information($"Unsuccessful login attempt with username {userCred.Username}.");
             return StatusCode((int)result.StatusCode, result.Description);
         }
 
@@ -46,45 +47,52 @@ namespace MASsenger.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers()
         {
-            return Ok(await _sender.Send(new GetAllUsersQuery()));
+            var result = await _sender.Send(new GetAllUsersQuery());
+            return StatusCode((int)result.StatusCode, result.Response.Entities);
         }
 
         [HttpPost, AllowAnonymous]
         public async Task<IActionResult> AddUserAsync([FromBody] UserCreateDto user)
         {
-            (var jwt, var refreshToken) = await _sender.Send(new AddUserCommand(user));
-            var cookieOptions = new CookieOptions
+            var result = await _sender.Send(new AddUserCommand(user));
+            if (result.Success)
             {
-                HttpOnly = true,
-                Expires = DateTimeOffset.Now.AddDays(7)
-            };
-            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
-            Log.Information($"User {user.Username} added.");
-            return Ok(jwt);
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTime.Now.AddDays(7)
+                };
+                Response.Cookies.Append("refreshToken", result.Response.RefreshToken, cookieOptions);
+                Log.Information($"User {user.Username} added.");
+                return StatusCode((int)result.StatusCode, result.Response.Jwt);
+            }
+            return StatusCode((int)result.StatusCode, result.Description);
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateUserAsync(UserUpdateDto user)
         {
-            if (await _sender.Send(new UpdateUserCommand(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)), user)) == Core.Enums.TransactionResultType.Done)
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var result = await _sender.Send(new UpdateUserCommand(userId, user));
+            if (result.Success)
             {
-                Log.Information($"User {User.FindFirstValue(ClaimTypes.NameIdentifier)} updated.");
-                return Ok("User updated successfully.");
+                Log.Information($"User {userId} updated.");
+                return StatusCode((int)result.StatusCode, result.Description);
             }
-            else if (await _sender.Send(new UpdateUserCommand(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)), user)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
-            return BadRequest("Something went wrong while updating the user.");
+            return StatusCode((int)result.StatusCode, result.Description);
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteUserAsync()
         {
-            if (await _sender.Send(new DeleteUserCommand(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))) == Core.Enums.TransactionResultType.Done)
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var result = await _sender.Send(new DeleteUserCommand(userId));
+            if (result.Success)
             {
-                Log.Information($"User {User.FindFirstValue(ClaimTypes.NameIdentifier)} deleted.");
-                return Ok("User deleted successfully.");
+                Log.Information($"User {userId} deleted.");
+                return StatusCode((int)result.StatusCode, result.Description);
             }
-            else if (await _sender.Send(new DeleteUserCommand(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
-            return BadRequest("Something went wrong while deleting the user.");
+            return StatusCode((int)result.StatusCode, result.Description);
         }
     }
 }
