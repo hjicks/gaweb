@@ -24,14 +24,11 @@ namespace MASsenger.Application.Commands.SessionCommands
             var session = await _sessionRepository.GetByIdAsync(request.sessionId);
             if (session == null)
             {
-                return new Result<TokensResponse> 
+                return new Result<TokensResponse>
                 {
                     Success = false,
                     StatusCode = System.Net.HttpStatusCode.NotFound,
-                    Response = new TokensResponse
-                    {
-                        Message = "Session not found."
-                    }
+                    Description = "Session not found."
                 }; 
             }
             if (session.Token != request.refreshToken)
@@ -40,10 +37,7 @@ namespace MASsenger.Application.Commands.SessionCommands
                 {
                     Success = false,
                     StatusCode = System.Net.HttpStatusCode.Unauthorized,
-                    Response = new TokensResponse
-                    {
-                        Message = "FBI, open up!"
-                    }
+                    Description = "FBI, open up!"
                 };
             }
             if (session.ExpiresAt < DateTime.Now)
@@ -52,10 +46,7 @@ namespace MASsenger.Application.Commands.SessionCommands
                 {
                     Success = false,
                     StatusCode = System.Net.HttpStatusCode.Forbidden,
-                    Response = new TokensResponse
-                    {
-                        Message = "Session is expired, please login."
-                    }
+                    Description = "Session is expired, please login."
                 };
             }
             

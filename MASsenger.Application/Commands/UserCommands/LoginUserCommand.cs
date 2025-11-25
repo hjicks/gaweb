@@ -27,11 +27,8 @@ namespace MASsenger.Application.Commands.UserCommands
             if (dbUser == null) return new Result<TokensResponse>
             {
                 Success = false,
-                Response = new TokensResponse
-                {
-                    Message = "Username or password is incorrect."
-                },
-                StatusCode = System.Net.HttpStatusCode.Unauthorized
+                StatusCode = System.Net.HttpStatusCode.Unauthorized,
+                Description = "Username or password is incorrect."
             };
 
             using var hmac = new HMACSHA512(dbUser.PasswordSalt);
@@ -39,11 +36,8 @@ namespace MASsenger.Application.Commands.UserCommands
             if (!computedHash.SequenceEqual(dbUser.PasswordHash)) return new Result<TokensResponse>
             {
                 Success = false,
-                Response = new TokensResponse
-                {
-                    Message = "Username or password is incorrect."
-                },
-                StatusCode = System.Net.HttpStatusCode.Unauthorized
+                StatusCode = System.Net.HttpStatusCode.Unauthorized,
+                Description = "Username or password is incorrect."
             };
 
             var session = new Session
@@ -57,13 +51,13 @@ namespace MASsenger.Application.Commands.UserCommands
             return new Result<TokensResponse>
             {
                 Success = true,
+                StatusCode = System.Net.HttpStatusCode.OK,
+                Description = "Login successful.",
                 Response = new TokensResponse
                 {
                     Jwt = _jwtService.GetJwt(dbUser.Id, dbUser.Id == 1 ? "Admin" : "User"),
-                    RefreshToken = session.Token.ToString(),
-                    Message = "Login successful."
-                },
-                StatusCode = System.Net.HttpStatusCode.OK
+                    RefreshToken = session.Token.ToString()
+                }
             };
         }
     }

@@ -38,7 +38,7 @@ namespace MASsenger.Api.Controllers
                 Log.Information($"User {userCred.Username} logged in.");
                 return StatusCode((int)result.StatusCode, result.Response.Jwt);
             }
-            return StatusCode((int)result.StatusCode, result.Response.Message);
+            return StatusCode((int)result.StatusCode, result.Description);
         }
 
         [HttpGet]

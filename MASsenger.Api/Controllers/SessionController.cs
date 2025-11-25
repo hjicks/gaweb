@@ -27,7 +27,7 @@ namespace MASsenger.Api.Controllers
                 return StatusCode((int)result.StatusCode, result.Response.Jwt);
             }
             Log.Information($"Unsuccessful attempt to refresh session {sessionId}.");
-            return StatusCode((int)result.StatusCode, result.Response.Message);
+            return StatusCode((int)result.StatusCode, result.Description);
         }
     }
 }
