@@ -2,7 +2,6 @@
 using MASsenger.Application.Interfaces;
 using MASsenger.Core.Entities;
 using MediatR;
-using System.Security.Claims;
 
 namespace MASsenger.Application.Queries.BotQueries
 {
@@ -23,12 +22,7 @@ namespace MASsenger.Application.Queries.BotQueries
 
             if (dbBot.Token.SequenceEqual(request.bot.Token)) return "error";
 
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Sid, dbBot.Id.ToString()),
-            };
-            claims.Add(new Claim(ClaimTypes.Role, "Bot"));
-            return _jwtService.GetJwt(claims);
+            return _jwtService.GetJwt(dbBot.Id, "Bot");
         }
     }
 }

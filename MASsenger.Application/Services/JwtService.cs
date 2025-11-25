@@ -14,11 +14,17 @@ namespace MASsenger.Application.Services
             _jwtOptions = jwtOptions;
         }
 
-        public string GetJwt(List<Claim> claims)
+        public string GetJwt(Int32 baseUserId, string role)
         {
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_jwtOptions.Key));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, baseUserId.ToString()),
+                new Claim(ClaimTypes.Role, role)
+            };
 
             var token = new JwtSecurityToken(
                 claims: claims,

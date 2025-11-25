@@ -3,7 +3,6 @@ using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
 using MASsenger.Core.Entities;
 using MediatR;
-using System.Security.Claims;
 using System.Security.Cryptography;
 
 namespace MASsenger.Application.Commands.UserCommands
@@ -55,18 +54,12 @@ namespace MASsenger.Application.Commands.UserCommands
 
             await _unitOfWork.SaveAsync();
 
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, dbUser.Id.ToString()),
-            };
-            if (dbUser.Id == 1) claims.Add(new Claim(ClaimTypes.Role, "Admin"));
-            claims.Add(new Claim(ClaimTypes.Role, "User"));
             return new Result<TokensResponse>
             {
                 Success = true,
                 Response = new TokensResponse
                 {
-                    Jwt = _jwtService.GetJwt(claims),
+                    Jwt = _jwtService.GetJwt(dbUser.Id, dbUser.Id == 1 ? "Admin" : "User"),
                     RefreshToken = session.Token.ToString(),
                     Message = "Login successful."
                 },

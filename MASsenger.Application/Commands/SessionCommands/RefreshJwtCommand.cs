@@ -1,7 +1,6 @@
 ﻿using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
 using MediatR;
-using System.Security.Claims;
 
 namespace MASsenger.Application.Commands.SessionCommands
 {
@@ -60,19 +59,13 @@ namespace MASsenger.Application.Commands.SessionCommands
                 };
             }
             
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, session.UserId.ToString()),
-            };
-            if (session.UserId == 1) claims.Add(new Claim(ClaimTypes.Role, "Admin"));
-            claims.Add(new Claim(ClaimTypes.Role, "User"));
             return new Result<TokensResponse>
             {
                 Success = true,
                 StatusCode= System.Net.HttpStatusCode.OK,
                 Response = new TokensResponse
                 {
-                    Jwt = _jwtService.GetJwt(claims),
+                    Jwt = _jwtService.GetJwt(session.UserId, session.UserId == 1 ? "Admin" : "User"),
                 }
             };
         }

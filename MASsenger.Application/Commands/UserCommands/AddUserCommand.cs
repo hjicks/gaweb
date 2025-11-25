@@ -2,7 +2,6 @@
 using MASsenger.Application.Interfaces;
 using MASsenger.Core.Entities;
 using MediatR;
-using System.Security.Claims;
 using System.Security.Cryptography;
 
 namespace MASsenger.Application.Commands.UserCommands
@@ -42,13 +41,8 @@ namespace MASsenger.Application.Commands.UserCommands
            
             await _unitOfWork.SaveAsync();
 
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, newUser.Id.ToString()),
-            };
-            if (newUser.Id == 1) claims.Add(new Claim(ClaimTypes.Role, "Admin"));
-            claims.Add(new Claim(ClaimTypes.Role, "User"));
-            return (_jwtService.GetJwt(claims), session.Token.ToString());
+            return (_jwtService.GetJwt(newUser.Id, newUser.Id == 1 ? "Admin" : "User"),
+                session.Token.ToString());
         }
     }
 }
