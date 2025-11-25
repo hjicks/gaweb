@@ -1,7 +1,7 @@
 ﻿using MASsenger.Application.Dtos.Login;
 using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
-using MASsenger.Core.Entities;
+using MASsenger.Core.Entities.UserEntities;
 using MediatR;
 using System.Security.Cryptography;
 

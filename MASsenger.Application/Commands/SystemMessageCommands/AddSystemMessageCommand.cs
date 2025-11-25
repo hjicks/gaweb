@@ -1,6 +1,7 @@
 ﻿using MASsenger.Application.Dtos.Create;
 using MASsenger.Application.Interfaces;
-using MASsenger.Core.Entities;
+using MASsenger.Core.Entities.ChatEntities;
+using MASsenger.Core.Entities.MessageEntities;
 using MASsenger.Core.Enums;
 using MediatR;
 

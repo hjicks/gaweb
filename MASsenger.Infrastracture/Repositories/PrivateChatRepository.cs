@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using MASsenger.Application.Interfaces;
-using MASsenger.Core.Entities;
+using MASsenger.Core.Entities.ChatEntities;
 using MASsenger.Infrastracture.Database;
 using MASsenger.Infrastracture.Repositories.Base;
 

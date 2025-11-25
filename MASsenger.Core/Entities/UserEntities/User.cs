@@ -1,4 +1,6 @@
-﻿namespace MASsenger.Core.Entities
+﻿using MASsenger.Core.Entities.ChatEntities;
+
+namespace MASsenger.Core.Entities.UserEntities
 {
     public class User : BaseUser
     {

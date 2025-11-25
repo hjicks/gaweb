@@ -2,7 +2,7 @@ using MASsenger.Application.Commands.UserCommands;
 using MASsenger.Application.Dtos.Login;
 using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
-using MASsenger.Core.Entities;
+using MASsenger.Core.Entities.UserEntities;
 using Moq;
 using System.Security.Cryptography;
 

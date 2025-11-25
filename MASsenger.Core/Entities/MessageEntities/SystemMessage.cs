@@ -1,4 +1,4 @@
-﻿namespace MASsenger.Core.Entities
+﻿namespace MASsenger.Core.Entities.MessageEntities
 {
     public class SystemMessage : BaseMessage
     {

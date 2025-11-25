@@ -1,4 +1,4 @@
-﻿using MASsenger.Core.Entities;
+﻿using MASsenger.Core.Entities.UserEntities;
 
 namespace MASsenger.Application.Interfaces
 {

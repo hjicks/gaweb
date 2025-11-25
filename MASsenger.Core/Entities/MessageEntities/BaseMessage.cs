@@ -1,6 +1,7 @@
 using MASsenger.Core.Entities.Base;
+using MASsenger.Core.Entities.ChatEntities;
 
-namespace MASsenger.Core.Entities
+namespace MASsenger.Core.Entities.MessageEntities
 {
     public class BaseMessage : BaseEntity
     {
