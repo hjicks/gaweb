@@ -5,16 +5,16 @@ namespace MASsenger.Infrastracture.Repositories.Base
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly EfDbContext _context;
+        private readonly EfDbContext _efDbContext;
 
-        public UnitOfWork(EfDbContext context)
+        public UnitOfWork(EfDbContext efDbContext)
         {
-            _context = context;
+            _efDbContext = efDbContext;
         }
 
         public async Task SaveAsync()
         {
-            await _context.SaveChangesAsync();
+            await _efDbContext.SaveChangesAsync();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace MASsenger.Infrastracture.Repositories
     public class PrivateChatRepository : BaseRepository<PrivateChat>, IPrivateChatRepository
     {
         private readonly DapperDbContext _dapperDbContext;
-        public PrivateChatRepository(EfDbContext efContext, DapperDbContext dapperDbContext) : base(efContext)
+        public PrivateChatRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext) : base(efDbContext)
         {
             _dapperDbContext = dapperDbContext;
         }

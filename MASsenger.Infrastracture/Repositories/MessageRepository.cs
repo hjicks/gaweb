@@ -9,7 +9,7 @@ namespace MASsenger.Infrastracture.Repositories
     public class MessageRepository : BaseRepository<Message>, IMessageRepository
     {
         private readonly DapperDbContext _dapperDbContext;
-        public MessageRepository(EfDbContext efContext, DapperDbContext dapperDbContext) : base(efContext)
+        public MessageRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext) : base(efDbContext)
         {
             _dapperDbContext = dapperDbContext;
         }

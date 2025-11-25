@@ -9,7 +9,7 @@ namespace MASsenger.Infrastracture.Repositories
     public class BotRepository : BaseRepository<Bot>, IBotRepository
     {
         private readonly DapperDbContext _dapperDbContext;
-        public BotRepository(EfDbContext efContext, DapperDbContext dapperDbContext) : base(efContext)
+        public BotRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext) : base(efDbContext)
         {
             _dapperDbContext = dapperDbContext;
         }

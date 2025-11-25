@@ -6,30 +6,30 @@ namespace MASsenger.Infrastracture.Repositories.Base
     public class BaseRepository<TEntity> : IBaseRepository<TEntity>
         where TEntity : class
     {
-        private readonly EfDbContext _efContext;
-        public BaseRepository(EfDbContext efContext)
+        private readonly EfDbContext _efDbContext;
+        public BaseRepository(EfDbContext efDbContext)
         {
-            _efContext = efContext;
+            _efDbContext = efDbContext;
         }
 
         public async Task<TEntity?> GetByIdAsync(Int32 entityId)
         {
-            return await _efContext.Set<TEntity>().FindAsync(entityId);
+            return await _efDbContext.Set<TEntity>().FindAsync(entityId);
         }
 
         public async Task AddAsync(TEntity entity)
         {
-            await _efContext.Set<TEntity>().AddAsync(entity);
+            await _efDbContext.Set<TEntity>().AddAsync(entity);
         }
 
         public void Update(TEntity entity)
         {
-            _efContext.Set<TEntity>().Update(entity);
+            _efDbContext.Set<TEntity>().Update(entity);
         }
 
         public void Delete(TEntity entity)
         {
-            _efContext.Set<TEntity>().Remove(entity);
+            _efDbContext.Set<TEntity>().Remove(entity);
         }
     }
 }
