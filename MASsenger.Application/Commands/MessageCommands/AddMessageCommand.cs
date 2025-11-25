@@ -36,8 +36,7 @@ namespace MASsenger.Application.Commands.MessageCommands
             {
                 Sender = sender,
                 Destination = destination,
-                Text = request.msg.Text,
-                SentTime = request.msg.SentTime
+                Text = request.msg.Text
             };
 
             await _messageRepository.AddAsync(newMessage);

@@ -27,8 +27,7 @@ namespace MASsenger.Application.Commands.SystemMessageCommands
             var newMessage = new SystemMessage
             {
                 Destination = destination,
-                Text = request.msg.Text,
-                SentTime = request.msg.SentTime
+                Text = request.msg.Text
             };
 
             await _messageRepository.AddAsync(newMessage);

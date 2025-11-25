@@ -17,7 +17,7 @@ namespace MASsenger.Application.Queries.MessageQueries
             return (await _messageRepository.GetAllAsync()).Select(m => new MessageReadDto
             {
                 Text = m.Text,
-                SentTime = m.SentTime,
+                CreatedAt = m.CreatedAt,
                 SenderID = m.Sender.Id,
                 DestinationID = m.Destination.Id,
             }).ToList(); ;
