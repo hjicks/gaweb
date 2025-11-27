@@ -29,9 +29,10 @@ namespace MASsenger.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddPrivateChatAsync()
+        public async Task<IActionResult> AddPrivateChatAsync(Int32 starterId, Int32 receiverId)
         {
-            if (await _sender.Send(new AddPrivateChatCommand()) == Core.Enums.TransactionResultType.Done) return Ok("PrivateChat added successfully.");
+            if (await _sender.Send(new AddPrivateChatCommand(starterId, receiverId)) == Core.Enums.TransactionResultType.Done) return Ok("PrivateChat added successfully.");
+            else if (await _sender.Send(new AddPrivateChatCommand(starterId, receiverId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id(s)");
             return BadRequest("Something went wrong while saving the privateChat.");
         }
 
