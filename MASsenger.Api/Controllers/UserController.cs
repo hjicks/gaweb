@@ -1,4 +1,5 @@
-﻿using MASsenger.Application.Commands.UserCommands;
+﻿using MASsenger.Application.Commands.SessionCommands;
+using MASsenger.Application.Commands.UserCommands;
 using MASsenger.Application.Dtos.Create;
 using MASsenger.Application.Dtos.Login;
 using MASsenger.Application.Dtos.Read;
@@ -26,7 +27,7 @@ namespace MASsenger.Api.Controllers
         [HttpPost("login"), AllowAnonymous]
         public async Task<IActionResult> Login(UserLoginDto userCred)
         {
-            var result = await _sender.Send(new LoginUserCommand(userCred));
+            var result = await _sender.Send(new LoginCommand(userCred));
             if (result.Success)
             {
                 var cookieOptions = new CookieOptions

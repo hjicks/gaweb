@@ -14,6 +14,5 @@ namespace MASsenger.Core.Entities.UserEntities
 
         // many-to-many relationships
         public ICollection<Bot> BotsJoined { get; set; } = new List<Bot>();
-        public ICollection<BaseUser> Blocked { get; set; } = new List<BaseUser>();
     }
 }

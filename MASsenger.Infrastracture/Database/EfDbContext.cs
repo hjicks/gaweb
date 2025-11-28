@@ -56,15 +56,18 @@ namespace MASsenger.Infrastracture.Database
 
             modelBuilder.Entity<ChannelChat>()
                 .HasMany(e => e.Members)
-                .WithMany(e => e.ChannelsJoined);
+                .WithMany(e => e.ChannelsJoined)
+                .UsingEntity(join => join.ToTable("ChannelsMembers"));
 
             modelBuilder.Entity<ChannelChat>()
                 .HasMany(e => e.Admins)
-                .WithMany(e => e.ChannelsManaged);
+                .WithMany(e => e.ChannelsManaged)
+                .UsingEntity(join => join.ToTable("ChannelsAdmins"));
 
             modelBuilder.Entity<ChannelChat>()
                 .HasMany(e => e.Banned)
-                .WithMany(e => e.ChannelsBannedFrom);
+                .WithMany(e => e.ChannelsBannedFrom)
+                .UsingEntity(join => join.ToTable("ChannelsBannedUsers"));
         }
     }
 }

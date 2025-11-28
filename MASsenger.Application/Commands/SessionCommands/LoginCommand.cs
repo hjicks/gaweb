@@ -5,16 +5,16 @@ using MASsenger.Core.Entities.UserEntities;
 using MediatR;
 using System.Security.Cryptography;
 
-namespace MASsenger.Application.Commands.UserCommands
+namespace MASsenger.Application.Commands.SessionCommands
 {
-    public record LoginUserCommand(UserLoginDto User) : IRequest<Result<TokensResponse>>;
-    public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, Result<TokensResponse>>
+    public record LoginCommand(UserLoginDto User) : IRequest<Result<TokensResponse>>;
+    public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<TokensResponse>>
     {
         private readonly IUserRepository _userRepository;
         private readonly ISessionRepository _sessionRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IJwtService _jwtService;
-        public LoginUserCommandHandler(IUserRepository userRepository, ISessionRepository sessionRepository,
+        public LoginCommandHandler(IUserRepository userRepository, ISessionRepository sessionRepository,
             IUnitOfWork unitOfWork, IJwtService jwtService)
         {
             _userRepository = userRepository;
@@ -22,7 +22,7 @@ namespace MASsenger.Application.Commands.UserCommands
             _unitOfWork = unitOfWork;
             _jwtService = jwtService;
         }
-        public async Task<Result<TokensResponse>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
+        public async Task<Result<TokensResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             var dbUser = await _userRepository.GetByUsernameAsync(request.User.Username);
             if (dbUser == null)

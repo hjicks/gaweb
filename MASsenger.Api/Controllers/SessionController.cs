@@ -8,12 +8,25 @@ namespace MASsenger.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "User")]
     public class SessionController : ControllerBase
     {
         private readonly ISender _sender;
         public SessionController(ISender sender)
         {
             _sender = sender;
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Logout([FromBody] Int32 sessionId)
+        {
+            var result = await _sender.Send(new LogoutCommand(sessionId));
+            if (result.Success)
+            {
+                Log.Information($"Session with id {sessionId} is expired.");
+                return StatusCode((int)result.StatusCode, result.Description);
+            }
+            return StatusCode((int)result.StatusCode, result.Description);
         }
 
         [HttpPost, AllowAnonymous]
