@@ -1,4 +1,5 @@
 ﻿using MASsenger.Application.Commands.SessionCommands;
+using MASsenger.Application.Dtos.Login;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,26 @@ namespace MASsenger.Api.Controllers
             _sender = sender;
         }
 
-        [HttpPut]
+        [HttpPost("login"), AllowAnonymous]
+        public async Task<IActionResult> Login(UserLoginDto userCred)
+        {
+            var result = await _sender.Send(new LoginCommand(userCred));
+            if (result.Success)
+            {
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTime.Now.AddDays(7)
+                };
+                Response.Cookies.Append("refreshToken", result.Response.RefreshToken, cookieOptions);
+                Log.Information($"User {userCred.Username} logged in.");
+                return StatusCode((int)result.StatusCode, result.Response.Jwt);
+            }
+            Log.Information($"Unsuccessful login attempt with username {userCred.Username}.");
+            return StatusCode((int)result.StatusCode, result.Description);
+        }
+
+        [HttpPut("logout")]
         public async Task<IActionResult> Logout([FromBody] Int32 sessionId)
         {
             var result = await _sender.Send(new LogoutCommand(sessionId));
@@ -29,7 +49,7 @@ namespace MASsenger.Api.Controllers
             return StatusCode((int)result.StatusCode, result.Description);
         }
 
-        [HttpPost, AllowAnonymous]
+        [HttpPost("refresh"), AllowAnonymous]
         public async Task<IActionResult> RefreshJwt([FromBody] Int32 sessionId)
         {
             Guid.TryParse(Request.Cookies["refreshToken"], out Guid refreshToken);

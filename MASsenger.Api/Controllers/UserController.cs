@@ -1,7 +1,5 @@
-﻿using MASsenger.Application.Commands.SessionCommands;
-using MASsenger.Application.Commands.UserCommands;
+﻿using MASsenger.Application.Commands.UserCommands;
 using MASsenger.Application.Dtos.Create;
-using MASsenger.Application.Dtos.Login;
 using MASsenger.Application.Dtos.Read;
 using MASsenger.Application.Dtos.Update;
 using MASsenger.Application.Queries.UserQueries;
@@ -22,25 +20,6 @@ namespace MASsenger.Api.Controllers
         public UserController(ISender sender)
         {
             _sender = sender;
-        }
-
-        [HttpPost("login"), AllowAnonymous]
-        public async Task<IActionResult> Login(UserLoginDto userCred)
-        {
-            var result = await _sender.Send(new LoginCommand(userCred));
-            if (result.Success)
-            {
-                var cookieOptions = new CookieOptions
-                {
-                    HttpOnly = true,
-                    Expires = DateTime.Now.AddDays(7)
-                };
-                Response.Cookies.Append("refreshToken", result.Response.RefreshToken, cookieOptions);
-                Log.Information($"User {userCred.Username} logged in.");
-                return StatusCode((int)result.StatusCode, result.Response.Jwt);
-            }
-            Log.Information($"Unsuccessful login attempt with username {userCred.Username}.");
-            return StatusCode((int)result.StatusCode, result.Description);
         }
 
         [HttpGet]
