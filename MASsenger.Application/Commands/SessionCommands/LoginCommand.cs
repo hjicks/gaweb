@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using MASsenger.Application.Dtos.Login;
+﻿using MASsenger.Application.Dtos.Login;
 using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
 using MASsenger.Core.Entities.UserEntities;
@@ -11,15 +10,13 @@ namespace MASsenger.Application.Commands.SessionCommands
     public record LoginCommand(UserLoginDto User) : IRequest<Result<TokensResponse>>;
     public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<TokensResponse>>
     {
-        private readonly IValidator<LoginCommand> _loginCommandValidator;
         private readonly IUserRepository _userRepository;
         private readonly ISessionRepository _sessionRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IJwtService _jwtService;
-        public LoginCommandHandler(IValidator<LoginCommand> loginCommandValidator, IUserRepository userRepository,
-            ISessionRepository sessionRepository, IUnitOfWork unitOfWork, IJwtService jwtService)
+        public LoginCommandHandler(IUserRepository userRepository, ISessionRepository sessionRepository,
+            IUnitOfWork unitOfWork, IJwtService jwtService)
         {
-            _loginCommandValidator = loginCommandValidator;
             _userRepository = userRepository;
             _sessionRepository = sessionRepository;
             _unitOfWork = unitOfWork;
@@ -27,15 +24,6 @@ namespace MASsenger.Application.Commands.SessionCommands
         }
         public async Task<Result<TokensResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var validation = await _loginCommandValidator.ValidateAsync(request);
-            if (!validation.IsValid)
-                return new Result<TokensResponse>
-                {
-                    Success = false,
-                    StatusCode = System.Net.HttpStatusCode.Conflict,
-                    Description = validation.ToString()
-                };
-
             var dbUser = await _userRepository.GetByUsernameAsync(request.User.Username);
             if (dbUser == null)
                 return new Result<TokensResponse>

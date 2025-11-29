@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MASsenger.Application.Interfaces;
+using MASsenger.Application.Pipelines;
 using MASsenger.Application.Services;
 using MASsenger.Core.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,6 +18,7 @@ namespace MASsenger.Application
             services.AddMediatR(configuration =>
             {
                 configuration.RegisterServicesFromAssembly(typeof(ApplicationDI).Assembly);
+                configuration.AddOpenBehavior(typeof(ValidationBehavior<,>));
             });
 
             services.AddValidatorsFromAssembly(typeof(ApplicationDI).Assembly);
