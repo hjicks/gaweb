@@ -1,4 +1,5 @@
-﻿using MASsenger.Application.Interfaces;
+﻿using FluentValidation;
+using MASsenger.Application.Interfaces;
 using MASsenger.Application.Services;
 using MASsenger.Core.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,6 +18,8 @@ namespace MASsenger.Application
             {
                 configuration.RegisterServicesFromAssembly(typeof(ApplicationDI).Assembly);
             });
+
+            services.AddValidatorsFromAssembly(typeof(ApplicationDI).Assembly);
 
             services.AddSingleton<IConfigureOptions<JwtBearerOptions>>(provider =>
             {
