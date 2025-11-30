@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using System.Reflection;
 
 namespace MASsenger.Application.Pipelines
 {
@@ -19,17 +20,33 @@ namespace MASsenger.Application.Pipelines
             RequestHandlerDelegate<TResponse> next,
             CancellationToken cancellationToken)
         {
+            if (!_validators.Any()) return await next();
+
             var context = new ValidationContext<TRequest>(request);
 
             var validationResults = await Task.WhenAll(
                 _validators.Select(validator => validator.ValidateAsync(context)));
 
-            var errors = validationResults
-                .SelectMany(validationResult => validationResult.Errors)
-                .Where(validationFailure => validationFailure != null)
-                .ToList();
+            string description = string.Join(Environment.NewLine,
+                validationResults
+                    .SelectMany(validationResult => validationResult.Errors)
+                    .Where(validationFailure => validationFailure != null)
+                    .Select(failure => failure.ErrorMessage));
 
-            return errors.Count != 0 ? throw new ValidationException(errors) : await next();
+            if (description.Any())
+            {
+                var resultType = typeof(TResponse);
+                var result = Activator.CreateInstance(resultType);
+                foreach (PropertyInfo property in resultType.GetProperties())
+                {
+                    if (property.Name == "Success") property.SetValue(result, false, null);
+                    if (property.Name == "StatusCode") property.SetValue(result, System.Net.HttpStatusCode.Conflict, null);
+                    if (property.Name == "Description") property.SetValue(result, description, null);
+                }
+                return (TResponse)result!;
+            }
+
+            return await next();
         }
     }
 }
