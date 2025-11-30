@@ -8,10 +8,9 @@ namespace MASsenger.Infrastracture.Repositories
 {
     public class SystemMessageRepository : BaseRepository<SystemMessage>, ISystemMessageRepository
     {
-        private readonly DapperDbContext _dapperDbContext;
-        public SystemMessageRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext) : base(efDbContext)
+        public SystemMessageRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext) : base(efDbContext, dapperDbContext)
         {
-            _dapperDbContext = dapperDbContext;
+
         }
 
         public async Task<IEnumerable<SystemMessage>> GetAllAsync()

@@ -8,10 +8,9 @@ namespace MASsenger.Infrastracture.Repositories
 {
     public class ChannelChatRepository : BaseRepository<ChannelChat>, IChannelChatRepository
     {
-        private readonly DapperDbContext _dapperDbContext;
-        public ChannelChatRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext) : base(efDbContext)
+        public ChannelChatRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext) : base(efDbContext, dapperDbContext)
         {
-            _dapperDbContext = dapperDbContext;
+
         }
 
         public async Task<IEnumerable<ChannelChat>> GetAllAsync()

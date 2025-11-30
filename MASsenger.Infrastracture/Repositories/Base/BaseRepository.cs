@@ -6,10 +6,12 @@ namespace MASsenger.Infrastracture.Repositories.Base
     public class BaseRepository<TEntity> : IBaseRepository<TEntity>
         where TEntity : class
     {
-        private readonly EfDbContext _efDbContext;
-        public BaseRepository(EfDbContext efDbContext)
+        protected readonly EfDbContext _efDbContext;
+        protected readonly DapperDbContext _dapperDbContext;
+        public BaseRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext)
         {
             _efDbContext = efDbContext;
+            _dapperDbContext = dapperDbContext;
         }
 
         public async Task<TEntity?> GetByIdAsync(Int32 entityId)
