@@ -19,12 +19,11 @@ namespace MASsenger.Api.Controllers
      * with exception the of Login()
      */
     [Authorize(Roles = "User")]
-    public class BotController : ControllerBase
+    public class BotController : BaseController
     {
-        private readonly ISender _sender;
-        public BotController(ISender sender)
+        public BotController(ISender sender) : base(sender) 
         {
-            _sender = sender;
+
         }
 
         [HttpPost("login"), AllowAnonymous]

@@ -1,24 +1,19 @@
 ﻿using MASsenger.Application.Commands.ChannelChatCommands;
 using MASsenger.Application.Commands.PrivateChatCommands;
-using MASsenger.Application.Dtos.Create;
 using MASsenger.Application.Dtos.Read;
-using MASsenger.Application.Queries.ChannelChatQueries;
 using MASsenger.Application.Queries.PrivateChatQueries;
-using MASsenger.Core.Entities;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MASsenger.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PrivateChatController : ControllerBase
+    public class PrivateChatController : BaseController
     {
-        private readonly ISender _sender;
-        public PrivateChatController(ISender sender)
+        public PrivateChatController(ISender sender) : base(sender)
         {
-            _sender = sender;
+
         }
 
         [HttpGet]

@@ -10,12 +10,11 @@ namespace MASsenger.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "User")]
-    public class SessionController : ControllerBase
+    public class SessionController : BaseController
     {
-        private readonly ISender _sender;
-        public SessionController(ISender sender)
+        public SessionController(ISender sender) : base(sender)
         {
-            _sender = sender;
+
         }
 
         [HttpPost("login"), AllowAnonymous]

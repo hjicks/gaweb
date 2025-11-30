@@ -14,12 +14,11 @@ namespace MASsenger.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "User")]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
-        private readonly ISender _sender;
-        public UserController(ISender sender)
+        public UserController(ISender sender) : base(sender)
         {
-            _sender = sender;
+
         }
 
         [HttpGet]
