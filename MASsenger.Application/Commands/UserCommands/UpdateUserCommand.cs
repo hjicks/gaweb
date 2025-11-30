@@ -40,7 +40,7 @@ namespace MASsenger.Application.Commands.UserCommands
             {
                 Success = true,
                 StatusCode = StatusCodes.Status200OK,
-                Description = "User updated successfully."
+                Response = new BaseResponse("User updated successfully.")
             };
         }
     }

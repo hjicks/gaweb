@@ -28,7 +28,7 @@ namespace MASsenger.Api.Controllers
         public async Task<IActionResult> GetAllUsers()
         {
             var result = await _sender.Send(new GetAllUsersQuery());
-            return StatusCode(result.StatusCode, result.Response.Entities);
+            return StatusCode(result.StatusCode, new { result.Success, result.Response.Entities });
         }
 
         [HttpPost, AllowAnonymous]
@@ -44,9 +44,9 @@ namespace MASsenger.Api.Controllers
                 };
                 Response.Cookies.Append("refreshToken", result.Response.RefreshToken, cookieOptions);
                 Log.Information($"User {user.Username} added.");
-                return StatusCode(result.StatusCode, result.Response.Jwt);
+                return StatusCode(result.StatusCode, new { result.Success, result.Response.Jwt });
             }
-            return StatusCode(result.StatusCode, result.Description);
+            return StatusCode(result.StatusCode, new { result.Success, result.Description });
         }
 
         [HttpPut]
@@ -57,9 +57,9 @@ namespace MASsenger.Api.Controllers
             if (result.Success)
             {
                 Log.Information($"User {userId} updated.");
-                return StatusCode(result.StatusCode, result.Description);
+                return StatusCode(result.StatusCode, new { result.Success, result.Response.Message });
             }
-            return StatusCode(result.StatusCode, result.Description);
+            return StatusCode(result.StatusCode, new { result.Success, result.Description });
         }
 
         [HttpDelete]
@@ -70,9 +70,9 @@ namespace MASsenger.Api.Controllers
             if (result.Success)
             {
                 Log.Information($"User {userId} deleted.");
-                return StatusCode(result.StatusCode, result.Description);
+                return StatusCode(result.StatusCode, new { result.Success, result.Response.Message });
             }
-            return StatusCode(result.StatusCode, result.Description);
+            return StatusCode(result.StatusCode, new { result.Success, result.Description });
         }
     }
 }

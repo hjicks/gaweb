@@ -34,7 +34,7 @@ namespace MASsenger.Application.Commands.SessionCommands
             {
                 Success = true,
                 StatusCode = StatusCodes.Status200OK,
-                Description = "Log out successful."
+                Response = new BaseResponse("Log out successful.")
             };
         }
     }

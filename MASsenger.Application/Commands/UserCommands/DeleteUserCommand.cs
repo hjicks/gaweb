@@ -34,7 +34,7 @@ namespace MASsenger.Application.Commands.UserCommands
             {
                 Success = true,
                 StatusCode = StatusCodes.Status200OK,
-                Description = "User deleted successfully."
+                Response = new BaseResponse("User deleted successfully.")
             };
         }
     }

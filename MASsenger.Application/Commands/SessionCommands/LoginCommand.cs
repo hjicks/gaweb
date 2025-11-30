@@ -56,7 +56,6 @@ namespace MASsenger.Application.Commands.SessionCommands
             {
                 Success = true,
                 StatusCode = StatusCodes.Status200OK,
-                Description = "Login successful.",
                 Response = new TokensResponse(_jwtService.GetJwt(dbUser.Id, roles), session.Token)
             };
         }
