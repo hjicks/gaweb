@@ -2,6 +2,7 @@
 using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace MASsenger.Application.Queries.UserQueries
 {
@@ -18,7 +19,7 @@ namespace MASsenger.Application.Queries.UserQueries
             return new Result<GetEntityResponse<UserReadDto>>
             {
                 Success = true,
-                StatusCode = System.Net.HttpStatusCode.OK,
+                StatusCode = StatusCodes.Status200OK,
                 Response = new GetEntityResponse<UserReadDto>(
                     (await _userRepository.GetAllAsync()).Select(u => new UserReadDto
                     {

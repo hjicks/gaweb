@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using System.Reflection;
 
 namespace MASsenger.Application.Pipelines
@@ -40,7 +41,7 @@ namespace MASsenger.Application.Pipelines
                 foreach (PropertyInfo property in resultType.GetProperties())
                 {
                     if (property.Name == "Success") property.SetValue(result, false, null);
-                    if (property.Name == "StatusCode") property.SetValue(result, System.Net.HttpStatusCode.Conflict, null);
+                    if (property.Name == "StatusCode") property.SetValue(result, StatusCodes.Status409Conflict, null);
                     if (property.Name == "Description") property.SetValue(result, description, null);
                 }
                 return (TResponse)result!;

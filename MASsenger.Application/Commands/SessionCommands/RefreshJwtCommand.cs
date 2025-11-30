@@ -1,6 +1,7 @@
 ﻿using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace MASsenger.Application.Commands.SessionCommands
 {
@@ -26,21 +27,21 @@ namespace MASsenger.Application.Commands.SessionCommands
                 return new Result<TokensResponse>
                 {
                     Success = false,
-                    StatusCode = System.Net.HttpStatusCode.NotFound,
+                    StatusCode = StatusCodes.Status404NotFound,
                     Description = "Session not found."
                 }; 
             if (session.Token != request.RefreshToken)
                 return new Result<TokensResponse>
                 {
                     Success = false,
-                    StatusCode = System.Net.HttpStatusCode.Unauthorized,
+                    StatusCode = StatusCodes.Status401Unauthorized,
                     Description = "FBI, open up!"
                 };
             if (session.ExpiresAt < DateTime.Now)
                 return new Result<TokensResponse>
                 {
                     Success = false,
-                    StatusCode = System.Net.HttpStatusCode.Forbidden,
+                    StatusCode = StatusCodes.Status419AuthenticationTimeout,
                     Description = "Session is expired, please login."
                 };
 
@@ -48,7 +49,7 @@ namespace MASsenger.Application.Commands.SessionCommands
             return new Result<TokensResponse>
             {
                 Success = true,
-                StatusCode= System.Net.HttpStatusCode.OK,
+                StatusCode= StatusCodes.Status200OK,
                 Response = new TokensResponse(_jwtService.GetJwt(session.UserId, roles))
             };
         }

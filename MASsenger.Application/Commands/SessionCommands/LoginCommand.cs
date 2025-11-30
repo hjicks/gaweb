@@ -3,6 +3,7 @@ using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
 using MASsenger.Core.Entities.UserEntities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using System.Security.Cryptography;
 
 namespace MASsenger.Application.Commands.SessionCommands
@@ -29,7 +30,7 @@ namespace MASsenger.Application.Commands.SessionCommands
                 return new Result<TokensResponse>
                 {
                     Success = false,
-                    StatusCode = System.Net.HttpStatusCode.Conflict,
+                    StatusCode = StatusCodes.Status409Conflict,
                     Description = "Username or password is incorrect."
                 };
 
@@ -39,7 +40,7 @@ namespace MASsenger.Application.Commands.SessionCommands
                 return new Result<TokensResponse>
                 {
                     Success = false,
-                    StatusCode = System.Net.HttpStatusCode.Conflict,
+                    StatusCode = StatusCodes.Status409Conflict,
                     Description = "Username or password is incorrect."
                 };
 
@@ -54,7 +55,7 @@ namespace MASsenger.Application.Commands.SessionCommands
             return new Result<TokensResponse>
             {
                 Success = true,
-                StatusCode = System.Net.HttpStatusCode.OK,
+                StatusCode = StatusCodes.Status200OK,
                 Description = "Login successful.",
                 Response = new TokensResponse(_jwtService.GetJwt(dbUser.Id, roles), session.Token)
             };
