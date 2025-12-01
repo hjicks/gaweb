@@ -48,10 +48,6 @@ namespace MASsenger.Application
                 return new JwtService(provider.GetRequiredService<IOptionsSnapshot<JwtOptions>>().Value);
             });
 
-            services.AddHttpContextAccessor();
-
-            services.AddScoped<IUserService, UserService>();
-
             return services;
         }
     }
