@@ -4,6 +4,7 @@ using MASsenger.Application.Dtos.Read;
 using MASsenger.Application.Dtos.Update;
 using MASsenger.Application.Queries.ChannelChatQueries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MASsenger.Api.Controllers
@@ -19,6 +20,7 @@ namespace MASsenger.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<ChannelChatReadDto>))]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllChannelChats()
         {
             return Ok(await _sender.Send(new GetAllChannelChatsQuery()));
