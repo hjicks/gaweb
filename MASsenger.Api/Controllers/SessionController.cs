@@ -30,7 +30,7 @@ namespace MASsenger.Api.Controllers
                 };
                 Response.Cookies.Append("refreshToken", result.Response.RefreshToken, cookieOptions);
                 Log.Information($"User {userCred.Username} logged in.");
-                return StatusCode(result.StatusCode, new { result.Success, result.Response.Jwt });
+                return StatusCode(result.StatusCode, new { result.Success, result.Response });
             }
             Log.Information($"Unsuccessful login attempt with username {userCred.Username}.");
             return StatusCode(result.StatusCode, new { result.Success, result.Description });
@@ -43,7 +43,7 @@ namespace MASsenger.Api.Controllers
             if (result.Success)
             {
                 Log.Information($"Session with id {sessionId} is expired.");
-                return StatusCode(result.StatusCode, new { result.Success, result.Response.Message });
+                return StatusCode(result.StatusCode, new { result.Success, result.Response });
             }
             return StatusCode(result.StatusCode, new { result.Success, result.Description });
         }
@@ -56,7 +56,7 @@ namespace MASsenger.Api.Controllers
             if (result.Success)
             {
                 Log.Information($"Jwt of user with id {sessionId} renewed.");
-                return StatusCode(result.StatusCode, new { result.Success, result.Response.Jwt });
+                return StatusCode(result.StatusCode, new { result.Success, result.Response });
             }
             Log.Information($"Unsuccessful attempt to refresh session {sessionId}.");
             return StatusCode(result.StatusCode, new { result.Success, result.Description });
