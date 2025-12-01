@@ -1,17 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Serilog;
+﻿using Serilog;
 
 namespace MASsenger.Api.Middlewares
 {
     public class ExceptionHandlingMiddleware : IMiddleware
     {
-        private readonly ILogger<ExceptionHandlingMiddleware> _logger;
-
-        public ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> logger)
-        {
-            _logger = logger;
-        }
-
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             try
@@ -20,19 +12,17 @@ namespace MASsenger.Api.Middlewares
             }
             catch (Exception exception)
             {
-                _logger.LogError(
-                    exception, "Exception occurred: {Message}", exception.Message);
+                Log.Error("Exception occurred: {Exception}", exception);
 
-                var problemDetails = new ProblemDetails
+                var problemDetails = new
                 {
-                    Status = StatusCodes.Status500InternalServerError,
-                    Title = "Server Error"
+                    Success = false,
+                    Description = "Server Error"
                 };
 
                 context.Response.StatusCode =
                     StatusCodes.Status500InternalServerError;
 
-                Log.Information($"Exception occured.");
                 await context.Response.WriteAsJsonAsync(problemDetails);
             }
         }
