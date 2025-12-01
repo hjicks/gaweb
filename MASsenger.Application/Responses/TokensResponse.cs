@@ -2,8 +2,8 @@
 {
     public record TokensResponse : BaseResponse
     {
-        public string Jwt {  get; set; } = string.Empty;
-        public string RefreshToken { get; set; } = string.Empty;
+        public string Jwt {  get; set; } = null!;
+        public string RefreshToken { get; set; } = null!;
 
         public TokensResponse(string jwt)
         {
