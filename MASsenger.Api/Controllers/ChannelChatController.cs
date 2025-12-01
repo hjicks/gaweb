@@ -11,6 +11,7 @@ namespace MASsenger.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "User,Bot")]
     public class ChannelChatController : BaseController
     {
         public ChannelChatController(ISender sender) : base(sender)
@@ -26,7 +27,7 @@ namespace MASsenger.Api.Controllers
             return Ok(await _sender.Send(new GetAllChannelChatsQuery()));
         }
 
-        [HttpPost]
+        [HttpPost, AllowAnonymous]
         public async Task<IActionResult> AddChannelChatAsync([FromBody] ChannelChatCreateDto channelChat, Int32 ownerId)
         {
             if (await _sender.Send(new AddChannelChatCommand(channelChat, ownerId)) == Core.Enums.TransactionResultType.Done) return Ok("ChannelChat added successfully.");
