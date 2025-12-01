@@ -22,6 +22,7 @@ namespace MASsenger.Api.Controllers
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<ChannelChatReadDto>))]
         [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> GetAllChannelChats()
         {
             return Ok(await _sender.Send(new GetAllChannelChatsQuery()));
