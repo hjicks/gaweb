@@ -3,7 +3,7 @@
     public record GetEntityResponse<TEntity> : BaseResponse
 
     {
-        public IEnumerable<TEntity> Entities { get; set; } = Enumerable.Empty<TEntity>(); 
+        public IEnumerable<TEntity> Entities { get; set; } = null!; 
 
         public GetEntityResponse(IEnumerable<TEntity> entities) 
         {

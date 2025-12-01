@@ -1,6 +1,7 @@
 ﻿using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace MASsenger.Application.Commands.SessionCommands
 {
@@ -21,7 +22,7 @@ namespace MASsenger.Application.Commands.SessionCommands
                 return new Result<BaseResponse>
                 {
                     Success = false,
-                    StatusCode = System.Net.HttpStatusCode.NotFound,
+                    StatusCode = StatusCodes.Status404NotFound,
                     Description = "Session not found."
                 };
 
@@ -32,8 +33,8 @@ namespace MASsenger.Application.Commands.SessionCommands
             return new Result<BaseResponse>
             {
                 Success = true,
-                StatusCode = System.Net.HttpStatusCode.OK,
-                Description = "Log out successful."
+                StatusCode = StatusCodes.Status200OK,
+                Response = new BaseResponse("Log out successful.")
             };
         }
     }

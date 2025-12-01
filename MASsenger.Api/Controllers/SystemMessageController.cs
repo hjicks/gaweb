@@ -1,8 +1,6 @@
 ﻿using MASsenger.Application.Commands.SystemMessageCommands;
 using MASsenger.Application.Dtos.Create;
-using MASsenger.Application.Dtos.Login;
 using MASsenger.Application.Dtos.Read;
-using MASsenger.Application.Dtos.Update;
 using MASsenger.Application.Queries.SystemMessageQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -14,12 +12,11 @@ namespace MASsenger.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "Admin")]
-    public class SystemMessageController : ControllerBase
+    public class SystemMessageController : BaseController
     {
-        private readonly ISender _sender;
-        public SystemMessageController(ISender sender)
+        public SystemMessageController(ISender sender) : base(sender)
         {
-            _sender = sender;
+
         }
 
         [HttpGet]

@@ -13,12 +13,11 @@ namespace MASsenger.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "User,Bot")]
-    public class MessageController : ControllerBase
+    public class MessageController : BaseController
     {
-        private readonly ISender _sender;
-        public MessageController(ISender sender)
+        public MessageController(ISender sender) : base(sender)
         {
-            _sender = sender;
+
         }
 
         [HttpGet]

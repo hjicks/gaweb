@@ -10,12 +10,11 @@ namespace MASsenger.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "User")]
-    public class SessionController : ControllerBase
+    public class SessionController : BaseController
     {
-        private readonly ISender _sender;
-        public SessionController(ISender sender)
+        public SessionController(ISender sender) : base(sender)
         {
-            _sender = sender;
+
         }
 
         [HttpPost("login"), AllowAnonymous]
@@ -31,10 +30,10 @@ namespace MASsenger.Api.Controllers
                 };
                 Response.Cookies.Append("refreshToken", result.Response.RefreshToken, cookieOptions);
                 Log.Information($"User {userCred.Username} logged in.");
-                return StatusCode((int)result.StatusCode, result.Response.Jwt);
+                return StatusCode(result.StatusCode, new { result.Success, result.Response });
             }
             Log.Information($"Unsuccessful login attempt with username {userCred.Username}.");
-            return StatusCode((int)result.StatusCode, result.Description);
+            return StatusCode(result.StatusCode, new { result.Success, result.Description });
         }
 
         [HttpPut("logout")]
@@ -44,9 +43,9 @@ namespace MASsenger.Api.Controllers
             if (result.Success)
             {
                 Log.Information($"Session with id {sessionId} is expired.");
-                return StatusCode((int)result.StatusCode, result.Description);
+                return StatusCode(result.StatusCode, new { result.Success, result.Response });
             }
-            return StatusCode((int)result.StatusCode, result.Description);
+            return StatusCode(result.StatusCode, new { result.Success, result.Description });
         }
 
         [HttpPost("refresh"), AllowAnonymous]
@@ -57,10 +56,10 @@ namespace MASsenger.Api.Controllers
             if (result.Success)
             {
                 Log.Information($"Jwt of user with id {sessionId} renewed.");
-                return StatusCode((int)result.StatusCode, result.Response.Jwt);
+                return StatusCode(result.StatusCode, new { result.Success, result.Response });
             }
             Log.Information($"Unsuccessful attempt to refresh session {sessionId}.");
-            return StatusCode((int)result.StatusCode, result.Description);
+            return StatusCode(result.StatusCode, new { result.Success, result.Description });
         }
     }
 }

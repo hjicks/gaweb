@@ -4,19 +4,17 @@ using MASsenger.Application.Dtos.Read;
 using MASsenger.Application.Dtos.Update;
 using MASsenger.Application.Queries.ChannelChatQueries;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MASsenger.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ChannelChatController : ControllerBase
+    public class ChannelChatController : BaseController
     {
-        private readonly ISender _sender;
-        public ChannelChatController(ISender sender)
+        public ChannelChatController(ISender sender) : base(sender)
         {
-            _sender = sender;
+
         }
 
         [HttpGet]

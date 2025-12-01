@@ -13,8 +13,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.36" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.35.0" />
-	<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.1.22" />
-	<PackageReference Include="Microsoft.Extensions.Identity.Core" Version="6.0.36" />
   </ItemGroup>
 
   <ItemGroup>

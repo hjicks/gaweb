@@ -17,7 +17,7 @@ namespace MASsenger.Infrastracture.Database
                 {
                     Name = "Admin",
                     Username = "Admin",
-                    PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("admin")),
+                    PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("sysadmin")),
                     PasswordSalt = hmac.Key,
                     Description = "Behold, this is the Admin.",
                     IsVerified = true
@@ -26,7 +26,7 @@ namespace MASsenger.Infrastracture.Database
                 {
                     Name = "Tester",    // this is a random user, nothing fancy
                     Username = "tester",
-                    PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("12345")),
+                    PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("12345678")),
                     PasswordSalt = hmac.Key,
                     Description = "Behold, this is the Tester."
                 };

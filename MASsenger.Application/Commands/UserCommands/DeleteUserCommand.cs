@@ -1,6 +1,7 @@
 ﻿using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace MASsenger.Application.Commands.UserCommands
 {
@@ -22,7 +23,7 @@ namespace MASsenger.Application.Commands.UserCommands
                 return new Result<BaseResponse>
                 {
                     Success = false,
-                    StatusCode = System.Net.HttpStatusCode.NotFound,
+                    StatusCode = StatusCodes.Status404NotFound,
                     Description = "User not found."
                 };
 
@@ -32,8 +33,8 @@ namespace MASsenger.Application.Commands.UserCommands
             return new Result<BaseResponse>
             {
                 Success = true,
-                StatusCode = System.Net.HttpStatusCode.OK,
-                Description = "User deleted successfully."
+                StatusCode = StatusCodes.Status200OK,
+                Response = new BaseResponse("User deleted successfully.")
             };
         }
     }

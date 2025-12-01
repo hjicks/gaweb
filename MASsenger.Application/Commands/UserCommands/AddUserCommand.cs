@@ -3,6 +3,7 @@ using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
 using MASsenger.Core.Entities.UserEntities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using System.Security.Cryptography;
 
 namespace MASsenger.Application.Commands.UserCommands
@@ -29,7 +30,7 @@ namespace MASsenger.Application.Commands.UserCommands
                 return new Result<TokensResponse>
                 {
                     Success = false,
-                    StatusCode = System.Net.HttpStatusCode.UnprocessableEntity,
+                    StatusCode = StatusCodes.Status422UnprocessableEntity,
                     Description = "Username is already taken. Please choose another."
                 };
 
@@ -56,7 +57,7 @@ namespace MASsenger.Application.Commands.UserCommands
             return new Result<TokensResponse>
             {
                 Success = true,
-                StatusCode = System.Net.HttpStatusCode.OK,
+                StatusCode = StatusCodes.Status201Created,
                 Response = new TokensResponse(_jwtService.GetJwt(newUser.Id, roles), session.Token)
             };
         }

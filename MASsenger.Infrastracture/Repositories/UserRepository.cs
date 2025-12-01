@@ -9,12 +9,9 @@ namespace MASsenger.Infrastracture.Repositories
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        private readonly EfDbContext _efDbContext;
-        private readonly DapperDbContext _dapperDbContext;
-        public UserRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext) : base(efDbContext)
+        public UserRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext) : base(efDbContext, dapperDbContext)
         {
-            _efDbContext = efDbContext;
-            _dapperDbContext = dapperDbContext;
+
         }
 
         public async Task<IEnumerable<User>> GetAllAsync()

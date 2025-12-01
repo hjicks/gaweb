@@ -7,6 +7,7 @@ namespace MASsenger.Application.Commands.SessionCommands
         public LoginCommandValidator()
         {
             RuleFor(c => c.User.Username)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                 .WithMessage("Username is required.")
                 .Length(5, 32)
@@ -15,6 +16,7 @@ namespace MASsenger.Application.Commands.SessionCommands
                 .WithMessage("Username can only contain letters, numbers and underscore.");
 
             RuleFor(c => c.User.Password)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                 .WithMessage("Password is required.")
                 .Length(8, 128)

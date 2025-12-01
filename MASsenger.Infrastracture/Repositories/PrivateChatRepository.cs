@@ -8,10 +8,9 @@ namespace MASsenger.Infrastracture.Repositories
 {
     public class PrivateChatRepository : BaseRepository<PrivateChat>, IPrivateChatRepository
     {
-        private readonly DapperDbContext _dapperDbContext;
-        public PrivateChatRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext) : base(efDbContext)
+        public PrivateChatRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext) : base(efDbContext, dapperDbContext)
         {
-            _dapperDbContext = dapperDbContext;
+            
         }
 
         public async Task<IEnumerable<PrivateChat>> GetAllAsync()

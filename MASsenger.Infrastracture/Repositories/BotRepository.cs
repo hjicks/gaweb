@@ -8,10 +8,9 @@ namespace MASsenger.Infrastracture.Repositories
 {
     public class BotRepository : BaseRepository<Bot>, IBotRepository
     {
-        private readonly DapperDbContext _dapperDbContext;
-        public BotRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext) : base(efDbContext)
+        public BotRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext) : base(efDbContext, dapperDbContext)
         {
-            _dapperDbContext = dapperDbContext;
+
         }
 
         public async Task<IEnumerable<Bot>> GetAllAsync()

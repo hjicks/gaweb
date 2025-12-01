@@ -8,10 +8,9 @@ namespace MASsenger.Infrastracture.Repositories
 {
     public class SessionRepository : BaseRepository<Session>, ISessionRepository
     {
-        private readonly EfDbContext  _efDbContext;
-        public SessionRepository(EfDbContext efDbContext) : base(efDbContext)
+        public SessionRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext) : base(efDbContext, dapperDbContext)
         {
-            _efDbContext = efDbContext;
+
         }
 
         public async Task<IEnumerable<Session>> GetAllAsync()
