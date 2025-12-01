@@ -34,7 +34,7 @@ namespace MASsenger.Application.Commands.SessionCommands
                 return new Result<TokensResponse>
                 {
                     Success = false,
-                    StatusCode = StatusCodes.Status401Unauthorized,
+                    StatusCode = StatusCodes.Status409Conflict,
                     Description = "FBI, open up!"
                 };
             if (session.ExpiresAt < DateTime.Now)

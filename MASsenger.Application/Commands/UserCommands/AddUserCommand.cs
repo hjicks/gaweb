@@ -57,7 +57,7 @@ namespace MASsenger.Application.Commands.UserCommands
             return new Result<TokensResponse>
             {
                 Success = true,
-                StatusCode = StatusCodes.Status200OK,
+                StatusCode = StatusCodes.Status201Created,
                 Response = new TokensResponse(_jwtService.GetJwt(newUser.Id, roles), session.Token)
             };
         }
