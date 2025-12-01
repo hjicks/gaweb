@@ -3,6 +3,7 @@ using MASsenger.Application.Commands.PrivateChatCommands;
 using MASsenger.Application.Dtos.Read;
 using MASsenger.Application.Queries.PrivateChatQueries;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MASsenger.Api.Controllers
@@ -18,6 +19,8 @@ namespace MASsenger.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<PrivateChatReadDto>))]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> GetAllPrivateChats()
         {
             return Ok(await _sender.Send(new GetAllPrivateChatsQuery()));
