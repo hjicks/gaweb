@@ -10,6 +10,8 @@ namespace MASsenger.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "User,Bot")]
+
     public class PrivateChatController : BaseController
     {
         public PrivateChatController(ISender sender) : base(sender)
@@ -26,7 +28,7 @@ namespace MASsenger.Api.Controllers
             return Ok(await _sender.Send(new GetAllPrivateChatsQuery()));
         }
 
-        [HttpPost]
+        [HttpPost, AllowAnonymous]
         public async Task<IActionResult> AddPrivateChatAsync(Int32 starterId, Int32 receiverId)
         {
             if (await _sender.Send(new AddPrivateChatCommand(starterId, receiverId)) == Core.Enums.TransactionResultType.Done) return Ok("PrivateChat added successfully.");
