@@ -6,21 +6,18 @@ using Microsoft.AspNetCore.Http;
 
 namespace MASsenger.Application.Queries.UserQueries
 {
-    public record GetAllUsersQuery() : IRequest<Result<GetEntityResponse<UserReadDto>>>;
-    public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Result<GetEntityResponse<UserReadDto>>>
+    public record GetAllUsersQuery() : IRequest<Result>;
+    public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, Result>
     {
         private readonly IUserRepository _userRepository;
         public GetAllUsersQueryHandler(IUserRepository userRepository) 
         {
             _userRepository = userRepository;
         }
-        public async Task<Result<GetEntityResponse<UserReadDto>>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
         {
-            return new Result<GetEntityResponse<UserReadDto>>
-            {
-                Success = true,
-                StatusCode = StatusCodes.Status200OK,
-                Response = new GetEntityResponse<UserReadDto>(
+            return Result.Success(StatusCodes.Status200OK,
+                new GetEntityResponse<UserReadDto>(
                     (await _userRepository.GetAllAsync()).Select(u => new UserReadDto
                     {
                         Id = u.Id,
@@ -29,8 +26,7 @@ namespace MASsenger.Application.Queries.UserQueries
                         Description = u.Description,
                         CreatedAt = u.CreatedAt,
                         IsVerified = u.IsVerified
-                    }).ToList())
-            };
+                    }).ToList()));
         }
     }
 }

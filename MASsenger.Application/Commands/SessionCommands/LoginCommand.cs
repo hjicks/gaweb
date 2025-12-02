@@ -8,8 +8,8 @@ using System.Security.Cryptography;
 
 namespace MASsenger.Application.Commands.SessionCommands
 {
-    public record LoginCommand(UserLoginDto User) : IRequest<Result<TokensResponse>>;
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<TokensResponse>>
+    public record LoginCommand(UserLoginDto User) : IRequest<Result>;
+    public class LoginCommandHandler : IRequestHandler<LoginCommand, Result>
     {
         private readonly IUserRepository _userRepository;
         private readonly ISessionRepository _sessionRepository;
@@ -23,26 +23,18 @@ namespace MASsenger.Application.Commands.SessionCommands
             _unitOfWork = unitOfWork;
             _jwtService = jwtService;
         }
-        public async Task<Result<TokensResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             var dbUser = await _userRepository.GetByUsernameAsync(request.User.Username);
             if (dbUser == null)
-                return new Result<TokensResponse>
-                {
-                    Success = false,
-                    StatusCode = StatusCodes.Status409Conflict,
-                    Description = "Username or password is incorrect."
-                };
+                return Result.Failure(StatusCodes.Status409Conflict,
+                    "Username or password is incorrect.");
 
             using var hmac = new HMACSHA512(dbUser.PasswordSalt);
             var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(request.User.Password));
             if (!computedHash.SequenceEqual(dbUser.PasswordHash))
-                return new Result<TokensResponse>
-                {
-                    Success = false,
-                    StatusCode = StatusCodes.Status409Conflict,
-                    Description = "Username or password is incorrect."
-                };
+                return Result.Failure(StatusCodes.Status409Conflict,
+                    "Username or password is incorrect.");
 
             var session = new Session
             {
@@ -52,12 +44,8 @@ namespace MASsenger.Application.Commands.SessionCommands
             await _unitOfWork.SaveAsync();
 
             var roles = dbUser.Id == 1 ? new List<string> { "Admin", "User" } : new List<string> { "User" };
-            return new Result<TokensResponse>
-            {
-                Success = true,
-                StatusCode = StatusCodes.Status200OK,
-                Response = new TokensResponse(_jwtService.GetJwt(dbUser.Id, roles), session.Token)
-            };
+            return Result.Success(StatusCodes.Status200OK,
+                new TokensResponse(_jwtService.GetJwt(dbUser.Id, roles), session.Token));
         }
     }
 }

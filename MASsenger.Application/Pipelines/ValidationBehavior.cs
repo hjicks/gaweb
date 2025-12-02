@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
+using MASsenger.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System.Reflection;
 
 namespace MASsenger.Application.Pipelines
 {
@@ -28,23 +28,16 @@ namespace MASsenger.Application.Pipelines
             var validationResults = await Task.WhenAll(
                 _validators.Select(validator => validator.ValidateAsync(context)));
 
-            string description = string.Join(Environment.NewLine,
+            string errors = string.Join(Environment.NewLine,
                 validationResults
                     .SelectMany(validationResult => validationResult.Errors)
                     .Where(validationFailure => validationFailure != null)
                     .Select(failure => failure.ErrorMessage));
 
-            if (description.Any())
+            if (errors.Any())
             {
-                var resultType = typeof(TResponse);
-                var result = Activator.CreateInstance(resultType);
-                foreach (PropertyInfo property in resultType.GetProperties())
-                {
-                    if (property.Name == "Success") property.SetValue(result, false, null);
-                    if (property.Name == "StatusCode") property.SetValue(result, StatusCodes.Status409Conflict, null);
-                    if (property.Name == "Description") property.SetValue(result, description, null);
-                }
-                return (TResponse)result!;
+                object result = Result.Failure(StatusCodes.Status409Conflict, errors);
+                return (TResponse)result;
             }
 
             return await next();

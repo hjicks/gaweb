@@ -1,6 +1,6 @@
 ﻿namespace MASsenger.Application.Responses
 {
-    public record GetEntityResponse<TEntity> : BaseResponse
+    public record GetEntityResponse<TEntity>
 
     {
         public IEnumerable<TEntity> Entities { get; set; } = null!; 

@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace MASsenger.Application.Commands.UserCommands
 {
-    public record DeleteUserCommand(Int32 UserId) : IRequest<Result<BaseResponse>>;
-    public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Result<BaseResponse>>
+    public record DeleteUserCommand(Int32 UserId) : IRequest<Result>;
+    public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Result>
     {
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -16,26 +16,17 @@ namespace MASsenger.Application.Commands.UserCommands
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<BaseResponse>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetByIdAsync(request.UserId);
-            if (user == null)   
-                return new Result<BaseResponse>
-                {
-                    Success = false,
-                    StatusCode = StatusCodes.Status404NotFound,
-                    Description = "User not found."
-                };
+            if (user == null)
+                return Result.Failure(StatusCodes.Status404NotFound, "User not found.");
 
             _userRepository.Delete(user);
             await _unitOfWork.SaveAsync();
 
-            return new Result<BaseResponse>
-            {
-                Success = true,
-                StatusCode = StatusCodes.Status200OK,
-                Response = new BaseResponse("User deleted successfully.")
-            };
+            return Result.Success(StatusCodes.Status200OK,
+                new BaseResponse("User deleted successfully."));
         }
     }
 }

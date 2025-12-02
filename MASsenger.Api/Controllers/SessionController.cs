@@ -1,5 +1,6 @@
 ﻿using MASsenger.Application.Commands.SessionCommands;
 using MASsenger.Application.Dtos.Login;
+using MASsenger.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,31 +22,31 @@ namespace MASsenger.Api.Controllers
         public async Task<IActionResult> Login(UserLoginDto userCred)
         {
             var result = await _sender.Send(new LoginCommand(userCred));
-            if (result.Success)
+            if (result.Ok)
             {
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
                     Expires = DateTime.Now.AddDays(7)
                 };
-                Response.Cookies.Append("refreshToken", result.Response.RefreshToken, cookieOptions);
+                Response.Cookies.Append("refreshToken", result.Response<TokensResponse>().RefreshToken, cookieOptions);
                 Log.Information($"User {userCred.Username} logged in.");
-                return StatusCode(result.StatusCode, new { result.Success, result.Response });
+                return StatusCode(result.StatusCode, new { result.Ok, Response = result.Response<TokensResponse>() });
             }
             Log.Information($"Unsuccessful login attempt with username {userCred.Username}.");
-            return StatusCode(result.StatusCode, new { result.Success, result.Description });
+            return StatusCode(result.StatusCode, new { result.Ok, result.Error });
         }
 
         [HttpPut("logout")]
         public async Task<IActionResult> Logout([FromBody] Int32 sessionId)
         {
             var result = await _sender.Send(new LogoutCommand(sessionId));
-            if (result.Success)
+            if (result.Ok)
             {
                 Log.Information($"Session with id {sessionId} is expired.");
-                return StatusCode(result.StatusCode, new { result.Success, result.Response });
+                return StatusCode(result.StatusCode, new { result.Ok, Response = result.Response<BaseResponse>() });
             }
-            return StatusCode(result.StatusCode, new { result.Success, result.Description });
+            return StatusCode(result.StatusCode, new { result.Ok, result.Error });
         }
 
         [HttpPost("refresh"), AllowAnonymous]
@@ -53,13 +54,13 @@ namespace MASsenger.Api.Controllers
         {
             Guid.TryParse(Request.Cookies["refreshToken"], out Guid refreshToken);
             var result = await _sender.Send(new RefreshJwtCommand(sessionId, refreshToken));
-            if (result.Success)
+            if (result.Ok)
             {
                 Log.Information($"Jwt of user with id {sessionId} renewed.");
-                return StatusCode(result.StatusCode, new { result.Success, result.Response });
+                return StatusCode(result.StatusCode, new { result.Ok, Response = result.Response<TokensResponse>() });
             }
             Log.Information($"Unsuccessful attempt to refresh session {sessionId}.");
-            return StatusCode(result.StatusCode, new { result.Success, result.Description });
+            return StatusCode(result.StatusCode, new { result.Ok, result.Error });
         }
     }
 }

@@ -2,15 +2,15 @@
 {
     public record BaseResponse
     {
-        public string Message { get; set; } = null!;
+        public string Description { get; set; } = null!;
 
         public BaseResponse()
         {
 
         }
-        public BaseResponse(string message)
+        public BaseResponse(string description)
         {
-            Message = message;
+            Description = description;
         }
     }
 }
