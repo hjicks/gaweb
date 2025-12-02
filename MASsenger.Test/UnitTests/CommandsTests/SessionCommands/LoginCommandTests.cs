@@ -95,10 +95,10 @@ namespace MASsenger.Test.UnitTests.CommandsTests.SessionCommands
                 _unitOfWorkMock.Object, _jwtServiceMock.Object);
 
             // Act
-            Result<TokensResponse> result = await handler.Handle(query, default);
+            Result result = await handler.Handle(query, default);
 
             // Assert
-            Assert.False(result.Success);
+            Assert.False(result.Ok);
         }
     }
 }

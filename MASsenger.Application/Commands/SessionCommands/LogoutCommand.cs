@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace MASsenger.Application.Commands.SessionCommands
 {
-    public record LogoutCommand(int SessionId) : IRequest<Result<BaseResponse>>;
-    public class LogoutCommandHandler : IRequestHandler<LogoutCommand, Result<BaseResponse>>
+    public record LogoutCommand(int SessionId) : IRequest<Result>;
+    public class LogoutCommandHandler : IRequestHandler<LogoutCommand, Result>
     {
         private readonly ISessionRepository _sessionRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -15,27 +15,17 @@ namespace MASsenger.Application.Commands.SessionCommands
             _sessionRepository = sessionRepository;
             _unitOfWork = unitOfWork;
         }
-        public async Task<Result<BaseResponse>> Handle(LogoutCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(LogoutCommand request, CancellationToken cancellationToken)
         {
             var dbSession = await _sessionRepository.GetByIdAsync(request.SessionId);
             if (dbSession == null)
-                return new Result<BaseResponse>
-                {
-                    Success = false,
-                    StatusCode = StatusCodes.Status404NotFound,
-                    Description = "Session not found."
-                };
+                return Result.Failure(StatusCodes.Status404NotFound, "Session not found.");
 
             dbSession.IsExpired = true;
             _sessionRepository.Update(dbSession);
             await _unitOfWork.SaveAsync();
 
-            return new Result<BaseResponse>
-            {
-                Success = true,
-                StatusCode = StatusCodes.Status200OK,
-                Response = new BaseResponse("Log out successful.")
-            };
+            return Result.Success(StatusCodes.Status200OK, new BaseResponse("Log out successful."));
         }
     }
 }
