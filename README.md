@@ -20,10 +20,9 @@ Chat related classes:
 BaseChat
 |
 |----> PrivateChat
-|
-|                   /----> ChannelChat
-\----> ChannelGroupChat
-                    \----> GroupChat
+|                   
+\----> ChannelChat
+                    
 ```
 
 User related classes:
@@ -31,5 +30,6 @@ User related classes:
 BaseUser
 |
 |----> User
+|
 \----> Bot
 ```
