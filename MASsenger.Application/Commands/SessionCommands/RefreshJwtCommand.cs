@@ -10,8 +10,8 @@ namespace MASsenger.Application.Commands.SessionCommands
      * as we have no sane way to renew the refresh token for now,
      * i named this a command so we can do that here as the last resort.
     */
-    public record RefreshJwtCommand(Int32 SessionId, Guid RefreshToken) : IRequest<Result<TokensResponse>>;
-    public class RefreshJwtCommandHandler : IRequestHandler<RefreshJwtCommand, Result<TokensResponse>>
+    public record RefreshJwtCommand(Int32 SessionId, Guid RefreshToken) : IRequest<Result>;
+    public class RefreshJwtCommandHandler : IRequestHandler<RefreshJwtCommand, Result>
     {
         private readonly ISessionRepository _sessionRepository;
         private readonly IJwtService _jwtService;
@@ -20,38 +20,22 @@ namespace MASsenger.Application.Commands.SessionCommands
             _sessionRepository = sessionRepository;
             _jwtService = jwtService;
         }
-        public async Task<Result<TokensResponse>> Handle(RefreshJwtCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(RefreshJwtCommand request, CancellationToken cancellationToken)
         {
             var session = await _sessionRepository.GetByIdAsync(request.SessionId);
             if (session == null)
-                return new Result<TokensResponse>
-                {
-                    Success = false,
-                    StatusCode = StatusCodes.Status404NotFound,
-                    Description = "Session not found."
-                }; 
+                return Result.Failure(StatusCodes.Status404NotFound, "Session not found.");
+
             if (session.Token != request.RefreshToken)
-                return new Result<TokensResponse>
-                {
-                    Success = false,
-                    StatusCode = StatusCodes.Status409Conflict,
-                    Description = "FBI, open up!"
-                };
-            if (session.ExpiresAt < DateTime.Now)
-                return new Result<TokensResponse>
-                {
-                    Success = false,
-                    StatusCode = StatusCodes.Status419AuthenticationTimeout,
-                    Description = "Session is expired, please login."
-                };
+                return Result.Failure(StatusCodes.Status409Conflict, "FBI, open up!");
+
+            if (session.ExpiresAt < DateTime.Now || session.IsExpired == true)
+                return Result.Failure(StatusCodes.Status419AuthenticationTimeout,
+                    "Session is expired, please login.");
 
             var roles = session.UserId == 1 ? new List<string> { "Admin", "User" } : new List<string> { "User" };
-            return new Result<TokensResponse>
-            {
-                Success = true,
-                StatusCode= StatusCodes.Status200OK,
-                Response = new TokensResponse(_jwtService.GetJwt(session.UserId, roles))
-            };
+            return Result.Success(StatusCodes.Status200OK,
+                new TokensResponse(_jwtService.GetJwt(session.UserId, roles)));
         }
     }
 }

@@ -8,8 +8,8 @@ using System.Security.Cryptography;
 
 namespace MASsenger.Application.Commands.UserCommands
 {
-    public record AddUserCommand(UserCreateDto User) : IRequest<Result<TokensResponse>>;
-    public class AddUserCommandHandler : IRequestHandler<AddUserCommand, Result<TokensResponse>>
+    public record AddUserCommand(UserCreateDto User) : IRequest<Result>;
+    public class AddUserCommandHandler : IRequestHandler<AddUserCommand, Result>
     {
         private readonly IUserRepository _userRepository;
         private readonly ISessionRepository _sessionRepository;
@@ -23,16 +23,12 @@ namespace MASsenger.Application.Commands.UserCommands
             _unitOfWork = unitOfWork;
             _jwtService = jwtService;
         }
-        public async Task<Result<TokensResponse>> Handle(AddUserCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(AddUserCommand request, CancellationToken cancellationToken)
         {
             var dbUser = await _userRepository.GetByUsernameAsync(request.User.Username);
             if (dbUser != null)
-                return new Result<TokensResponse>
-                {
-                    Success = false,
-                    StatusCode = StatusCodes.Status422UnprocessableEntity,
-                    Description = "Username is already taken. Please choose another."
-                };
+                return Result.Failure(StatusCodes.Status422UnprocessableEntity,
+                    "Username is already taken. Please choose another.");
 
             using var hmac = new HMACSHA512();
             var newUser = new User
@@ -54,12 +50,8 @@ namespace MASsenger.Application.Commands.UserCommands
             await _unitOfWork.SaveAsync();
 
             var roles = newUser.Id == 1 ? new List<string> { "Admin", "User" } : new List<string> { "User" };
-            return new Result<TokensResponse>
-            {
-                Success = true,
-                StatusCode = StatusCodes.Status201Created,
-                Response = new TokensResponse(_jwtService.GetJwt(newUser.Id, roles), session.Token)
-            };
+            return Result.Success(StatusCodes.Status201Created,
+                new TokensResponse(_jwtService.GetJwt(newUser.Id, roles), session.Token));
         }
     }
 }

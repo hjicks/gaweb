@@ -1,6 +1,6 @@
 ﻿namespace MASsenger.Application.Responses
 {
-    public record TokensResponse : BaseResponse
+    public record TokensResponse
     {
         public string Jwt {  get; set; } = null!;
         public string RefreshToken { get; set; } = null!;
