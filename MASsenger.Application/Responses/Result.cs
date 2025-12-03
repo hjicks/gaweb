@@ -8,14 +8,14 @@ namespace MASsenger.Application.Responses
         public int StatusCode { get; set; } = StatusCodes.Status400BadRequest;
         public string Error { get; set; } = null!;
 
-        private object _response = null!;
-        public TResponse Response<TResponse>()
+        public object Response = null!;
+        public TResponse GetTypedResponse<TResponse>()
         {
-            return (TResponse)_response;
+            return (TResponse)Response;
         }
         private void SetResponse<TResponse>(TResponse response)
         {
-            _response = response!;
+            Response = response!;
         }
 
         private Result(bool ok, int statusCode, string error, object response)

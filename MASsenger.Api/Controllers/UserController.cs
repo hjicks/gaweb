@@ -3,7 +3,6 @@ using MASsenger.Application.Dtos.Create;
 using MASsenger.Application.Dtos.Read;
 using MASsenger.Application.Dtos.Update;
 using MASsenger.Application.Queries.UserQueries;
-using MASsenger.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +28,7 @@ namespace MASsenger.Api.Controllers
         {
             var result = await _sender.Send(new GetAllUsersQuery());
             return StatusCode(result.StatusCode,
-                new { result.Ok, Response = result.Response<GetEntityResponse<UserReadDto>>() });
+                new { result.Ok, result.Response });
         }
 
         [HttpPost, AllowAnonymous]
@@ -38,15 +37,9 @@ namespace MASsenger.Api.Controllers
             var result = await _sender.Send(new AddUserCommand(user));
             if (result.Ok)
             {
-                var cookieOptions = new CookieOptions
-                {
-                    HttpOnly = true,
-                    Expires = DateTime.Now.AddDays(7)
-                };
-                Response.Cookies.Append("refreshToken", result.Response<TokensResponse>().RefreshToken, cookieOptions);
                 Log.Information($"User {user.Username} added.");
                 return StatusCode(result.StatusCode,
-                    new { result.Ok, Response = result.Response<TokensResponse>() });
+                    new { result.Ok, result.Response });
             }
             return StatusCode(result.StatusCode, new { result.Ok, result.Error });
         }
@@ -59,7 +52,7 @@ namespace MASsenger.Api.Controllers
             if (result.Ok)
             {
                 Log.Information($"User {userId} updated.");
-                return StatusCode(result.StatusCode, new { result.Ok, Response = result.Response<BaseResponse>() });
+                return StatusCode(result.StatusCode, new { result.Ok, result.Response });
             }
             return StatusCode(result.StatusCode, new { result.Ok, result.Error });
         }
@@ -72,7 +65,7 @@ namespace MASsenger.Api.Controllers
             if (result.Ok)
             {
                 Log.Information($"User {userId} deleted.");
-                return StatusCode(result.StatusCode, new { result.Ok, Response = result.Response<BaseResponse>() });
+                return StatusCode(result.StatusCode, new { result.Ok, result.Response });
             }
             return StatusCode(result.StatusCode, new { result.Ok, result.Error });
         }
