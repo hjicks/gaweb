@@ -7,7 +7,7 @@ $ sudo apt install dotnet dotnet-sdk-6.0 sqlite3
 then clone this repository:
 ```
 $ git clone https://github.com/mhs04/MessageEngine
-$ cd gaweb
+$ cd MessageEngine
 $ dotnet build
 ```
 
