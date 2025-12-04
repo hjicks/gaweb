@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Http;
 namespace MASsenger.Application.Pipelines
 {
     public sealed class ValidationBehavior<TRequest, TResponse>
-        : IPipelineBehavior<TRequest, TResponse>
-        where TRequest : IRequest<TResponse>
+        : IPipelineBehavior<TRequest, Result>
+        where TRequest : IRequest<Result>
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
 
@@ -16,9 +16,9 @@ namespace MASsenger.Application.Pipelines
             _validators = validators;
         }
 
-        public async Task<TResponse> Handle(
+        public async Task<Result> Handle(
             TRequest request,
-            RequestHandlerDelegate<TResponse> next,
+            RequestHandlerDelegate<Result> next,
             CancellationToken cancellationToken)
         {
             if (!_validators.Any()) return await next();
@@ -36,8 +36,7 @@ namespace MASsenger.Application.Pipelines
 
             if (errors.Any())
             {
-                object result = Result.Failure(StatusCodes.Status409Conflict, errors);
-                return (TResponse)result;
+                return Result.Failure(StatusCodes.Status409Conflict, errors);
             }
 
             return await next();

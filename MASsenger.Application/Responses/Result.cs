@@ -1,34 +1,40 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Text.Json.Serialization;
 
 namespace MASsenger.Application.Responses
 {
     public class Result
     {
-        public bool Ok { get; set; } = false;
+        [JsonIgnore]
         public int StatusCode { get; set; } = StatusCodes.Status400BadRequest;
+
+        [JsonPropertyOrder(0)]
+        public bool Ok { get; set; } = false;
+
+        [JsonPropertyOrder(1)]
         public string Error { get; set; } = null!;
 
-        public object Response = null!;
-        public TResponse GetTypedResponse<TResponse>()
+        public Result(int statusCode, bool ok, string error)
         {
-            return (TResponse)Response;
-        }
-        private void SetResponse<TResponse>(TResponse response)
-        {
-            Response = response!;
-        }
-
-        private Result(bool ok, int statusCode, string error, object response)
-        {
-            Ok = ok;
             StatusCode = statusCode;
+            Ok = ok;
             Error = error;
-            SetResponse(response);
         }
 
-        public static Result Success(int statusCode, object response) =>
-            new(true, statusCode, null!, response);
+        public static Result<TResponse> Success<TResponse>(int statusCode, TResponse response) =>
+            new(statusCode, true, null!, response);
+
         public static Result Failure(int statusCode, string error) =>
-            new(false, statusCode, error, null!);
+            new(statusCode, false, error);
+    }
+
+    public class Result<TResponse> : Result
+    {
+        [JsonPropertyOrder(2)]
+        public TResponse Response { get; set; } = default!;
+        public Result(int statusCode, bool ok, string error, TResponse response) : base(statusCode, ok, error)
+        {
+            Response = response;
+        }
     }
 }

@@ -24,10 +24,10 @@ namespace MASsenger.Api.Controllers
             if (result.Ok)
             {
                 Log.Information($"User {userCred.Username} logged in.");
-                return StatusCode(result.StatusCode, new { result.Ok, result.Response });
+                return StatusCode(result.StatusCode, result);
             }
             Log.Information($"Unsuccessful login attempt with username {userCred.Username}.");
-            return StatusCode(result.StatusCode, new { result.Ok, result.Error });
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpPut("logout")]
@@ -37,9 +37,9 @@ namespace MASsenger.Api.Controllers
             if (result.Ok)
             {
                 Log.Information($"Session with id {sessionId} is expired.");
-                return StatusCode(result.StatusCode, new { result.Ok, result.Response });
+                return StatusCode(result.StatusCode, result);
             }
-            return StatusCode(result.StatusCode, new { result.Ok, result.Error });
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpPost("refresh"), AllowAnonymous]
@@ -49,10 +49,10 @@ namespace MASsenger.Api.Controllers
             if (result.Ok)
             {
                 Log.Information($"Jwt of user with id {sessionId} renewed.");
-                return StatusCode(result.StatusCode, new { result.Ok, result.Response });
+                return StatusCode(result.StatusCode, result);
             }
             Log.Information($"Unsuccessful attempt to refresh session {sessionId}.");
-            return StatusCode(result.StatusCode, new { result.Ok, result.Error });
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

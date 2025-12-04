@@ -27,8 +27,7 @@ namespace MASsenger.Api.Controllers
         public async Task<IActionResult> GetAllUsers()
         {
             var result = await _sender.Send(new GetAllUsersQuery());
-            return StatusCode(result.StatusCode,
-                new { result.Ok, result.Response });
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpPost, AllowAnonymous]
@@ -38,10 +37,9 @@ namespace MASsenger.Api.Controllers
             if (result.Ok)
             {
                 Log.Information($"User {user.Username} added.");
-                return StatusCode(result.StatusCode,
-                    new { result.Ok, result.Response });
+                return StatusCode(result.StatusCode, result);
             }
-            return StatusCode(result.StatusCode, new { result.Ok, result.Error });
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpPut]
@@ -52,9 +50,9 @@ namespace MASsenger.Api.Controllers
             if (result.Ok)
             {
                 Log.Information($"User {userId} updated.");
-                return StatusCode(result.StatusCode, new { result.Ok, result.Response });
+                return StatusCode(result.StatusCode, result);
             }
-            return StatusCode(result.StatusCode, new { result.Ok, result.Error });
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpDelete]
@@ -65,9 +63,9 @@ namespace MASsenger.Api.Controllers
             if (result.Ok)
             {
                 Log.Information($"User {userId} deleted.");
-                return StatusCode(result.StatusCode, new { result.Ok, result.Response });
+                return StatusCode(result.StatusCode, result);
             }
-            return StatusCode(result.StatusCode, new { result.Ok, result.Error });
+            return StatusCode(result.StatusCode, result);
         }
     }
 }
