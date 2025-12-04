@@ -17,11 +17,19 @@ namespace MASsenger.Application.Responses
             Ok = ok;
         }
 
+        public Result(bool ok)
+        {
+            Ok = ok;
+        }
+
         public static SuccessResult<TResponse> Success<TResponse>(int statusCode, TResponse response) =>
             new(statusCode, true, response);
 
         public static FailureResult Failure(int statusCode, string error) =>
             new(statusCode, false, error);
+
+        public static FailureResult Failure(string error) =>
+            new(false, error);
     }
 
     public record SuccessResult<TResponse> : Result
@@ -41,6 +49,11 @@ namespace MASsenger.Application.Responses
         public string Error { get; set; } = null!;
 
         public FailureResult(int statusCode, bool ok, string error) : base(statusCode, ok)
+        {
+            Error = error;
+        }
+
+        public FailureResult(bool ok, string error) : base(ok)
         {
             Error = error;
         }

@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using MASsenger.Application.Responses;
+using Serilog;
 
 namespace MASsenger.Api.Middlewares
 {
@@ -14,16 +15,10 @@ namespace MASsenger.Api.Middlewares
             {
                 Log.Error("Exception occurred: {Exception}", exception);
 
-                var problemDetails = new
-                {
-                    Success = false,
-                    Description = "Server Error"
-                };
-
                 context.Response.StatusCode =
                     StatusCodes.Status500InternalServerError;
 
-                await context.Response.WriteAsJsonAsync(problemDetails);
+                await context.Response.WriteAsJsonAsync(Result.Failure("Server Error"));
             }
         }
     }
