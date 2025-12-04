@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MASsenger.Core.Enums;
+using Microsoft.AspNetCore.Http;
 using System.Text.Json.Serialization;
 
 namespace MASsenger.Application.Responses
@@ -25,11 +26,11 @@ namespace MASsenger.Application.Responses
         public static SuccessResult<TResponse> Success<TResponse>(int statusCode, TResponse response) =>
             new(statusCode, true, response);
 
-        public static FailureResult Failure(int statusCode, string error) =>
-            new(statusCode, false, error);
+        public static FailureResult Failure(int statusCode, ErrorType error, IEnumerable<string> description) =>
+            new(statusCode, false, error, description);
 
-        public static FailureResult Failure(string error) =>
-            new(false, error);
+        public static FailureResult Failure(ErrorType error, IEnumerable<string> description) =>
+            new(false, error, description);
     }
 
     public record SuccessResult<TResponse> : Result
@@ -37,7 +38,8 @@ namespace MASsenger.Application.Responses
         [JsonPropertyOrder(1)]
         public TResponse Response { get; set; } = default!;
 
-        public SuccessResult(int statusCode, bool ok, TResponse response) : base(statusCode, ok)
+        public SuccessResult(int statusCode, bool ok, TResponse response)
+            : base(statusCode, ok)
         {
             Response = response;
         }
@@ -46,16 +48,23 @@ namespace MASsenger.Application.Responses
     public record FailureResult : Result
     {
         [JsonPropertyOrder(1)]
-        public string Error { get; set; } = null!;
+        public ErrorType Error { get; set; }
 
-        public FailureResult(int statusCode, bool ok, string error) : base(statusCode, ok)
+        [JsonPropertyOrder(2)]
+        public IEnumerable<string> Description { get; set; } = null!;
+
+        public FailureResult(int statusCode, bool ok, ErrorType error, IEnumerable<string> description)
+            : base(statusCode, ok)
         {
             Error = error;
+            Description = description;
         }
 
-        public FailureResult(bool ok, string error) : base(ok)
+        public FailureResult(bool ok, ErrorType error, IEnumerable<string> description)
+            : base(ok)
         {
-            Error = error;
+            Error = error; 
+            Description = description;
         }
     }
 }

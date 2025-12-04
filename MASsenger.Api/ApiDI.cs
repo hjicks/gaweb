@@ -1,5 +1,6 @@
 ﻿using MASsenger.Api.Middlewares;
 using MASsenger.Application.Responses;
+using MASsenger.Core.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -17,12 +18,11 @@ namespace MASsenger.Api
                 {
                     options.InvalidModelStateResponseFactory = context =>
                     {
-                       var errors = string.Join(Environment.NewLine,
-                           context.ModelState
-                               .Where(x => x.Value!.Errors.Any())
-                               .Select(x => $"{string.Join(Environment.NewLine, x.Value!.Errors.Select(e => e.ErrorMessage))}")
-                       );
-                        return new BadRequestObjectResult(Result.Failure(errors));
+                        var errors = context.ModelState
+                            .Where(x => x.Value!.Errors.Any())
+                            .SelectMany(x => x.Value!.Errors.Select(e => e.ErrorMessage))
+                            .ToArray();
+                        return new BadRequestObjectResult(Result.Failure(ErrorType.InvalidRequestModel, errors));
                     };
                 })
                 .AddJsonOptions(options =>
@@ -30,6 +30,7 @@ namespace MASsenger.Api
                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                     options.JsonSerializerOptions.WriteIndented = true;
                     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

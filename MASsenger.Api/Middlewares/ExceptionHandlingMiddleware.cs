@@ -1,4 +1,5 @@
 ﻿using MASsenger.Application.Responses;
+using MASsenger.Core.Enums;
 using Serilog;
 
 namespace MASsenger.Api.Middlewares
@@ -18,7 +19,8 @@ namespace MASsenger.Api.Middlewares
                 context.Response.StatusCode =
                     StatusCodes.Status500InternalServerError;
 
-                await context.Response.WriteAsJsonAsync(Result.Failure("Server Error"));
+                await context.Response.WriteAsJsonAsync(
+                    Result.Failure(ErrorType.Exception, new[] { "Server Error" }));
             }
         }
     }

@@ -2,6 +2,7 @@
 using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
 using MASsenger.Core.Entities.UserEntities;
+using MASsenger.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Cryptography;
@@ -27,14 +28,14 @@ namespace MASsenger.Application.Commands.SessionCommands
         {
             var dbUser = await _userRepository.GetByUsernameAsync(request.User.Username);
             if (dbUser == null)
-                return Result.Failure(StatusCodes.Status409Conflict,
-                    "Username or password is incorrect.");
+                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidCredentials,
+                    new[] { "Username or password is incorrect." });
 
             using var hmac = new HMACSHA512(dbUser.PasswordSalt);
             var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(request.User.Password));
             if (!computedHash.SequenceEqual(dbUser.PasswordHash))
-                return Result.Failure(StatusCodes.Status409Conflict,
-                    "Username or password is incorrect.");
+                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidCredentials,
+                    new[] { "Username or password is incorrect." });
 
             var session = new Session
             {

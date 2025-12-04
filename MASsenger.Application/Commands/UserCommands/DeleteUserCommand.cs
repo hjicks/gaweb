@@ -1,5 +1,6 @@
 ﻿using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
+using MASsenger.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
@@ -20,7 +21,8 @@ namespace MASsenger.Application.Commands.UserCommands
         {
             var user = await _userRepository.GetByIdAsync(request.UserId);
             if (user == null)
-                return Result.Failure(StatusCodes.Status404NotFound, "User not found.");
+                return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
+                    new[] { "User not found." });
 
             _userRepository.Delete(user);
             await _unitOfWork.SaveAsync();

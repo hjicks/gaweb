@@ -1,5 +1,6 @@
 ﻿using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
+using MASsenger.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
@@ -24,14 +25,16 @@ namespace MASsenger.Application.Commands.SessionCommands
         {
             var session = await _sessionRepository.GetByIdAsync(request.SessionId);
             if (session == null)
-                return Result.Failure(StatusCodes.Status404NotFound, "Session not found.");
+                return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
+                    new[] { "Session not found." });
 
             if (session.Token != request.RefreshToken)
-                return Result.Failure(StatusCodes.Status409Conflict, "FBI, open up!");
+                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidRefreshToken,
+                    new[] { "FBI, open up!" });
 
             if (session.ExpiresAt < DateTime.Now || session.IsExpired == true)
-                return Result.Failure(StatusCodes.Status419AuthenticationTimeout,
-                    "Session is expired, please login.");
+                return Result.Failure(StatusCodes.Status419AuthenticationTimeout, ErrorType.ExpiredRefreshToken,
+                    new[] { "Session is expired, please login." });
 
             var roles = session.UserId == 1 ? new List<string> { "Admin", "User" } : new List<string> { "User" };
             return Result.Success(StatusCodes.Status200OK,

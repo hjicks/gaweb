@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MASsenger.Application.Responses;
+using MASsenger.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
@@ -28,15 +29,14 @@ namespace MASsenger.Application.Pipelines
             var validationResults = await Task.WhenAll(
                 _validators.Select(validator => validator.ValidateAsync(context)));
 
-            string errors = string.Join(Environment.NewLine,
-                validationResults
-                    .SelectMany(validationResult => validationResult.Errors)
-                    .Where(validationFailure => validationFailure != null)
-                    .Select(failure => failure.ErrorMessage));
+            var errors = validationResults
+                .SelectMany(validationResult => validationResult.Errors)
+                .Where(validationFailure => validationFailure != null)
+                .Select(failure => failure.ErrorMessage);
 
             if (errors.Any())
             {
-                return Result.Failure(StatusCodes.Status409Conflict, errors);
+                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.Validation, errors);
             }
 
             return await next();

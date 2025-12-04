@@ -2,6 +2,7 @@
 using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
 using MASsenger.Core.Entities.UserEntities;
+using MASsenger.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Cryptography;
@@ -27,8 +28,8 @@ namespace MASsenger.Application.Commands.UserCommands
         {
             var dbUser = await _userRepository.GetByUsernameAsync(request.User.Username);
             if (dbUser != null)
-                return Result.Failure(StatusCodes.Status422UnprocessableEntity,
-                    "Username is already taken. Please choose another.");
+                return Result.Failure(StatusCodes.Status422UnprocessableEntity, ErrorType.AlreadyExists,
+                    new[] { "Username is already taken. Please choose another." });
 
             using var hmac = new HMACSHA512();
             var newUser = new User

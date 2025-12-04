@@ -1,6 +1,7 @@
 ﻿using MASsenger.Application.Dtos.Update;
 using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
+using MASsenger.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Cryptography;
@@ -21,7 +22,8 @@ namespace MASsenger.Application.Commands.UserCommands
         {
             var user = await _userRepository.GetByIdAsync(request.UserId);
             if (user == null)
-                return Result.Failure(StatusCodes.Status404NotFound, "User not found.");
+                return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
+                    new[] { "User not found." });
 
             using var hmac = new HMACSHA512(user.PasswordSalt);
             user.Name = request.User.Name;
