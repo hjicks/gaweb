@@ -6,5 +6,6 @@ namespace MASsenger.Application.Interfaces
     {
         Task<IEnumerable<User>> GetAllAsync();
         Task<User?> GetByUsernameAsync(string username);
+        Task<bool> IsExistsAsync(Int32 userId);
     }
 }

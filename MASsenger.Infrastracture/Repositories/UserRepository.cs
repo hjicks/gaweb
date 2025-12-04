@@ -24,5 +24,10 @@ namespace MASsenger.Infrastracture.Repositories
         {
             return await _efDbContext.Users.Where(u => u.Username == username).SingleOrDefaultAsync();
         }
+
+        public async Task<bool> IsExistsAsync(Int32 userId)
+        {
+            return await _efDbContext.Users.AnyAsync(u => u.Id == userId);
+        }
     }
 }

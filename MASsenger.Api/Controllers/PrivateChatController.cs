@@ -2,6 +2,7 @@
 using MASsenger.Application.Commands.PrivateChatCommands;
 using MASsenger.Application.Dtos.Read;
 using MASsenger.Application.Queries.PrivateChatQueries;
+using MASsenger.Application.Queries.UserQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace MASsenger.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "User,Bot")]
+    [Authorize(Roles = "User")]
 
     public class PrivateChatController : BaseController
     {
@@ -22,10 +23,17 @@ namespace MASsenger.Api.Controllers
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<PrivateChatReadDto>))]
         [Authorize(Roles = "Admin")]
-
         public async Task<IActionResult> GetAllPrivateChats()
         {
-            return Ok(await _sender.Send(new GetAllPrivateChatsQuery()));
+            var result =  await _sender.Send(new GetAllPrivateChatsQuery());
+            return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpGet("getAllUser")]
+        public async Task<IActionResult> GetAllUserChatsAsync(Int32 userId)
+        {
+            var result = await _sender.Send(new GetAllUserPrivateChatsQuery(userId));
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpPost, AllowAnonymous]
