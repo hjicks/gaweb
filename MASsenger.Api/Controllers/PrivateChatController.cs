@@ -2,10 +2,11 @@
 using MASsenger.Application.Commands.PrivateChatCommands;
 using MASsenger.Application.Dtos.Read;
 using MASsenger.Application.Queries.PrivateChatQueries;
-using MASsenger.Application.Queries.UserQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
+using System.Security.Claims;
 
 namespace MASsenger.Api.Controllers
 {
@@ -36,12 +37,17 @@ namespace MASsenger.Api.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPost, AllowAnonymous]
-        public async Task<IActionResult> AddPrivateChatAsync(Int32 starterId, Int32 receiverId)
+        [HttpPost]
+        public async Task<IActionResult> AddPrivateChatAsync(Int32 receiverId)
         {
-            if (await _sender.Send(new AddPrivateChatCommand(starterId, receiverId)) == Core.Enums.TransactionResultType.Done) return Ok("PrivateChat added successfully.");
-            else if (await _sender.Send(new AddPrivateChatCommand(starterId, receiverId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id(s)");
-            return BadRequest("Something went wrong while saving the privateChat.");
+            var starterId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var result = await _sender.Send(new AddPrivateChatCommand(starterId, receiverId));
+            if (result.Ok)
+            {
+                Log.Information($"Private chat with starter id {starterId} and receiver id {receiverId} added.");
+                return StatusCode(result.StatusCode, result);
+            }
+            return StatusCode(result.StatusCode, result);
         }
 
         [HttpDelete]
