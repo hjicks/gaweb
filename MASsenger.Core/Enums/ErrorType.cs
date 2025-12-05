@@ -9,6 +9,7 @@
         InvalidRequestModel,
         InvalidCredentials,
         InvalidRefreshToken,
-        ExpiredRefreshToken
+        ExpiredRefreshToken,
+        PermissionDenied
     }
 }

@@ -1,11 +1,13 @@
 ﻿using MASsenger.Application.Interfaces;
+using MASsenger.Application.Results;
 using MASsenger.Core.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace MASsenger.Application.Commands.MessageCommands
 {
-    public record DeleteMessageCommand(Int32 messageId) : IRequest<TransactionResultType>;
-    public class DeleteMessageCommandHandler : IRequestHandler<DeleteMessageCommand, TransactionResultType>
+    public record DeleteMessageCommand(int SenderId, int MessageId) : IRequest<Result>;
+    public class DeleteMessageCommandHandler : IRequestHandler<DeleteMessageCommand, Result>
     {
         private readonly IMessageRepository _messageRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -15,14 +17,21 @@ namespace MASsenger.Application.Commands.MessageCommands
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<TransactionResultType> Handle(DeleteMessageCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(DeleteMessageCommand request, CancellationToken cancellationToken)
         {
-            var message = await _messageRepository.GetByIdAsync(request.messageId);
+            var message = await _messageRepository.GetByIdAsync(request.MessageId);
             if (message == null)
-                return TransactionResultType.ForeignKeyNotFound;
+                return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
+                    new[] { "Message not found." });
+
+            if (message.Sender.Id != request.SenderId)
+                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied,
+                    new[] { "You are not allowed to edit someone else's message." });
+
             _messageRepository.Delete(message);
             await _unitOfWork.SaveAsync();
-            return TransactionResultType.Done;
+
+            return Result.Success(StatusCodes.Status204NoContent);
         }
     }
 }

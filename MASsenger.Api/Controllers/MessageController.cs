@@ -5,12 +5,13 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using System.Security.Claims;
 
 namespace MASsenger.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/")]
     [ApiController]
-    [Authorize(Roles = "User,Bot")]
+    [Authorize(Roles = "User")]
     public class MessageController : BaseController
     {
         public MessageController(ISender sender) : base(sender)
@@ -18,47 +19,51 @@ namespace MASsenger.Api.Controllers
 
         }
 
-        [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<MessageReadDto>))]
+        [HttpGet("messages")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllMessages()
         {
-            return Ok(await _sender.Send(new GetAllMessagesQuery()));
+            var result = await _sender.Send(new GetAllMessagesQuery());
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPost, AllowAnonymous]
-        public async Task<IActionResult> AddMessageAsync([FromBody] MessageCreateDto msg)
+        [HttpPost("chat/message")]
+        public async Task<IActionResult> AddMessageAsync([FromBody] MessageCreateDto message)
         {
-            if (await _sender.Send(new AddMessageCommand(msg)) == Core.Enums.TransactionResultType.Done)
+            var senderId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var result = await _sender.Send(new AddMessageCommand(senderId, message));
+            if (result.Ok)
             {
-                Log.Information("Message added.");
-                return Ok("Message added successfully.");
+                Log.Information($"User {senderId} added message to chat {message.DestinationID}.");
+                return StatusCode(result.StatusCode, result);
             }
-            return BadRequest("Something went wrong while saving the message.");
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateMessageAsync(MessageUpdateDto msg)
+        [HttpPut("chat/message")]
+        public async Task<IActionResult> UpdateMessageAsync([FromBody] MessageUpdateDto message)
         {
-            if (await _sender.Send(new UpdateMessageCommand(msg)) == Core.Enums.TransactionResultType.Done)
+            var senderId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var result = await _sender.Send(new UpdateMessageCommand(senderId, message));
+            if (result.Ok)
             {
-                Log.Information($"Message {msg.Id} updated.");
-                return Ok("Message updated successfully.");
+                Log.Information($"User {senderId} updated message {message.Id}.");
+                return StatusCode(result.StatusCode, result);
             }
-            else if (await _sender.Send(new UpdateMessageCommand(msg)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid message Id.");
-            return BadRequest("Something went wrong while updating the message.");
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteMessageAsync(Int32 msgId)
+        [HttpDelete("chat/message/{messageId}")]
+        public async Task<IActionResult> DeleteMessageAsync(int messageId)
         {
-            if (await _sender.Send(new DeleteMessageCommand(msgId)) == Core.Enums.TransactionResultType.Done)
+            var senderId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var result = await _sender.Send(new DeleteMessageCommand(senderId, messageId));
+            if (result.Ok)
             {
-                Log.Information($"Message {msgId} deleted.");
-                return Ok("Message deleted successfully.");
+                Log.Information($"User {senderId} deleted message {messageId}.");
+                return StatusCode(result.StatusCode, result);
             }
-            else if (await _sender.Send(new DeleteMessageCommand(msgId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid user Id.");
-            return BadRequest("Something went wrong while deleting the message.");
+            return StatusCode(result.StatusCode, result);
         }
     }
 }
