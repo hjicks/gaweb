@@ -1,6 +1,6 @@
 ﻿namespace MASsenger.Application.Dtos.SystemMessageDtos
 {
-    public class SystemMessageReadDto
+    public record SystemMessageReadDto
     {
         public int DestinationID { set; get; }
         public string? Text { set; get; }

@@ -1,6 +1,6 @@
 ﻿namespace MASsenger.Application.Dtos.ChannelChatDtos
 {
-    public class ChannelChatReadDto
+    public record ChannelChatReadDto
     {
         public int Id { get; set; }
         public DateTime CreatedAt { get; set; }

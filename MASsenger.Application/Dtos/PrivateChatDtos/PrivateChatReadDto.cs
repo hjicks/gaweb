@@ -2,7 +2,7 @@
 
 namespace MASsenger.Application.Dtos.PrivateChatDtos
 {
-    public class PrivateChatReadDto
+    public record PrivateChatReadDto
     {
         public int Id { get; set; }
         public BaseUser Starter { get; set; } = null!;

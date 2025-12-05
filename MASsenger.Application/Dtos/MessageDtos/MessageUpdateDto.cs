@@ -1,6 +1,6 @@
 namespace MASsenger.Application.Dtos.MessageDtos
 {
-    public class MessageUpdateDto
+    public record MessageUpdateDto
     {
         public int Id { get; }
 

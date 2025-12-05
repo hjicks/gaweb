@@ -2,7 +2,7 @@
 
 namespace MASsenger.Application.Dtos.UserDtos
 {
-    public class UserCreateDto
+    public record UserCreateDto
     {
         [MinLength(1)]
         [MaxLength(64)]

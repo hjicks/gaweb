@@ -1,6 +1,6 @@
 ﻿namespace MASsenger.Application.Dtos.ChannelChatDtos
 {
-    public class ChannelChatCreateDto
+    public record ChannelChatCreateDto
     {
         public string? Name { get; set; }
         public string? Username { get; set; }
