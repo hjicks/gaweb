@@ -1,7 +1,8 @@
-﻿using MASsenger.Application.Dtos.Create;
+﻿using MASsenger.Application.Dtos.UserDtos;
 using MASsenger.Application.Interfaces;
-using MASsenger.Application.Responses;
+using MASsenger.Application.Results;
 using MASsenger.Core.Entities.UserEntities;
+using MASsenger.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Cryptography;
@@ -27,8 +28,8 @@ namespace MASsenger.Application.Commands.UserCommands
         {
             var dbUser = await _userRepository.GetByUsernameAsync(request.User.Username);
             if (dbUser != null)
-                return Result.Failure(StatusCodes.Status422UnprocessableEntity,
-                    "Username is already taken. Please choose another.");
+                return Result.Failure(StatusCodes.Status422UnprocessableEntity, ErrorType.AlreadyExists,
+                    new[] { "Username is already taken. Please choose another." });
 
             using var hmac = new HMACSHA512();
             var newUser = new User
@@ -51,7 +52,18 @@ namespace MASsenger.Application.Commands.UserCommands
 
             var roles = newUser.Id == 1 ? new List<string> { "Admin", "User" } : new List<string> { "User" };
             return Result.Success(StatusCodes.Status201Created,
-                new TokensResponse(_jwtService.GetJwt(newUser.Id, roles), session.Token));
+                new UserTokenDto
+                {
+                    Id = newUser.Id,
+                    Name = newUser.Name,
+                    Username = newUser.Username,
+                    Description = newUser.Description,
+                    IsVerified = newUser.IsVerified,
+                    CreatedAt = newUser.CreatedAt,
+                    UpdatedAt = newUser.UpdatedAt,
+                    Jwt = _jwtService.GetJwt(newUser.Id, roles),
+                    RefreshToken = session.Token.ToString()
+                });
         }
     }
 }

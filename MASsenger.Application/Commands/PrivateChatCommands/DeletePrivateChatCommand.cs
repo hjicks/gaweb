@@ -1,16 +1,13 @@
 ﻿using MASsenger.Application.Interfaces;
+using MASsenger.Application.Results;
 using MASsenger.Core.Enums;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace MASsenger.Application.Commands.PrivateChatCommands
 {
-    public record DeletePrivateChatCommand(Int32 privateChatId) : IRequest<TransactionResultType>;
-    public class DeletePrivateChatCommandHandler : IRequestHandler<DeletePrivateChatCommand, TransactionResultType>
+    public record DeletePrivateChatCommand(int PrivateChatId) : IRequest<Result>;
+    public class DeletePrivateChatCommandHandler : IRequestHandler<DeletePrivateChatCommand, Result>
     {
         private readonly IPrivateChatRepository _privateChatRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -20,14 +17,17 @@ namespace MASsenger.Application.Commands.PrivateChatCommands
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<TransactionResultType> Handle(DeletePrivateChatCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(DeletePrivateChatCommand request, CancellationToken cancellationToken)
         {
-            var privateChat = await _privateChatRepository.GetByIdAsync(request.privateChatId);
+            var privateChat = await _privateChatRepository.GetByIdAsync(request.PrivateChatId);
             if (privateChat == null)
-                return TransactionResultType.ForeignKeyNotFound;
+                return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
+                    new[] { "Private chat not found." });
+
             _privateChatRepository.Delete(privateChat);
             await _unitOfWork.SaveAsync();
-            return TransactionResultType.Done;
+
+            return Result.Success(StatusCodes.Status204NoContent);
         }
     }
 }

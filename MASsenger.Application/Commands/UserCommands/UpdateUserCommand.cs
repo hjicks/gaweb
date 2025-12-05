@@ -1,13 +1,14 @@
-﻿using MASsenger.Application.Dtos.Update;
+﻿using MASsenger.Application.Dtos.UserDtos;
 using MASsenger.Application.Interfaces;
-using MASsenger.Application.Responses;
+using MASsenger.Application.Results;
+using MASsenger.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Cryptography;
 
 namespace MASsenger.Application.Commands.UserCommands
 {
-    public record UpdateUserCommand(Int32 UserId, UserUpdateDto User) : IRequest<Result>;
+    public record UpdateUserCommand(int UserId, UserUpdateDto User) : IRequest<Result>;
     public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Result>
     {
         private readonly IUserRepository _userRepository;
@@ -21,7 +22,8 @@ namespace MASsenger.Application.Commands.UserCommands
         {
             var user = await _userRepository.GetByIdAsync(request.UserId);
             if (user == null)
-                return Result.Failure(StatusCodes.Status404NotFound, "User not found.");
+                return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
+                    new[] { "User not found." });
 
             using var hmac = new HMACSHA512(user.PasswordSalt);
             user.Name = request.User.Name;
@@ -32,7 +34,16 @@ namespace MASsenger.Application.Commands.UserCommands
             await _unitOfWork.SaveAsync();
 
             return Result.Success(StatusCodes.Status200OK,
-                new BaseResponse("User updated successfully."));
+                new UserReadDto
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Username = user.Username,
+                    Description = user.Description,
+                    IsVerified = user.IsVerified,
+                    CreatedAt = user.CreatedAt,
+                    UpdatedAt = user.UpdatedAt,
+                });
         }
     }
 }

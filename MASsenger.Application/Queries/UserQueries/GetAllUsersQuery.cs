@@ -1,6 +1,6 @@
-﻿using MASsenger.Application.Dtos.Read;
+﻿using MASsenger.Application.Dtos.UserDtos;
 using MASsenger.Application.Interfaces;
-using MASsenger.Application.Responses;
+using MASsenger.Application.Results;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
@@ -16,17 +16,18 @@ namespace MASsenger.Application.Queries.UserQueries
         }
         public async Task<Result> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
         {
-            return Result.Success(StatusCodes.Status200OK,
-                new GetEntityResponse<UserReadDto>(
-                    (await _userRepository.GetAllAsync()).Select(u => new UserReadDto
-                    {
-                        Id = u.Id,
-                        Name = u.Name,
-                        Username = u.Username,
-                        Description = u.Description,
-                        CreatedAt = u.CreatedAt,
-                        IsVerified = u.IsVerified
-                    }).ToList()));
+            var users = (await _userRepository.GetAllAsync()).Select(u => new UserReadDto
+            {
+                Id = u.Id,
+                Name = u.Name,
+                Username = u.Username,
+                Description = u.Description,
+                IsVerified = u.IsVerified,
+                CreatedAt = u.CreatedAt,
+                UpdatedAt = u.UpdatedAt
+            }).ToList();
+
+            return Result.Success(StatusCodes.Status200OK, users);
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace MASsenger.Application.Dtos.Create
+﻿namespace MASsenger.Application.Dtos.BotDtos
 {
-    public class BotCreateDto
+    public record BotCreateDto
     {
         public string Name { get; set; } = null!;
         public string Username { get; set; } = null!;

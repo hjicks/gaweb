@@ -1,5 +1,6 @@
 ﻿using MASsenger.Application.Interfaces;
-using MASsenger.Application.Responses;
+using MASsenger.Application.Results;
+using MASsenger.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
@@ -19,13 +20,14 @@ namespace MASsenger.Application.Commands.SessionCommands
         {
             var dbSession = await _sessionRepository.GetByIdAsync(request.SessionId);
             if (dbSession == null)
-                return Result.Failure(StatusCodes.Status404NotFound, "Session not found.");
+                return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
+                    new[] { "Session not found." });
 
             dbSession.IsExpired = true;
             _sessionRepository.Update(dbSession);
             await _unitOfWork.SaveAsync();
 
-            return Result.Success(StatusCodes.Status200OK, new BaseResponse("Log out successful."));
+            return Result.Success(StatusCodes.Status204NoContent);
         }
     }
 }

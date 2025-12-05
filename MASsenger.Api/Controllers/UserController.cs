@@ -1,9 +1,6 @@
 ﻿using MASsenger.Application.Commands.UserCommands;
-using MASsenger.Application.Dtos.Create;
-using MASsenger.Application.Dtos.Read;
-using MASsenger.Application.Dtos.Update;
+using MASsenger.Application.Dtos.UserDtos;
 using MASsenger.Application.Queries.UserQueries;
-using MASsenger.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +9,7 @@ using System.Security.Claims;
 
 namespace MASsenger.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/")]
     [ApiController]
     [Authorize(Roles = "User")]
     public class UserController : BaseController
@@ -22,36 +19,28 @@ namespace MASsenger.Api.Controllers
 
         }
 
-        [HttpGet]
+        [HttpGet("users")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<UserReadDto>))]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers()
         {
             var result = await _sender.Send(new GetAllUsersQuery());
-            return StatusCode(result.StatusCode,
-                new { result.Ok, Response = result.Response<GetEntityResponse<UserReadDto>>() });
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPost, AllowAnonymous]
+        [HttpPost("user"), AllowAnonymous]
         public async Task<IActionResult> AddUserAsync([FromBody] UserCreateDto user)
         {
             var result = await _sender.Send(new AddUserCommand(user));
             if (result.Ok)
             {
-                var cookieOptions = new CookieOptions
-                {
-                    HttpOnly = true,
-                    Expires = DateTime.Now.AddDays(7)
-                };
-                Response.Cookies.Append("refreshToken", result.Response<TokensResponse>().RefreshToken, cookieOptions);
                 Log.Information($"User {user.Username} added.");
-                return StatusCode(result.StatusCode,
-                    new { result.Ok, Response = result.Response<TokensResponse>() });
+                return StatusCode(result.StatusCode, result);
             }
-            return StatusCode(result.StatusCode, new { result.Ok, result.Error });
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPut]
+        [HttpPut("user")]
         public async Task<IActionResult> UpdateUserAsync(UserUpdateDto user)
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -59,12 +48,12 @@ namespace MASsenger.Api.Controllers
             if (result.Ok)
             {
                 Log.Information($"User {userId} updated.");
-                return StatusCode(result.StatusCode, new { result.Ok, Response = result.Response<BaseResponse>() });
+                return StatusCode(result.StatusCode, result);
             }
-            return StatusCode(result.StatusCode, new { result.Ok, result.Error });
+            return StatusCode(result.StatusCode, result);
         }
 
-        [HttpDelete]
+        [HttpDelete("user")]
         public async Task<IActionResult> DeleteUserAsync()
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -72,9 +61,9 @@ namespace MASsenger.Api.Controllers
             if (result.Ok)
             {
                 Log.Information($"User {userId} deleted.");
-                return StatusCode(result.StatusCode, new { result.Ok, Response = result.Response<BaseResponse>() });
+                return StatusCode(result.StatusCode, result);
             }
-            return StatusCode(result.StatusCode, new { result.Ok, result.Error });
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

@@ -1,4 +1,7 @@
 ﻿using MASsenger.Api.Middlewares;
+using MASsenger.Application.Results;
+using MASsenger.Core.Enums;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.Filters;
@@ -10,12 +13,25 @@ namespace MASsenger.Api
     {
         public static IServiceCollection AddApiDI(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddControllers().AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                options.JsonSerializerOptions.WriteIndented = true;
-                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            });
+            services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    options.InvalidModelStateResponseFactory = context =>
+                    {
+                        var errors = context.ModelState
+                            .Where(x => x.Value!.Errors.Any())
+                            .SelectMany(x => x.Value!.Errors.Select(e => e.ErrorMessage))
+                            .ToArray();
+                        return new BadRequestObjectResult(Result.Failure(ErrorType.InvalidRequestModel, errors));
+                    };
+                })
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                    options.JsonSerializerOptions.WriteIndented = true;
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                });
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();

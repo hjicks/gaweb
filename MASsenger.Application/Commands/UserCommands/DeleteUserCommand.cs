@@ -1,11 +1,12 @@
 ﻿using MASsenger.Application.Interfaces;
-using MASsenger.Application.Responses;
+using MASsenger.Application.Results;
+using MASsenger.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
 namespace MASsenger.Application.Commands.UserCommands
 {
-    public record DeleteUserCommand(Int32 UserId) : IRequest<Result>;
+    public record DeleteUserCommand(int UserId) : IRequest<Result>;
     public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Result>
     {
         private readonly IUserRepository _userRepository;
@@ -20,13 +21,13 @@ namespace MASsenger.Application.Commands.UserCommands
         {
             var user = await _userRepository.GetByIdAsync(request.UserId);
             if (user == null)
-                return Result.Failure(StatusCodes.Status404NotFound, "User not found.");
+                return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
+                    new[] { "User not found." });
 
             _userRepository.Delete(user);
             await _unitOfWork.SaveAsync();
 
-            return Result.Success(StatusCodes.Status200OK,
-                new BaseResponse("User deleted successfully."));
+            return Result.Success(StatusCodes.Status204NoContent);
         }
     }
 }
