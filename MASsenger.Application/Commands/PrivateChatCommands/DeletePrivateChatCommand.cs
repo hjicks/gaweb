@@ -22,7 +22,7 @@ namespace MASsenger.Application.Commands.PrivateChatCommands
             var privateChat = await _privateChatRepository.GetByIdAsync(request.PrivateChatId);
             if (privateChat == null)
                 return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
-                    new[] { "User not found." });
+                    new[] { "Private chat not found." });
 
             _privateChatRepository.Delete(privateChat);
             await _unitOfWork.SaveAsync();
