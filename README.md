@@ -6,24 +6,13 @@ $ sudo apt install dotnet dotnet-sdk-6.0 sqlite3
 ```
 then clone this repository:
 ```
-$ git clone https://github.com/mhs04/MessageEngine
-$ cd MessageEngine
+$ git clone https://github.com/hjicks/gaweb
+$ cd gaweb
 $ dotnet build
 ```
 
 
 # Design
-
-Chat related classes:
-```
-BaseChat
-|
-|----> PrivateChat
-|                   
-\----> ChannelChat
-                    
-```
-
 User related classes:
 ```
 BaseUser
@@ -31,4 +20,24 @@ BaseUser
 |----> User
 |
 \----> Bot
+
+Session
+```
+
+Chat related classes:
+```
+BaseChat
+|
+|----> PrivateChat
+|                   
+\----> ChannelChat                    
+```
+
+Message related classes:
+```
+BaseMessage
+|
+|----> Message
+|                   
+\----> SystemMessage                    
 ```
