@@ -1,4 +1,4 @@
-﻿using MASsenger.Application.Responses;
+﻿using MASsenger.Application.Results;
 using MASsenger.Core.Enums;
 using Serilog;
 

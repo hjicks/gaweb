@@ -1,6 +1,6 @@
 ﻿using MASsenger.Application.Dtos.PrivateChatDtos;
 using MASsenger.Application.Interfaces;
-using MASsenger.Application.Responses;
+using MASsenger.Application.Results;
 using MASsenger.Core.Entities.ChatEntities;
 using MASsenger.Core.Enums;
 using MediatR;

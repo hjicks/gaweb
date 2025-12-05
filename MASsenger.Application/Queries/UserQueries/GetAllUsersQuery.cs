@@ -1,6 +1,6 @@
 ﻿using MASsenger.Application.Dtos.UserDtos;
 using MASsenger.Application.Interfaces;
-using MASsenger.Application.Responses;
+using MASsenger.Application.Results;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 

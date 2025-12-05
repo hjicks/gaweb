@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System.Text.Json.Serialization;
 
-namespace MASsenger.Application.Responses
+namespace MASsenger.Application.Results
 {
     public record Result
     {
