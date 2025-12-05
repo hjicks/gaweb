@@ -1,5 +1,5 @@
 using MASsenger.Application.Commands.ChannelChatCommands;
-using MASsenger.Application.Dtos.Create;
+using MASsenger.Application.Dtos.ChannelChatDtos;
 using MASsenger.Application.Interfaces;
 using Moq;
 
