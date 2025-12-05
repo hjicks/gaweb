@@ -1,6 +1,6 @@
 ﻿namespace MASsenger.Application.Dtos.UserDtos
 {
-    public record UserReadDto
+    public record UserTokenDto
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
@@ -9,5 +9,7 @@
         public bool IsVerified { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public string Jwt { get; set; } = null!;
+        public string RefreshToken { get; set; } = null!;
     }
 }

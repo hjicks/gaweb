@@ -27,7 +27,7 @@ namespace MASsenger.Application.Commands.SessionCommands
             _sessionRepository.Update(dbSession);
             await _unitOfWork.SaveAsync();
 
-            return Result.Success(StatusCodes.Status200OK, new BaseResponse("Log out successful."));
+            return Result.Success(StatusCodes.Status204NoContent);
         }
     }
 }

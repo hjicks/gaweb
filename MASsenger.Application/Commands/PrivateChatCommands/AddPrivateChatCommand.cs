@@ -1,4 +1,5 @@
-﻿using MASsenger.Application.Interfaces;
+﻿using MASsenger.Application.Dtos.PrivateChatDtos;
+using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
 using MASsenger.Core.Entities.ChatEntities;
 using MASsenger.Core.Enums;
@@ -38,8 +39,15 @@ namespace MASsenger.Application.Commands.PrivateChatCommands
             await _privateChatRepository.AddAsync(newPrivateChat);
             await _unitOfWork.SaveAsync();
 
-            return Result.Success(StatusCodes.Status200OK,
-                new BaseResponse("Chat added successfully."));
+            return Result.Success(StatusCodes.Status201Created,
+                new PrivateChatReadDto
+                {
+                    Id = newPrivateChat.Id,
+                    Starter = newPrivateChat.Starter,
+                    Receiver = newPrivateChat.Receiver,
+                    CreatedAt = newPrivateChat.CreatedAt,
+                    UpdatedAt = newPrivateChat.UpdatedAt
+                });
         }
     }
 }

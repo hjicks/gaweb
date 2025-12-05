@@ -22,8 +22,9 @@ namespace MASsenger.Application.Queries.UserQueries
                 Name = u.Name,
                 Username = u.Username,
                 Description = u.Description,
+                IsVerified = u.IsVerified,
                 CreatedAt = u.CreatedAt,
-                IsVerified = u.IsVerified
+                UpdatedAt = u.UpdatedAt
             }).ToList();
 
             return Result.Success(StatusCodes.Status200OK, users);

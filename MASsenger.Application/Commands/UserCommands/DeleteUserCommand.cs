@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace MASsenger.Application.Commands.UserCommands
 {
-    public record DeleteUserCommand(Int32 UserId) : IRequest<Result>;
+    public record DeleteUserCommand(int UserId) : IRequest<Result>;
     public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Result>
     {
         private readonly IUserRepository _userRepository;
@@ -27,8 +27,7 @@ namespace MASsenger.Application.Commands.UserCommands
             _userRepository.Delete(user);
             await _unitOfWork.SaveAsync();
 
-            return Result.Success(StatusCodes.Status200OK,
-                new BaseResponse("User deleted successfully."));
+            return Result.Success(StatusCodes.Status204NoContent);
         }
     }
 }

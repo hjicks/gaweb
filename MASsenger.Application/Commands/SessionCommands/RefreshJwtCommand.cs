@@ -1,4 +1,5 @@
-﻿using MASsenger.Application.Interfaces;
+﻿using MASsenger.Application.Dtos.SessionDtos;
+using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
 using MASsenger.Core.Enums;
 using MediatR;
@@ -38,7 +39,10 @@ namespace MASsenger.Application.Commands.SessionCommands
 
             var roles = session.UserId == 1 ? new List<string> { "Admin", "User" } : new List<string> { "User" };
             return Result.Success(StatusCodes.Status200OK,
-                new TokensResponse(_jwtService.GetJwt(session.UserId, roles)));
+                new RefreshSessionDto
+                {
+                    Jwt = _jwtService.GetJwt(session.UserId, roles)
+                });
         }
     }
 }

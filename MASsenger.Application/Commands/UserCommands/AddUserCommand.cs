@@ -52,7 +52,18 @@ namespace MASsenger.Application.Commands.UserCommands
 
             var roles = newUser.Id == 1 ? new List<string> { "Admin", "User" } : new List<string> { "User" };
             return Result.Success(StatusCodes.Status201Created,
-                new TokensResponse(_jwtService.GetJwt(newUser.Id, roles), session.Token));
+                new UserTokenDto
+                {
+                    Id = newUser.Id,
+                    Name = newUser.Name,
+                    Username = newUser.Username,
+                    Description = newUser.Description,
+                    IsVerified = newUser.IsVerified,
+                    CreatedAt = newUser.CreatedAt,
+                    UpdatedAt = newUser.UpdatedAt,
+                    Jwt = _jwtService.GetJwt(newUser.Id, roles),
+                    RefreshToken = session.Token.ToString()
+                });
         }
     }
 }

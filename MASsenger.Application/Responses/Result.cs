@@ -23,6 +23,9 @@ namespace MASsenger.Application.Responses
             Ok = ok;
         }
 
+        public static Result Success(int statusCode) =>
+            new(statusCode, true);
+
         public static SuccessResult<TResponse> Success<TResponse>(int statusCode, TResponse response) =>
             new(statusCode, true, response);
 

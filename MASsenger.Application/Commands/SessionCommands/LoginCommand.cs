@@ -1,4 +1,5 @@
-﻿using MASsenger.Application.Dtos.UserDtos;
+﻿using MASsenger.Application.Dtos.SessionDtos;
+using MASsenger.Application.Dtos.UserDtos;
 using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
 using MASsenger.Core.Entities.UserEntities;
@@ -46,7 +47,11 @@ namespace MASsenger.Application.Commands.SessionCommands
 
             var roles = dbUser.Id == 1 ? new List<string> { "Admin", "User" } : new List<string> { "User" };
             return Result.Success(StatusCodes.Status200OK,
-                new TokensResponse(_jwtService.GetJwt(dbUser.Id, roles), session.Token));
+                new RefreshSessionDto
+                {
+                    Jwt = _jwtService.GetJwt(dbUser.Id, roles),
+                    RefreshToken = session.Token.ToString()
+                });
         }
     }
 }

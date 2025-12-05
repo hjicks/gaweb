@@ -5,8 +5,9 @@ namespace MASsenger.Application.Dtos.PrivateChatDtos
     public class PrivateChatReadDto
     {
         public int Id { get; set; }
+        public BaseUser Starter { get; set; } = null!;
+        public BaseUser Receiver { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public BaseUser Receiver { get; set; } = null!;
     }
 }

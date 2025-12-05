@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 
 namespace MASsenger.Application.Commands.UserCommands
 {
-    public record UpdateUserCommand(Int32 UserId, UserUpdateDto User) : IRequest<Result>;
+    public record UpdateUserCommand(int UserId, UserUpdateDto User) : IRequest<Result>;
     public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Result>
     {
         private readonly IUserRepository _userRepository;
@@ -34,7 +34,16 @@ namespace MASsenger.Application.Commands.UserCommands
             await _unitOfWork.SaveAsync();
 
             return Result.Success(StatusCodes.Status200OK,
-                new BaseResponse("User updated successfully."));
+                new UserReadDto
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Username = user.Username,
+                    Description = user.Description,
+                    IsVerified = user.IsVerified,
+                    CreatedAt = user.CreatedAt,
+                    UpdatedAt = user.UpdatedAt,
+                });
         }
     }
 }
