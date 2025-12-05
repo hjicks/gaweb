@@ -24,8 +24,7 @@ namespace MASsenger.Application.Queries.PrivateChatQueries
                 Receiver = c.Receiver
             }).ToList();
 
-            return Result.Success(StatusCodes.Status200OK,
-                new GetEntityResponse<PrivateChatReadDto>(chats));
+            return Result.Success(StatusCodes.Status200OK, chats);
         }
     }
 }
