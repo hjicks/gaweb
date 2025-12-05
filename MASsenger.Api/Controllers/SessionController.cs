@@ -7,7 +7,7 @@ using Serilog;
 
 namespace MASsenger.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/session")]
     [ApiController]
     [Authorize(Roles = "User")]
     public class SessionController : BaseController

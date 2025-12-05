@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace MASsenger.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/")]
     [ApiController]
     [Authorize(Roles = "User")]
     public class UserController : BaseController
@@ -19,7 +19,7 @@ namespace MASsenger.Api.Controllers
 
         }
 
-        [HttpGet]
+        [HttpGet("users")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<UserReadDto>))]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers()
@@ -28,7 +28,7 @@ namespace MASsenger.Api.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPost, AllowAnonymous]
+        [HttpPost("user"), AllowAnonymous]
         public async Task<IActionResult> AddUserAsync([FromBody] UserCreateDto user)
         {
             var result = await _sender.Send(new AddUserCommand(user));
@@ -40,7 +40,7 @@ namespace MASsenger.Api.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPut]
+        [HttpPut("user")]
         public async Task<IActionResult> UpdateUserAsync(UserUpdateDto user)
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -53,7 +53,7 @@ namespace MASsenger.Api.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpDelete]
+        [HttpDelete("user")]
         public async Task<IActionResult> DeleteUserAsync()
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));

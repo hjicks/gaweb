@@ -1,5 +1,4 @@
-﻿using MASsenger.Application.Commands.ChannelChatCommands;
-using MASsenger.Application.Commands.PrivateChatCommands;
+﻿using MASsenger.Application.Commands.PrivateChatCommands;
 using MASsenger.Application.Dtos.PrivateChatDtos;
 using MASsenger.Application.Queries.PrivateChatQueries;
 using MediatR;
@@ -10,7 +9,7 @@ using System.Security.Claims;
 
 namespace MASsenger.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/")]
     [ApiController]
     [Authorize(Roles = "User")]
 
@@ -21,7 +20,7 @@ namespace MASsenger.Api.Controllers
 
         }
 
-        [HttpGet]
+        [HttpGet("privateChats")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<PrivateChatReadDto>))]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllPrivateChats()
@@ -30,15 +29,16 @@ namespace MASsenger.Api.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpGet("getAllUser")]
-        public async Task<IActionResult> GetAllUserChatsAsync(Int32 userId)
+        [HttpGet("user/privateChats")]
+        public async Task<IActionResult> GetAllUserChatsAsync()
         {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var result = await _sender.Send(new GetAllUserPrivateChatsQuery(userId));
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddPrivateChatAsync(Int32 receiverId)
+        [HttpPost("user/privateChat/{receiverId}")]
+        public async Task<IActionResult> AddPrivateChatAsync(int receiverId)
         {
             var starterId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var result = await _sender.Send(new AddPrivateChatCommand(starterId, receiverId));
@@ -50,12 +50,16 @@ namespace MASsenger.Api.Controllers
             return StatusCode(result.StatusCode, result);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeletePrivateChatAsync(Int32 privateChatId)
+        [HttpDelete("user/privateChat/{privateChatId}")]
+        public async Task<IActionResult> DeletePrivateChatAsync(int privateChatId)
         {
-            if (await _sender.Send(new DeletePrivateChatCommand(privateChatId)) == Core.Enums.TransactionResultType.Done) return Ok("PrivateChat deleted successfully.");
-            else if (await _sender.Send(new DeleteChannelChatCommand(privateChatId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid privateChat Id.");
-            return BadRequest("Something went wrong while deleting the privateChat.");
+            var result = await _sender.Send(new DeletePrivateChatCommand(privateChatId));
+            if (result.Ok)
+            {
+                Log.Information($"Private chat {privateChatId} deleted.");
+                return StatusCode(result.StatusCode, result);
+            }
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

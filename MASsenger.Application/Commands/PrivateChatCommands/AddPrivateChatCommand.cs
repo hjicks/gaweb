@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace MASsenger.Application.Commands.PrivateChatCommands
 {
-    public record AddPrivateChatCommand(Int32 StarterId, Int32 ReceiverId) : IRequest<Result>;
+    public record AddPrivateChatCommand(int StarterId, int ReceiverId) : IRequest<Result>;
     public class AddPrivateChatCommandHandler : IRequestHandler<AddPrivateChatCommand, Result>
     {
         private readonly IPrivateChatRepository _privateChatRepository;
