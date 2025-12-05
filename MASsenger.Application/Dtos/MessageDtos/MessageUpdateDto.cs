@@ -1,8 +1,8 @@
-namespace MASsenger.Application.Dtos.Update
+namespace MASsenger.Application.Dtos.MessageDtos
 {
     public class MessageUpdateDto
     {
-        public Int32 Id { get; }
+        public int Id { get; }
 
         /* 
          * IRC doesn't offer this, why should we?

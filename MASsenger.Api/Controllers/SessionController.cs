@@ -1,5 +1,5 @@
 ﻿using MASsenger.Application.Commands.SessionCommands;
-using MASsenger.Application.Dtos.Login;
+using MASsenger.Application.Dtos.UserDtos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

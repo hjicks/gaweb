@@ -1,8 +1,8 @@
-﻿namespace MASsenger.Application.Dtos.Create
+﻿namespace MASsenger.Application.Dtos.SystemMessageDtos
 {
     public class SystemMessageCreateDto
     {
-        public Int32 DestinationID { set; get; }
+        public int DestinationID { set; get; }
         public string Text { set; get; } = string.Empty;
     }
 }

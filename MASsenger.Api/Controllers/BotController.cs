@@ -1,8 +1,5 @@
 ﻿using MASsenger.Application.Commands.BotCommands;
-using MASsenger.Application.Dtos.Create;
-using MASsenger.Application.Dtos.Login;
-using MASsenger.Application.Dtos.Read;
-using MASsenger.Application.Dtos.Update;
+using MASsenger.Application.Dtos.BotDtos;
 using MASsenger.Application.Queries.BotQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

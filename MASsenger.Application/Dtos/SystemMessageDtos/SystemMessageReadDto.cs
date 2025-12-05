@@ -1,8 +1,8 @@
-﻿namespace MASsenger.Application.Dtos.Read
+﻿namespace MASsenger.Application.Dtos.SystemMessageDtos
 {
     public class SystemMessageReadDto
     {
-        public Int32 DestinationID { set; get; }
+        public int DestinationID { set; get; }
         public string? Text { set; get; }
         public DateTime? CreatedAt { set; get; }
     }

@@ -1,7 +1,5 @@
 ﻿using MASsenger.Application.Commands.ChannelChatCommands;
-using MASsenger.Application.Dtos.Create;
-using MASsenger.Application.Dtos.Read;
-using MASsenger.Application.Dtos.Update;
+using MASsenger.Application.Dtos.ChannelChatDtos;
 using MASsenger.Application.Queries.ChannelChatQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

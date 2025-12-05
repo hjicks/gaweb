@@ -1,10 +1,10 @@
 ﻿using MASsenger.Core.Entities.UserEntities;
 
-namespace MASsenger.Application.Dtos.Read
+namespace MASsenger.Application.Dtos.PrivateChatDtos
 {
     public class PrivateChatReadDto
     {
-        public Int32 Id { get; set; }
+        public int Id { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public BaseUser Receiver { get; set; } = null!;

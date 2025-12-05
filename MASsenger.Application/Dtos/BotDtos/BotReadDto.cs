@@ -1,8 +1,8 @@
-﻿namespace MASsenger.Application.Dtos.Read
+﻿namespace MASsenger.Application.Dtos.BotDtos
 {
     public class BotReadDto
     {
-        public Int32 Id { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; } = null!;
         public string? Username { get; set; }
         public string? Description { get; set; }

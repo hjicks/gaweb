@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MASsenger.Application.Dtos.Login
+namespace MASsenger.Application.Dtos.UserDtos
 {
     public class UserLoginDto
     {

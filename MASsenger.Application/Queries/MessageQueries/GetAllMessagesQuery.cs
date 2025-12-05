@@ -1,4 +1,4 @@
-﻿using MASsenger.Application.Dtos.Read;
+﻿using MASsenger.Application.Dtos.MessageDtos;
 using MASsenger.Application.Interfaces;
 using MediatR;
 

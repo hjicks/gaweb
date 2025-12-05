@@ -1,6 +1,6 @@
 ﻿using MASsenger.Application.Commands.ChannelChatCommands;
 using MASsenger.Application.Commands.PrivateChatCommands;
-using MASsenger.Application.Dtos.Read;
+using MASsenger.Application.Dtos.PrivateChatDtos;
 using MASsenger.Application.Queries.PrivateChatQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

@@ -1,4 +1,4 @@
-﻿using MASsenger.Application.Dtos.Create;
+﻿using MASsenger.Application.Dtos.UserDtos;
 using MASsenger.Application.Interfaces;
 using MASsenger.Application.Responses;
 using MASsenger.Core.Entities.UserEntities;

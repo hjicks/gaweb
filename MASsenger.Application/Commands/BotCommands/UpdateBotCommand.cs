@@ -1,4 +1,4 @@
-﻿using MASsenger.Application.Dtos.Update;
+﻿using MASsenger.Application.Dtos.BotDtos;
 using MASsenger.Application.Interfaces;
 using MASsenger.Core.Enums;
 using MediatR;

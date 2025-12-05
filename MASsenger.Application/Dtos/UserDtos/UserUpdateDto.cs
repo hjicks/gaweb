@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MASsenger.Application.Dtos.Create
+namespace MASsenger.Application.Dtos.UserDtos
 {
-    public class UserCreateDto
+    public class UserUpdateDto
     {
         [MinLength(1)]
         [MaxLength(64)]

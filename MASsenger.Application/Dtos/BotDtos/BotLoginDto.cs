@@ -1,8 +1,8 @@
-﻿namespace MASsenger.Application.Dtos.Login
+﻿namespace MASsenger.Application.Dtos.BotDtos
 {
     public class BotLoginDto
     {
-        public Int32 Id { get; set; }
+        public int Id { get; set; }
         public string Token { get; set; } = string.Empty;
     }
 }

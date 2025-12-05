@@ -1,4 +1,4 @@
-﻿namespace MASsenger.Application.Dtos.Create
+﻿namespace MASsenger.Application.Dtos.BotDtos
 {
     public class BotCreateDto
     {

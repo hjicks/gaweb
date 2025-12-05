@@ -1,4 +1,4 @@
-﻿using MASsenger.Application.Dtos.Create;
+﻿using MASsenger.Application.Dtos.SystemMessageDtos;
 using MASsenger.Application.Interfaces;
 using MASsenger.Core.Entities.ChatEntities;
 using MASsenger.Core.Entities.MessageEntities;

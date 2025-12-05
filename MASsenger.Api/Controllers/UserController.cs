@@ -1,7 +1,5 @@
 ﻿using MASsenger.Application.Commands.UserCommands;
-using MASsenger.Application.Dtos.Create;
-using MASsenger.Application.Dtos.Read;
-using MASsenger.Application.Dtos.Update;
+using MASsenger.Application.Dtos.UserDtos;
 using MASsenger.Application.Queries.UserQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
