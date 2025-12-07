@@ -2,7 +2,7 @@
 {
     public record MessageCreateDto
     {
-        public int DestinationID { set; get; }
+        public int DestinationId { set; get; }
         public string Text { set; get; } = string.Empty;
     }
 }

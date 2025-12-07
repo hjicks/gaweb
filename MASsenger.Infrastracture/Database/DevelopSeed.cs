@@ -1,6 +1,7 @@
 ﻿using MASsenger.Core.Entities.ChatEntities;
 using MASsenger.Core.Entities.MessageEntities;
 using MASsenger.Core.Entities.UserEntities;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 
 namespace MASsenger.Infrastracture.Database
@@ -31,6 +32,10 @@ namespace MASsenger.Infrastracture.Database
                     Description = "Behold, this is the Tester."
                 };
                 await dbContext.Users.AddRangeAsync(admin, tester);
+                await dbContext.SaveChangesAsync();
+
+                var dbAdmin = await dbContext.Users.Where(u => u.Username == admin.Username).SingleAsync();
+                var dbTester = await dbContext.Users.Where(u => u.Username == tester.Username).SingleAsync();
 
                 var bot = new Bot()
                 {
@@ -38,60 +43,66 @@ namespace MASsenger.Infrastracture.Database
                     Username = "testersbot",
                     Token = "thisisatoken",
                     Description = "Behold, this the Testers bot.",
-                    Owner = tester
+                    OwnerId = dbTester.Id
                 };
                 await dbContext.Bots.AddAsync(bot);
+                await dbContext.SaveChangesAsync();
 
                 var adminSession = new Session()
                 {
-                    User = admin
+                    UserId = dbAdmin.Id
                 };
                 var testerSession = new Session()
                 {
-                    User = tester
+                    UserId = dbTester.Id
                 };
                 await dbContext.Sessions.AddRangeAsync(adminSession, testerSession);
+                await dbContext.SaveChangesAsync();
 
                 var privateChat = new PrivateChat()
                 {
-                    Starter = admin,
-                    Receiver = tester
+                    StarterId = dbAdmin.Id,
+                    ReceiverId = dbTester.Id
                 };
                 await dbContext.PrivateChats.AddAsync(privateChat);
+                await dbContext.SaveChangesAsync();
 
                 var channel = new ChannelChat()
                 {
                     Name = "Testers Channel",
                     Username = "testerschannel",
                     Description = "Behold, this is the Testers channel.",
-                    Owner = tester,
-                    Admins = new List<BaseUser>() { tester },
-                    Members = new List<BaseUser>() { tester }
+                    OwnerId = dbTester.Id,
+                    Admins = new List<BaseUser>() { dbTester },
+                    Members = new List<BaseUser>() { dbTester }
                 };
                 await dbContext.ChannelChats.AddAsync(channel);
+                await dbContext.SaveChangesAsync();
+
+                var dbPrivateChat = await dbContext.PrivateChats.Where(c => c.StarterId == privateChat.StarterId).SingleAsync();
+                var dbChannel = await dbContext.ChannelChats.Where(c => c.Username == channel.Username).SingleAsync();
 
                 var systemMessage = new SystemMessage()
                 {
                     Text = "Testers Channel created.",
-                    Destination = channel
+                    DestinationId = dbChannel.Id
                 };
                 await dbContext.SystemMessages.AddAsync(systemMessage);
+                await dbContext.SaveChangesAsync();
 
                 var channelMessage = new Message()
                 {
                     Text = "Hello World!",
-                    Sender = tester,
-                    Destination = channel
+                    SenderId = dbTester.Id,
+                    DestinationId = dbChannel.Id
                 };
                 var privateMessage = new Message()
                 {
                     Text = "Welcome to MASsenger!",
-                    Sender = admin,
-                    Destination = privateChat
+                    SenderId = dbAdmin.Id,
+                    DestinationId = dbPrivateChat.Id
                 };
                 await dbContext.Messages.AddRangeAsync(channelMessage, privateMessage);
-
-
                 await dbContext.SaveChangesAsync();
             }
         }

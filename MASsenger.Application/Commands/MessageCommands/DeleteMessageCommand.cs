@@ -24,7 +24,7 @@ namespace MASsenger.Application.Commands.MessageCommands
                 return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
                     new[] { "Message not found." });
 
-            if (message.Sender.Id != request.SenderId)
+            if (message.SenderId != request.SenderId)
                 return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied,
                     new[] { "You are not allowed to edit someone else's message." });
 

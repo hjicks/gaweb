@@ -29,9 +29,9 @@ namespace MASsenger.Application.Commands.BotCommands
                 Name = request.bot.Name,
                 Username = request.bot.Username,
                 Description = request.bot.Description,
-                Token = request.bot.Token
+                Token = request.bot.Token,
+                OwnerId = owner.Id
             };
-            newBot.Owner = owner;
             await _botRepository.AddAsync(newBot);
             await _unitOfWork.SaveAsync();
             return TransactionResultType.Done;

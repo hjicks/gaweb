@@ -18,7 +18,7 @@ namespace MASsenger.Application.Queries.SystemMessageQueries
             {
                 Text = m.Text,
                 CreatedAt = m.CreatedAt,
-                DestinationID = m.Destination.Id,
+                DestinationId = m.DestinationId
             }).ToList(); ;
         }
     }

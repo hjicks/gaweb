@@ -19,8 +19,8 @@ namespace MASsenger.Application.Queries.PrivateChatQueries
             var chats = (await _privateChatRepository.GetAllUserAsync(request.UserId)).Select(c => new PrivateChatReadDto
             {
                 Id = c.Id,
-                Starter = c.Starter,
-                Receiver = c.Receiver,
+                StarterId = c.StarterId,
+                ReceiverId = c.ReceiverId,
                 CreatedAt = c.CreatedAt,
                 UpdatedAt = c.UpdatedAt
             }).ToList();

@@ -1,5 +1,6 @@
 ﻿using MASsenger.Core.Entities.Base;
 using MASsenger.Core.Entities.ChatEntities;
+using MASsenger.Core.Entities.MessageEntities;
 
 namespace MASsenger.Core.Entities.UserEntities
 {
@@ -11,8 +12,10 @@ namespace MASsenger.Core.Entities.UserEntities
         public bool IsVerified { get; set; } = false;
 
         // many-to-many relationships
+        public ICollection<PrivateChat> PrivateChats { get; set; } = new List<PrivateChat>();
         public ICollection<ChannelChat> ChannelsJoined { get; set; } = new List<ChannelChat>();
         public ICollection<ChannelChat> ChannelsManaged { get; set; } = new List<ChannelChat>();
         public ICollection<ChannelChat> ChannelsBannedFrom { get; set; } = new List<ChannelChat>();
+        public ICollection<Message> Messages { get; set; } = new List<Message>();
     }
 }

@@ -31,15 +31,15 @@ namespace MASsenger.Application.Commands.MessageCommands
         {
             var sender = await _baseUserRepository.GetByIdAsync(request.SenderId);
 
-            var destination = await _baseChatRepository.GetByIdAsync(request.Message.DestinationID);
+            var destination = await _baseChatRepository.GetByIdAsync(request.Message.DestinationId);
             if (destination == null)
                 return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
                     new[] { "Destination chat not found." });
 
             var newMessage = new Message
             {
-                Sender = sender!,
-                Destination = destination,
+                SenderId = sender!.Id,
+                DestinationId = destination.Id,
                 Text = request.Message.Text
             };
 
@@ -50,8 +50,8 @@ namespace MASsenger.Application.Commands.MessageCommands
                 new MessageReadDto
                 {
                     Id = newMessage.Id,
-                    SenderID = newMessage.Sender.Id,
-                    DestinationID = newMessage.Destination.Id,
+                    SenderId = newMessage.SenderId,
+                    DestinationId = newMessage.DestinationId,
                     Text = newMessage.Text,
                     CreatedAt = newMessage.CreatedAt,
                     UpdatedAt = newMessage.UpdatedAt

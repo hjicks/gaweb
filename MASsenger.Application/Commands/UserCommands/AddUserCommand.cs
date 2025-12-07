@@ -44,7 +44,7 @@ namespace MASsenger.Application.Commands.UserCommands
 
             var session = new Session
             {
-                User = newUser
+                UserId = newUser.Id
             };
             await _sessionRepository.AddAsync(session);
            

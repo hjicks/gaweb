@@ -68,6 +68,11 @@ namespace MASsenger.Infrastracture.Database
                 .HasMany(e => e.Banned)
                 .WithMany(e => e.ChannelsBannedFrom)
                 .UsingEntity(join => join.ToTable("ChannelsBannedUsers"));
+
+            modelBuilder.Entity<PrivateChat>()
+                .HasOne(e => e.Receiver)
+                .WithMany(e => e.PrivateChats)
+                .HasForeignKey(e => e.ReceiverId);
         }
     }
 }

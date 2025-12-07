@@ -1,6 +1,7 @@
 ﻿using MASsenger.Application.Dtos.MessageDtos;
 using MASsenger.Application.Interfaces;
 using MASsenger.Application.Results;
+using MASsenger.Core.Entities.MessageEntities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -19,10 +20,12 @@ namespace MASsenger.Application.Queries.MessageQueries
         {
             var messages = (await _messageRepository.GetAllAsync()).Select(m => new MessageReadDto
             {
+                Id = m.Id,
+                SenderId = m.SenderId,
+                DestinationId = m.DestinationId,
                 Text = m.Text,
                 CreatedAt = m.CreatedAt,
-                SenderID = m.Sender.Id,
-                DestinationID = m.Destination.Id,
+                UpdatedAt = m.UpdatedAt
             }).ToList();
 
             return Result.Success(StatusCodes.Status200OK, messages);

@@ -7,8 +7,7 @@ namespace MASsenger.Core.Entities.ChatEntities
 		public string? Name { get; set; } = null;
 		public string? Username { get; set; } = null;
 		public string? Description { get; set; } = null;
-
-        // required one-to-many relationship
+        public int OwnerId { get; set; }
         public User Owner { get; set; } = null!;
 
         // many-to-many relationships
