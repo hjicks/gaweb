@@ -22,12 +22,12 @@ namespace MASsenger.Application.Commands.SystemMessageCommands
         }
         public async Task<TransactionResultType> Handle(AddSystemMessageCommand request, CancellationToken cancellationToken)
         {
-            var destination = await _baseChatRepository.GetByIdAsync(request.msg.DestinationID);
+            var destination = await _baseChatRepository.GetByIdAsync(request.msg.DestinationId);
             if (destination == null)
                 return TransactionResultType.ForeignKeyNotFound;
             var newMessage = new SystemMessage
             {
-                Destination = destination,
+                DestinationId = destination.Id,
                 Text = request.msg.Text
             };
 

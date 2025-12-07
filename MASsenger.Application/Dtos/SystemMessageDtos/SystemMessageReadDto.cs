@@ -2,7 +2,7 @@
 {
     public record SystemMessageReadDto
     {
-        public int DestinationID { set; get; }
+        public int DestinationId { set; get; }
         public string? Text { set; get; }
         public DateTime? CreatedAt { set; get; }
     }

@@ -32,8 +32,8 @@ namespace MASsenger.Application.Commands.PrivateChatCommands
             
             var newPrivateChat = new PrivateChat
             {
-                Starter = starter!,
-                Receiver = receiver
+                StarterId = starter!.Id,
+                ReceiverId = receiver.Id
             };
 
             await _privateChatRepository.AddAsync(newPrivateChat);
@@ -43,8 +43,8 @@ namespace MASsenger.Application.Commands.PrivateChatCommands
                 new PrivateChatReadDto
                 {
                     Id = newPrivateChat.Id,
-                    Starter = newPrivateChat.Starter,
-                    Receiver = newPrivateChat.Receiver,
+                    StarterId = newPrivateChat.StarterId,
+                    ReceiverId = newPrivateChat.ReceiverId,
                     CreatedAt = newPrivateChat.CreatedAt,
                     UpdatedAt = newPrivateChat.UpdatedAt
                 });

@@ -34,7 +34,7 @@ namespace MASsenger.Api.Controllers
             var result = await _sender.Send(new AddMessageCommand(senderId, message));
             if (result.Ok)
             {
-                Log.Information($"User {senderId} added message to chat {message.DestinationID}.");
+                Log.Information($"User {senderId} added message to chat {message.DestinationId}.");
                 return StatusCode(result.StatusCode, result);
             }
             return StatusCode(result.StatusCode, result);

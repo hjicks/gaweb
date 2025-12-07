@@ -40,7 +40,7 @@ namespace MASsenger.Application.Commands.SessionCommands
 
             var session = new Session
             {
-                User = dbUser
+                UserId = dbUser.Id
             };
             await _sessionRepository.AddAsync(session);
             await _unitOfWork.SaveAsync();
