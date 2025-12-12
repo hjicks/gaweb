@@ -1,6 +1,7 @@
 using MASsenger.Api;
 using MASsenger.Api.Middlewares;
 using MASsenger.Application;
+using MASsenger.Application.Hubs;
 using MASsenger.Core;
 using MASsenger.Infrastracture;
 using MASsenger.Infrastracture.Database;
@@ -14,6 +15,8 @@ builder.Services.AddCoreDI(builder.Configuration)
     .AddApiDI(builder.Configuration);
 
 builder.Host.UseSerilog();
+builder.Services.AddSignalR();
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
@@ -40,5 +43,6 @@ app.UseAuthorization();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/hub");
 
 app.Run();
