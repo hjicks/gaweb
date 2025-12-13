@@ -6,6 +6,7 @@ using MASsenger.Core;
 using MASsenger.Infrastracture;
 using MASsenger.Infrastracture.Database;
 using Serilog;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +25,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.DocExpansion(DocExpansion.None); // Shut up swagger
+    });
 
     using var seedScope = app.Services.CreateScope();
     var dbContext = seedScope.ServiceProvider.GetRequiredService<EfDbContext>();
