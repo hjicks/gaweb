@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using MASsenger.Application.Hubs;
 using MASsenger.Application.Interfaces;
 using MASsenger.Application.Pipelines;
 using MASsenger.Application.Services;
