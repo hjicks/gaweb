@@ -48,6 +48,8 @@ namespace MASsenger.Application
                 return new JwtService(provider.GetRequiredService<IOptionsSnapshot<JwtOptions>>().Value);
             });
 
+
+            services.AddSingleton<ChatHub>();
             return services;
         }
     }
