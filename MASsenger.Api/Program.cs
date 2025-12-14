@@ -1,10 +1,12 @@
 using MASsenger.Api;
 using MASsenger.Api.Middlewares;
 using MASsenger.Application;
+using MASsenger.Application.Hubs;
 using MASsenger.Core;
 using MASsenger.Infrastracture;
 using MASsenger.Infrastracture.Database;
 using Serilog;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,8 @@ builder.Services.AddCoreDI(builder.Configuration)
     .AddApiDI(builder.Configuration);
 
 builder.Host.UseSerilog();
+builder.Services.AddSignalR();
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
@@ -21,7 +25,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.DocExpansion(DocExpansion.None); // Shut up swagger
+    });
 
     using var seedScope = app.Services.CreateScope();
     var dbContext = seedScope.ServiceProvider.GetRequiredService<EfDbContext>();
@@ -40,5 +47,6 @@ app.UseAuthorization();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/hub");
 
 app.Run();

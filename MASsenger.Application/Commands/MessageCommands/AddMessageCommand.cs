@@ -1,4 +1,5 @@
 ﻿using MASsenger.Application.Dtos.MessageDtos;
+using MASsenger.Application.Hubs;
 using MASsenger.Application.Interfaces;
 using MASsenger.Application.Results;
 using MASsenger.Core.Entities.ChatEntities;
@@ -7,6 +8,7 @@ using MASsenger.Core.Entities.UserEntities;
 using MASsenger.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 
 namespace MASsenger.Application.Commands.MessageCommands
 {
@@ -17,15 +19,17 @@ namespace MASsenger.Application.Commands.MessageCommands
         private readonly IMessageRepository _messageRepository;
         private readonly IBaseRepository<BaseChat> _baseChatRepository;
         private readonly IBaseRepository<BaseUser> _baseUserRepository;
+        private readonly IHubContext<ChatHub> _hubContext;
 
         public AddMessageCommandHandler(IMessageRepository messageRepository,
             IBaseRepository<BaseChat> baseChatRepository, IBaseRepository<BaseUser> baseUserRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext)
         {
             _messageRepository = messageRepository;
             _baseChatRepository = baseChatRepository;
             _baseUserRepository = baseUserRepository;
             _unitOfWork = unitOfWork;
+            _hubContext = hubContext;
         }
         public async Task<Result> Handle(AddMessageCommand request, CancellationToken cancellationToken)
         {
@@ -45,6 +49,8 @@ namespace MASsenger.Application.Commands.MessageCommands
 
             await _messageRepository.AddAsync(newMessage);
             await _unitOfWork.SaveAsync();
+
+            await _hubContext.Clients.All.SendAsync("a", sender.Name, request.Message.Text, cancellationToken: cancellationToken);
 
             return Result.Success(StatusCodes.Status201Created,
                 new MessageReadDto
