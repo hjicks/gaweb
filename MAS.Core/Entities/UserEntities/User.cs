@@ -1,18 +1,30 @@
-﻿using MAS.Core.Entities.ChatEntities;
+﻿using MAS.Core.Entities.Base;
+using MAS.Core.Entities.ChatEntities;
+using MAS.Core.Entities.MessageEntities;
 
 namespace MAS.Core.Entities.UserEntities
 {
-    public class User : BaseUser
+    public class User : BaseEntity
     {
-        public byte[] PasswordHash { get; set; } = null!;
-        public byte[] PasswordSalt { get; set; } = null!;
+        public string DisplayName { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
+        public string? Bio { get; set; }
+        public byte[]? Avatar { get; set; }
+        public byte[] PasswordHash { get; set; } = Array.Empty<byte>();
+        public byte[] PasswordSalt { get; set; } = Array.Empty<byte>();
+        public bool IsVerified { get; set; } = false;
+        public bool IsBot { get; set; } = false;
+        public DateTime LastSeenAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        // one-to-many relationships
-        public ICollection<Bot> BotsOwned { get; set; } = new List<Bot>();
-        public ICollection<ChannelChat> ChannelsOwned { get; set; } = new List<ChannelChat>();
-        public ICollection<Session> UserSessions { get; set; } = new List<Session>();
+        // navigation properties
 
-        // many-to-many relationships
-        public ICollection<Bot> BotsJoined { get; set; } = new List<Bot>();
+        // many-to-one
+        public ICollection<Session> Sessions { get; set; } = new List<Session>();
+        public ICollection<Message> Messages { get; set; } = new List<Message>();
+
+        // many-to-many
+        public ICollection<GroupChat> GroupChats { get; set; } = new List<GroupChat>();
+        public ICollection<PrivateChat> PrivateChats { get; set; } = new List<PrivateChat>();
     }
 }

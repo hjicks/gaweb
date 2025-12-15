@@ -45,7 +45,7 @@ namespace MAS.Api.Controllers
         [HttpPost("refresh"), AllowAnonymous]
         public async Task<IActionResult> RefreshJwt([FromBody] Int32 sessionId, Guid refreshToken)
         {
-            var result = await _sender.Send(new RefreshJwtCommand(sessionId, refreshToken));
+            var result = await _sender.Send(new RefreshSessionCommand(sessionId, refreshToken));
             if (result.Ok)
             {
                 Log.Information($"Jwt of user with id {sessionId} renewed.");

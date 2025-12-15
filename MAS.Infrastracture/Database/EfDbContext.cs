@@ -1,4 +1,5 @@
 ﻿using MAS.Core.Entities.ChatEntities;
+using MAS.Core.Entities.JunctionEntities;
 using MAS.Core.Entities.MessageEntities;
 using MAS.Core.Entities.UserEntities;
 using Microsoft.EntityFrameworkCore;
@@ -12,67 +13,35 @@ namespace MAS.Infrastracture.Database
             
         }
 
-        public DbSet<BaseUser> BaseUsers { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
-        public DbSet<Bot> Bots { get; set; } = null!;
         public DbSet<Session> Sessions { get; set; } = null!;
-        public DbSet<BaseChat> BaseChats { get; set; } = null!;
-        public DbSet<ChannelChat> ChannelChats { get; set; } = null!;
+        public DbSet<BaseChat> Chats { get; set; } = null!;
         public DbSet<PrivateChat> PrivateChats { get; set; } = null!;
-        public DbSet<BaseMessage> BaseMessages { get; set; } = null!;
+        public DbSet <GroupChat> GroupChats { get; set; } = null!;
+        public DbSet<PrivateChatUser> PrivateChatUsers { get; set; } = null!;
+        public DbSet<GroupChatUser> GroupChatUsers { get; set; } = null!;
         public DbSet<Message> Messages { get; set; } = null!;
-        public DbSet<SystemMessage> SystemMessages { get; set; } = null!;
+        public DbSet<FileContent> FileContents { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<BaseUser>()
-                .HasDiscriminator<string>("Type")
-                .HasValue<User>("User")
-                .HasValue<Bot>("Bot");
-
             modelBuilder.Entity<BaseChat>()
                 .HasDiscriminator<string>("Type")
-                .HasValue<ChannelChat>("Channel")
+                .HasValue<GroupChat>("Group")
                 .HasValue<PrivateChat>("Private");
 
-            modelBuilder.Entity<BaseMessage>()
-                .HasDiscriminator<string>("Type")
-                .HasValue<Message>("Message")
-                .HasValue<SystemMessage>("SystemMessage");
-
-            modelBuilder.Entity<Bot>()
-                .HasOne(e => e.Owner)
-                .WithMany(e => e.BotsOwned)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Bot>()
+            modelBuilder.Entity<GroupChat>()
                 .HasMany(e => e.Members)
-                .WithMany(e => e.BotsJoined);
-
-            modelBuilder.Entity<ChannelChat>()
-                .HasOne(e => e.Owner)
-                .WithMany(e => e.ChannelsOwned)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<ChannelChat>()
-                .HasMany(e => e.Members)
-                .WithMany(e => e.ChannelsJoined)
-                .UsingEntity(join => join.ToTable("ChannelsMembers"));
-
-            modelBuilder.Entity<ChannelChat>()
-                .HasMany(e => e.Admins)
-                .WithMany(e => e.ChannelsManaged)
-                .UsingEntity(join => join.ToTable("ChannelsAdmins"));
-
-            modelBuilder.Entity<ChannelChat>()
-                .HasMany(e => e.Banned)
-                .WithMany(e => e.ChannelsBannedFrom)
-                .UsingEntity(join => join.ToTable("ChannelsBannedUsers"));
+                .WithMany(e => e.GroupChats)
+                .UsingEntity<GroupChatUser>();
 
             modelBuilder.Entity<PrivateChat>()
-                .HasOne(e => e.Receiver)
+                .HasMany(e => e.Members)
                 .WithMany(e => e.PrivateChats)
-                .HasForeignKey(e => e.ReceiverId);
+                .UsingEntity<PrivateChatUser>();
+
+            modelBuilder.Entity<FileContent>()
+                .HasKey(e => e.MessageId);
         }
     }
 }

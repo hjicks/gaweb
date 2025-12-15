@@ -16,7 +16,7 @@ namespace MAS.Infrastracture.Repositories
 
         public async Task<IEnumerable<User>> GetAllAsync()
         {
-            string query = "SELECT * FROM BaseUsers WHERE Type == 'User'";
+            string query = "SELECT * FROM Users WHERE Type == 'User'";
             return (await _dapperDbContext.GetConnection().QueryAsync<User>(query)).ToList();
         }
 

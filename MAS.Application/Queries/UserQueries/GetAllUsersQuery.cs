@@ -16,12 +16,12 @@ namespace MAS.Application.Queries.UserQueries
         }
         public async Task<Result> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
         {
-            var users = (await _userRepository.GetAllAsync()).Select(u => new UserReadDto
+            var users = (await _userRepository.GetAllAsync()).Select(u => new UserGetDto
             {
                 Id = u.Id,
-                Name = u.Name,
+                DisplayName = u.DisplayName,
                 Username = u.Username,
-                Description = u.Description,
+                Bio = u.Bio,
                 IsVerified = u.IsVerified,
                 CreatedAt = u.CreatedAt,
                 UpdatedAt = u.UpdatedAt

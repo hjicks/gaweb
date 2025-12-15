@@ -16,37 +16,34 @@ namespace MAS.Infrastracture.Database
             {
                 var admin = new User()
                 {
-                    Name = "Admin",
+                    DisplayName = "Admin",
                     Username = "Admin",
                     PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("sysadmin")),
                     PasswordSalt = hmac.Key,
-                    Description = "Behold, this is the Admin.",
+                    Bio = "Behold, this is the Admin.",
                     IsVerified = true
                 };
                 var tester = new User()
                 {
-                    Name = "Tester",    // this is a random user, nothing fancy
+                    DisplayName = "Tester",    // this is a random user, nothing fancy
                     Username = "tester",
                     PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("12345678")),
                     PasswordSalt = hmac.Key,
-                    Description = "Behold, this is the Tester."
+                    Bio = "Behold, this is the Tester."
                 };
-                await dbContext.Users.AddRangeAsync(admin, tester);
+                var bot = new User()
+                {
+                    DisplayName = "Testers Bot",
+                    Username = "testersbot",
+                    PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("thisisatoken")),
+                    PasswordSalt = hmac.Key,
+                    Bio = "Behold, this the Testers bot."
+                };
+                await dbContext.Users.AddRangeAsync(admin, tester, bot);
                 await dbContext.SaveChangesAsync();
 
                 var dbAdmin = await dbContext.Users.Where(u => u.Username == admin.Username).SingleAsync();
                 var dbTester = await dbContext.Users.Where(u => u.Username == tester.Username).SingleAsync();
-
-                var bot = new Bot()
-                {
-                    Name = "Testers Bot",
-                    Username = "testersbot",
-                    Token = "thisisatoken",
-                    Description = "Behold, this the Testers bot.",
-                    OwnerId = dbTester.Id
-                };
-                await dbContext.Bots.AddAsync(bot);
-                await dbContext.SaveChangesAsync();
 
                 var adminSession = new Session()
                 {
@@ -61,49 +58,48 @@ namespace MAS.Infrastracture.Database
 
                 var privateChat = new PrivateChat()
                 {
-                    StarterId = dbAdmin.Id,
-                    ReceiverId = dbTester.Id
+                    Members = new List<User> { dbAdmin, dbTester }
                 };
                 await dbContext.PrivateChats.AddAsync(privateChat);
                 await dbContext.SaveChangesAsync();
 
-                var channel = new ChannelChat()
+                var group = new GroupChat()
                 {
-                    Name = "Testers Channel",
-                    Username = "testerschannel",
+                    DisplayName = "Testers Channel",
+                    Groupname = "testerschannel",
                     Description = "Behold, this is the Testers channel.",
-                    OwnerId = dbTester.Id,
-                    Admins = new List<BaseUser>() { dbTester },
-                    Members = new List<BaseUser>() { dbTester }
+                    //OwnerId = dbTester.Id,
+                    //Admins = new List<BaseUser>() { dbTester },
+                    Members = new List<User>() { dbTester }
                 };
-                await dbContext.ChannelChats.AddAsync(channel);
+                await dbContext.GroupChats.AddAsync(group);
                 await dbContext.SaveChangesAsync();
 
-                var dbPrivateChat = await dbContext.PrivateChats.Where(c => c.StarterId == privateChat.StarterId).SingleAsync();
-                var dbChannel = await dbContext.ChannelChats.Where(c => c.Username == channel.Username).SingleAsync();
+                //var dbPrivateChat = await dbContext.PrivateChats.Where(c => c.StarterId == privateChat.StarterId).SingleAsync();
+                //var dbChannel = await dbContext.GroupChats.Where(c => c.Username == group.Username).SingleAsync();
 
-                var systemMessage = new SystemMessage()
-                {
-                    Text = "Testers Channel created.",
-                    DestinationId = dbChannel.Id
-                };
-                await dbContext.SystemMessages.AddAsync(systemMessage);
-                await dbContext.SaveChangesAsync();
+                //var systemMessage = new SystemMessage()
+                //{
+                //    Text = "Testers Channel created.",
+                //    DestinationId = dbChannel.Id
+                //};
+                //await dbContext.SystemMessages.AddAsync(systemMessage);
+                //await dbContext.SaveChangesAsync();
 
-                var channelMessage = new Message()
-                {
-                    Text = "Hello World!",
-                    SenderId = dbTester.Id,
-                    DestinationId = dbChannel.Id
-                };
-                var privateMessage = new Message()
-                {
-                    Text = "Welcome to MASsenger!",
-                    SenderId = dbAdmin.Id,
-                    DestinationId = dbPrivateChat.Id
-                };
-                await dbContext.Messages.AddRangeAsync(channelMessage, privateMessage);
-                await dbContext.SaveChangesAsync();
+                //var groupMessage = new Message()
+                //{
+                //    Text = "Hello World!",
+                //    SenderId = dbTester.Id,
+                //    DestinationId = dbChannel.Id
+                //};
+                //var privateMessage = new Message()
+                //{
+                //    Text = "Welcome to MASsenger!",
+                //    SenderId = dbAdmin.Id,
+                //    DestinationId = dbPrivateChat.Id
+                //};
+                //await dbContext.Messages.AddRangeAsync(groupMessage, privateMessage);
+                //await dbContext.SaveChangesAsync();
             }
         }
     }

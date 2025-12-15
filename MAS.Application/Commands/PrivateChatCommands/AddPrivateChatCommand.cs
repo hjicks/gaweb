@@ -2,6 +2,7 @@
 using MAS.Application.Interfaces;
 using MAS.Application.Results;
 using MAS.Core.Entities.ChatEntities;
+using MAS.Core.Entities.UserEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -32,21 +33,18 @@ namespace MAS.Application.Commands.PrivateChatCommands
             
             var newPrivateChat = new PrivateChat
             {
-                StarterId = starter!.Id,
-                ReceiverId = receiver.Id
+                Members = new List<User> { starter!, receiver }
             };
 
             await _privateChatRepository.AddAsync(newPrivateChat);
             await _unitOfWork.SaveAsync();
 
             return Result.Success(StatusCodes.Status201Created,
-                new PrivateChatReadDto
+                new PrivateChatGetDto
                 {
                     Id = newPrivateChat.Id,
-                    StarterId = newPrivateChat.StarterId,
-                    ReceiverId = newPrivateChat.ReceiverId,
-                    CreatedAt = newPrivateChat.CreatedAt,
-                    UpdatedAt = newPrivateChat.UpdatedAt
+                    Members = newPrivateChat.Members,
+                    CreatedAt = newPrivateChat.CreatedAt
                 });
         }
     }

@@ -20,7 +20,7 @@ namespace MAS.Api.Controllers
         }
 
         [HttpGet("users")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<UserReadDto>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UserGetDto>))]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllUsers()
         {
@@ -29,7 +29,7 @@ namespace MAS.Api.Controllers
         }
 
         [HttpPost("user"), AllowAnonymous]
-        public async Task<IActionResult> AddUserAsync([FromBody] UserCreateDto user)
+        public async Task<IActionResult> AddUserAsync([FromBody] UserAddDto user)
         {
             var result = await _sender.Send(new AddUserCommand(user));
             if (result.Ok)

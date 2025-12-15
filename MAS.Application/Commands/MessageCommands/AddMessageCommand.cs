@@ -12,17 +12,17 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace MAS.Application.Commands.MessageCommands
 {
-    public record AddMessageCommand(int SenderId, MessageCreateDto Message) : IRequest<Result>;
+    public record AddMessageCommand(int SenderId, MessageAddDto Message) : IRequest<Result>;
     public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Result>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMessageRepository _messageRepository;
         private readonly IBaseRepository<BaseChat> _baseChatRepository;
-        private readonly IBaseRepository<BaseUser> _baseUserRepository;
+        private readonly IBaseRepository<User> _baseUserRepository;
         private readonly IHubContext<ChatHub> _hubContext;
 
         public AddMessageCommandHandler(IMessageRepository messageRepository,
-            IBaseRepository<BaseChat> baseChatRepository, IBaseRepository<BaseUser> baseUserRepository,
+            IBaseRepository<BaseChat> baseChatRepository, IBaseRepository<User> baseUserRepository,
             IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext)
         {
             _messageRepository = messageRepository;
@@ -50,17 +50,16 @@ namespace MAS.Application.Commands.MessageCommands
             await _messageRepository.AddAsync(newMessage);
             await _unitOfWork.SaveAsync();
 
-            await _hubContext.Clients.All.SendAsync("a", sender.Name, request.Message.Text, cancellationToken: cancellationToken);
+            await _hubContext.Clients.All.SendAsync("a", sender.DisplayName, request.Message.Text, cancellationToken: cancellationToken);
 
             return Result.Success(StatusCodes.Status201Created,
-                new MessageReadDto
+                new MessageGetDto
                 {
                     Id = newMessage.Id,
                     SenderId = newMessage.SenderId,
                     DestinationId = newMessage.DestinationId,
                     Text = newMessage.Text,
-                    CreatedAt = newMessage.CreatedAt,
-                    UpdatedAt = newMessage.UpdatedAt
+                    CreatedAt = newMessage.CreatedAt
                 });
         }
     }

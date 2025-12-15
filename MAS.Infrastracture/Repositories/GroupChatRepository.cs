@@ -1,0 +1,22 @@
+﻿using Dapper;
+using MAS.Application.Interfaces;
+using MAS.Core.Entities.ChatEntities;
+using MAS.Infrastracture.Database;
+using MAS.Infrastracture.Repositories.Base;
+
+namespace MAS.Infrastracture.Repositories
+{
+    public class GroupChatRepository : BaseRepository<GroupChat>, IGroupChatRepository
+    {
+        public GroupChatRepository(EfDbContext efDbContext, DapperDbContext dapperDbContext) : base(efDbContext, dapperDbContext)
+        {
+
+        }
+
+        public async Task<IEnumerable<GroupChat>> GetAllAsync()
+        {
+            string query = "SELECT * FROM Chats WHERE Type == 'Channel'";
+            return (await _dapperDbContext.GetConnection().QueryAsync<GroupChat>(query)).ToList();
+        }
+    }
+}

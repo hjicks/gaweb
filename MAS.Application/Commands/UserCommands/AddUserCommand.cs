@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 
 namespace MAS.Application.Commands.UserCommands
 {
-    public record AddUserCommand(UserCreateDto User) : IRequest<Result>;
+    public record AddUserCommand(UserAddDto User) : IRequest<Result>;
     public class AddUserCommandHandler : IRequestHandler<AddUserCommand, Result>
     {
         private readonly IUserRepository _userRepository;
@@ -34,11 +34,12 @@ namespace MAS.Application.Commands.UserCommands
             using var hmac = new HMACSHA512();
             var newUser = new User
             {
-                Name = request.User.Name,
+                IsBot = false,
+                DisplayName = request.User.DisplayName,
                 Username = request.User.Username,
                 PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(request.User.Password)),
                 PasswordSalt = hmac.Key,
-                Description = request.User.Description
+                Bio = request.User.Bio
             };
             await _userRepository.AddAsync(newUser);
 
@@ -55,9 +56,9 @@ namespace MAS.Application.Commands.UserCommands
                 new UserTokenDto
                 {
                     Id = newUser.Id,
-                    Name = newUser.Name,
+                    DisplayName = newUser.DisplayName,
                     Username = newUser.Username,
-                    Description = newUser.Description,
+                    Bio = newUser.Bio,
                     IsVerified = newUser.IsVerified,
                     CreatedAt = newUser.CreatedAt,
                     UpdatedAt = newUser.UpdatedAt,

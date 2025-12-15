@@ -47,7 +47,7 @@ namespace MAS.Application.Commands.SessionCommands
 
             var roles = dbUser.Id == 1 ? new List<string> { "Admin", "User" } : new List<string> { "User" };
             return Result.Success(StatusCodes.Status200OK,
-                new RefreshSessionDto
+                new SessionRefreshDto
                 {
                     Jwt = _jwtService.GetJwt(dbUser.Id, roles),
                     RefreshToken = session.Token.ToString()

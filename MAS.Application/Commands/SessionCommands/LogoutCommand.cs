@@ -23,7 +23,7 @@ namespace MAS.Application.Commands.SessionCommands
                 return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
                     new[] { "Session not found." });
 
-            dbSession.IsExpired = true;
+            dbSession.IsRevoked = true;
             _sessionRepository.Update(dbSession);
             await _unitOfWork.SaveAsync();
 

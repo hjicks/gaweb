@@ -1,6 +1,6 @@
 ﻿namespace MAS.Application.Dtos.UserDtos
 {
-    public record UserUpdateDto
+    public record UserAddDto
     {
         public string DisplayName { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;

@@ -15,7 +15,7 @@ namespace MAS.Infrastracture.Repositories
 
         public async Task<IEnumerable<Message>> GetAllAsync()
         {
-            string query = "SELECT * FROM BaseMessages WHERE Type == 'Message'";
+            string query = "SELECT * FROM Messages WHERE Type == 'Message'";
             return (await _dapperDbContext.GetConnection().QueryAsync<Message>(query)).ToList();
         }
     }

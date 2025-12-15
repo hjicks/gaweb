@@ -1,17 +1,19 @@
 using MAS.Core.Entities.Base;
 using MAS.Core.Entities.MessageEntities;
+using MAS.Core.Entities.UserEntities;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MAS.Core.Entities.ChatEntities
 {
 	public class BaseChat : BaseEntity
 	{
-        /*
-		 * there might be insane amount of users/messages
-		 * if API calls .len() everytime overhead would be unimagineable
-		 * perhaps we could cache them later?
-		 */
+        // navigation properties
 
-        // one-to-many relationships
-        public ICollection<BaseMessage> Messages { get; set; } = new List<BaseMessage>();
-	}
+        // many-to-one
+        public ICollection<Message> Messages { get; set; } = new List<Message>();
+
+        // many-to-many
+        [NotMapped]
+        public ICollection<User> Members { get; set; } = new List<User>();
+    }
 }

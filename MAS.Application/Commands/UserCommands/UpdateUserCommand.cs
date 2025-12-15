@@ -26,23 +26,27 @@ namespace MAS.Application.Commands.UserCommands
                     new[] { "User not found." });
 
             using var hmac = new HMACSHA512(user.PasswordSalt);
-            user.Name = request.User.Name;
+            user.DisplayName = request.User.DisplayName;
             user.Username = request.User.Username;
             user.PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(request.User.Password));
-            user.Description = request.User.Description;
+            user.Bio = request.User.Bio;
+            user.Avatar = request.User.Avatar;
             _userRepository.Update(user);
             await _unitOfWork.SaveAsync();
 
             return Result.Success(StatusCodes.Status200OK,
-                new UserReadDto
+                new UserGetDto
                 {
                     Id = user.Id,
-                    Name = user.Name,
+                    DisplayName = user.DisplayName,
                     Username = user.Username,
-                    Description = user.Description,
+                    Bio = user.Bio,
+                    Avatar = user.Avatar,
                     IsVerified = user.IsVerified,
+                    IsBot = user.IsBot,
+                    LastSeenAt = user.LastSeenAt,
                     CreatedAt = user.CreatedAt,
-                    UpdatedAt = user.UpdatedAt,
+                    UpdatedAt = user.UpdatedAt
                 });
         }
     }

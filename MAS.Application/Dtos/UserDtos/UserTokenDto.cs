@@ -3,9 +3,9 @@
     public record UserTokenDto
     {
         public int Id { get; set; }
-        public string Name { get; set; } = null!;
+        public string DisplayName { get; set; } = null!;
         public string? Username { get; set; }
-        public string? Description { get; set; }
+        public string? Bio { get; set; }
         public bool IsVerified { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

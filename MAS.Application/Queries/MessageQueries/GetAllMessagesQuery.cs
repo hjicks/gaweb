@@ -1,10 +1,8 @@
 ﻿using MAS.Application.Dtos.MessageDtos;
 using MAS.Application.Interfaces;
 using MAS.Application.Results;
-using MAS.Core.Entities.MessageEntities;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System;
 
 namespace MAS.Application.Queries.MessageQueries
 {
@@ -18,14 +16,13 @@ namespace MAS.Application.Queries.MessageQueries
         }
         public async Task<Result> Handle(GetAllMessagesQuery request, CancellationToken cancellationToken)
         {
-            var messages = (await _messageRepository.GetAllAsync()).Select(m => new MessageReadDto
+            var messages = (await _messageRepository.GetAllAsync()).Select(m => new MessageGetDto
             {
                 Id = m.Id,
                 SenderId = m.SenderId,
                 DestinationId = m.DestinationId,
                 Text = m.Text,
-                CreatedAt = m.CreatedAt,
-                UpdatedAt = m.UpdatedAt
+                CreatedAt = m.CreatedAt
             }).ToList();
 
             return Result.Success(StatusCodes.Status200OK, messages);

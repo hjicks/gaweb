@@ -28,26 +28,13 @@ namespace MAS.Api.Controllers
         }
 
         [HttpPost("chat/message")]
-        public async Task<IActionResult> AddMessageAsync([FromBody] MessageCreateDto message)
+        public async Task<IActionResult> AddMessageAsync([FromBody] MessageAddDto message)
         {
             var senderId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var result = await _sender.Send(new AddMessageCommand(senderId, message));
             if (result.Ok)
             {
                 Log.Information($"User {senderId} added message to chat {message.DestinationId}.");
-                return StatusCode(result.StatusCode, result);
-            }
-            return StatusCode(result.StatusCode, result);
-        }
-
-        [HttpPut("chat/message")]
-        public async Task<IActionResult> UpdateMessageAsync([FromBody] MessageUpdateDto message)
-        {
-            var senderId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var result = await _sender.Send(new UpdateMessageCommand(senderId, message));
-            if (result.Ok)
-            {
-                Log.Information($"User {senderId} updated message {message.Id}.");
                 return StatusCode(result.StatusCode, result);
             }
             return StatusCode(result.StatusCode, result);

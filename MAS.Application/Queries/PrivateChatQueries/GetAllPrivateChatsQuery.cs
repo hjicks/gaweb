@@ -16,13 +16,11 @@ namespace MAS.Application.Queries.PrivateChatQueries
         }
         public async Task<Result> Handle(GetAllPrivateChatsQuery request, CancellationToken cancellationToken)
         {
-            var chats = (await _privateChatRepository.GetAllAsync()).Select(c => new PrivateChatReadDto
+            var chats = (await _privateChatRepository.GetAllAsync()).Select(c => new PrivateChatGetDto
             {
                 Id = c.Id,
-                StarterId = c.StarterId,
-                ReceiverId = c.ReceiverId,
-                CreatedAt = c.CreatedAt,
-                UpdatedAt = c.UpdatedAt
+                Members = c.Members,
+                CreatedAt = c.CreatedAt
             }).ToList();
 
             return Result.Success(StatusCodes.Status200OK, chats);

@@ -22,7 +22,8 @@ namespace MAS.Infrastracture.Repositories
 
         public async Task<IEnumerable<PrivateChat>> GetAllUserAsync(Int32 userId)
         {
-            return await _efDbContext.PrivateChats.Where(p => p.Starter.Id == userId && p.IsDeleted == false).ToListAsync();
+            //return await _efDbContext.PrivateChats.Where(p => p.Starter.Id == userId && p.IsDeleted == false).ToListAsync();
+            return await _efDbContext.PrivateChats.ToListAsync();
         }
     }
 }
