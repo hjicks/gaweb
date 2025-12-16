@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MASsenger.Api", "MASsenger.Api\MASsenger.Api.csproj", "{C2906EE5-DB8F-43B0-94DB-6357D521242A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAS.Api", "MAS.Api\MAS.Api.csproj", "{C2906EE5-DB8F-43B0-94DB-6357D521242A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MASsenger.Application", "MASsenger.Application\MASsenger.Application.csproj", "{183C32BC-F3D2-4607-BA3D-B27DE484D15D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAS.Application", "MAS.Application\MAS.Application.csproj", "{183C32BC-F3D2-4607-BA3D-B27DE484D15D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MASsenger.Infrastracture", "MASsenger.Infrastracture\MASsenger.Infrastracture.csproj", "{BDF1EB50-0637-4CFC-9B2E-30B0F55CBFA2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAS.Infrastracture", "MAS.Infrastracture\MAS.Infrastracture.csproj", "{BDF1EB50-0637-4CFC-9B2E-30B0F55CBFA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MASsenger.Core", "MASsenger.Core\MASsenger.Core.csproj", "{EEAFB274-409D-4A71-865D-FFC8C4353434}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAS.Core", "MAS.Core\MAS.Core.csproj", "{EEAFB274-409D-4A71-865D-FFC8C4353434}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MASsenger.Test", "MASsenger.Test\MASsenger.Test.csproj", "{4506D7D7-A692-41AB-9FA0-E646531867B9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAS.Test", "MAS.Test\MAS.Test.csproj", "{4506D7D7-A692-41AB-9FA0-E646531867B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MASsenger.Client", "MASsenger.Client\MASsenger.Client.csproj", "{FD9B212D-2776-4DD8-8F6F-4AF9BD383AA6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MAS.Client", "MAS.Client\MAS.Client.csproj", "{FD9B212D-2776-4DD8-8F6F-4AF9BD383AA6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
