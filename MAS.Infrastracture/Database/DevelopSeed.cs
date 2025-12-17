@@ -46,15 +46,12 @@ public class DevelopSeed
             await dbContext.Users.AddRangeAsync(admin, tester, bot);
             await dbContext.SaveChangesAsync();
 
-            var dbAdmin = await dbContext.Users.Where(u => u.Username == admin.Username).SingleAsync();
-            var dbTester = await dbContext.Users.Where(u => u.Username == tester.Username).SingleAsync();
-
             var privateChat = new PrivateChat()
             {
-                Members = new List<User> { dbAdmin, dbTester },
+                Members = new List<User> { admin, tester },
                 Messages = new List<Message>
                 {
-                    new() { Text = "Welcome to MASsenger!", Sender = dbAdmin }
+                    new() { Text = "Welcome to MASsenger!", Sender = admin }
                 }
             };
             await dbContext.PrivateChats.AddAsync(privateChat);
@@ -67,26 +64,26 @@ public class DevelopSeed
                 Description = "Behold, this is the Testers group.",
                 IsPublic = true,
                 Members = new List<GroupChatUser>()
-                { new() { Member = dbTester, Role = GroupChatRole.Owner } },
+                { new() { Member = tester, Role = GroupChatRole.Owner } },
                 Messages = new List<Message>()
                 {
-                    new() { Text = "Testers Group created.", Sender = dbAdmin },
-                    new() { Text = "Hello World!", Sender = dbTester }
+                    new() { Text = "Testers Group created.", Sender = admin },
+                    new() { Text = "Hello World!", Sender = tester }
                 }
             };
             await dbContext.GroupChats.AddAsync(groupChat);
             await dbContext.SaveChangesAsync();
 
-            var adminActiveSession = await dbContext.Sessions.Where(s => s.UserId == dbAdmin.Id && s.IsRevoked == false).SingleAsync();
+            // fetch and revoke admin and tester sessions   
+            var adminActiveSession = await dbContext.Sessions.Where(s => s.UserId == admin.Id && s.IsRevoked == false).SingleAsync();
             adminActiveSession.IsRevoked = true;
             adminActiveSession.RevokedAt = DateTime.UtcNow;
 
-            var testerActiveSession = await dbContext.Sessions.Where(s => s.UserId == dbTester.Id && s.IsRevoked == false).SingleAsync();
+            var testerActiveSession = await dbContext.Sessions.Where(s => s.UserId == tester.Id && s.IsRevoked == false).SingleAsync();
             testerActiveSession.IsRevoked = true;
             testerActiveSession.RevokedAt = DateTime.UtcNow;
 
-            dbContext.Sessions.Update(adminActiveSession);
-            dbContext.Sessions.Update(testerActiveSession);
+            dbContext.Sessions.UpdateRange(adminActiveSession, testerActiveSession);
             await dbContext.SaveChangesAsync();
         }
     }
