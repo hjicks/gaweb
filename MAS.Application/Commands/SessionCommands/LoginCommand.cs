@@ -8,50 +8,55 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Security.Cryptography;
 
-namespace MAS.Application.Commands.SessionCommands
+namespace MAS.Application.Commands.SessionCommands;
+
+public record LoginCommand(UserLoginDto User) : IRequest<Result>;
+public class LoginCommandHandler : IRequestHandler<LoginCommand, Result>
 {
-    public record LoginCommand(UserLoginDto User) : IRequest<Result>;
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, Result>
+    private readonly IUserRepository _userRepository;
+    private readonly ISessionRepository _sessionRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IJwtService _jwtService;
+    public LoginCommandHandler(IUserRepository userRepository, ISessionRepository sessionRepository,
+        IUnitOfWork unitOfWork, IJwtService jwtService)
     {
-        private readonly IUserRepository _userRepository;
-        private readonly ISessionRepository _sessionRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IJwtService _jwtService;
-        public LoginCommandHandler(IUserRepository userRepository, ISessionRepository sessionRepository,
-            IUnitOfWork unitOfWork, IJwtService jwtService)
-        {
-            _userRepository = userRepository;
-            _sessionRepository = sessionRepository;
-            _unitOfWork = unitOfWork;
-            _jwtService = jwtService;
-        }
-        public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
-        {
-            var dbUser = await _userRepository.GetByUsernameAsync(request.User.Username);
-            if (dbUser == null)
-                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidCredentials,
-                    new[] { "Username or password is incorrect." });
+        _userRepository = userRepository;
+        _sessionRepository = sessionRepository;
+        _unitOfWork = unitOfWork;
+        _jwtService = jwtService;
+    }
+    public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
+    {
+        var dbUser = await _userRepository.GetByUsernameAsync(request.User.Username);
+        if (dbUser == null)
+            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidCredentials,
+                new[] { "Username or password is incorrect." });
 
-            using var hmac = new HMACSHA512(dbUser.PasswordSalt);
-            var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(request.User.Password));
-            if (!computedHash.SequenceEqual(dbUser.PasswordHash))
-                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidCredentials,
-                    new[] { "Username or password is incorrect." });
+        using var hmac = new HMACSHA512(dbUser.PasswordSalt);
+        var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(request.User.Password));
+        if (!computedHash.SequenceEqual(dbUser.PasswordHash))
+            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidCredentials,
+                new[] { "Username or password is incorrect." });
 
-            var session = new Session
+        var hasActiveSession = await _sessionRepository.GetActiveAsync(dbUser.Id);
+        if (hasActiveSession == true)
+            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.ActiveSessionAvailable,
+                new[] { "Please log out from your other session first." });
+
+        var session = new Session
+        {
+            User = dbUser,
+            Device = request.User.Device
+        };
+        await _sessionRepository.AddAsync(session);
+        await _unitOfWork.SaveAsync();
+
+        var roles = dbUser.Id == 1 ? new List<string> { "Admin", "User" } : new List<string> { "User" };
+        return Result.Success(StatusCodes.Status200OK,
+            new SessionRefreshDto
             {
-                UserId = dbUser.Id
-            };
-            await _sessionRepository.AddAsync(session);
-            await _unitOfWork.SaveAsync();
-
-            var roles = dbUser.Id == 1 ? new List<string> { "Admin", "User" } : new List<string> { "User" };
-            return Result.Success(StatusCodes.Status200OK,
-                new SessionRefreshDto
-                {
-                    Jwt = _jwtService.GetJwt(dbUser.Id, roles),
-                    RefreshToken = session.Token.ToString()
-                });
-        }
+                Jwt = _jwtService.GetJwt(dbUser.Id, roles),
+                RefreshToken = session.Token.ToString()
+            });
     }
 }

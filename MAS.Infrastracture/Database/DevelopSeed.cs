@@ -42,7 +42,6 @@ public class DevelopSeed
                 PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("thisisatoken")),
                 PasswordSalt = hmac.Key,
                 Bio = "Behold, this the Test bot.",
-                Sessions = new List<Session> { new() }
             };
             await dbContext.Users.AddRangeAsync(admin, tester, bot);
             await dbContext.SaveChangesAsync();
@@ -76,6 +75,18 @@ public class DevelopSeed
                 }
             };
             await dbContext.GroupChats.AddAsync(groupChat);
+            await dbContext.SaveChangesAsync();
+
+            var adminActiveSession = await dbContext.Sessions.Where(s => s.UserId == dbAdmin.Id && s.IsRevoked == false).SingleAsync();
+            adminActiveSession.IsRevoked = true;
+            adminActiveSession.RevokedAt = DateTime.UtcNow;
+
+            var testerActiveSession = await dbContext.Sessions.Where(s => s.UserId == dbTester.Id && s.IsRevoked == false).SingleAsync();
+            testerActiveSession.IsRevoked = true;
+            testerActiveSession.RevokedAt = DateTime.UtcNow;
+
+            dbContext.Sessions.Update(adminActiveSession);
+            dbContext.Sessions.Update(testerActiveSession);
             await dbContext.SaveChangesAsync();
         }
     }

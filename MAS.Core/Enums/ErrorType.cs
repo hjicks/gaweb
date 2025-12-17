@@ -10,6 +10,7 @@
         InvalidCredentials,
         InvalidRefreshToken,
         ExpiredRefreshToken,
-        PermissionDenied
+        PermissionDenied,
+        ActiveSessionAvailable
     }
 }
