@@ -2,6 +2,7 @@
 using MAS.Core.Entities.JoinEntities;
 using MAS.Core.Entities.MessageEntities;
 using MAS.Core.Entities.UserEntities;
+using MAS.Core.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace MAS.Infrastracture.Database;
@@ -26,10 +27,10 @@ public class EfDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BaseChat>()
-            .HasDiscriminator<string>("Type")
-            .HasValue<GroupChat>("Group")
-            .HasValue<PrivateChat>("Private");
-
+            .HasDiscriminator(c => c.Type)
+            .HasValue<GroupChat>(ChatType.Group)
+            .HasValue<PrivateChat>(ChatType.Private);
+        
         modelBuilder.Entity<PrivateChat>()
             .HasMany(e => e.Members)
             .WithMany(e => e.PrivateChats)

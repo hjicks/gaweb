@@ -6,5 +6,6 @@ namespace MAS.Application.Interfaces
     {
         Task<IEnumerable<PrivateChat>> GetAllAsync();
         Task<IEnumerable<PrivateChat>> GetAllUserAsync(Int32 userId);
+        Task<PrivateChat?> IncludedGetByIdAsync(int pvId);
     }
 }

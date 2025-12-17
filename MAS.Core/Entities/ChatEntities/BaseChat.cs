@@ -1,10 +1,13 @@
 using MAS.Core.Entities.Base;
 using MAS.Core.Entities.MessageEntities;
+using MAS.Core.Enums;
 
 namespace MAS.Core.Entities.ChatEntities;
 
-public class BaseChat : BaseEntity
+public abstract class BaseChat : BaseEntity
 {
+    public ChatType Type { get; private set; }
+
     // navigation properties
 
     // many-to-one

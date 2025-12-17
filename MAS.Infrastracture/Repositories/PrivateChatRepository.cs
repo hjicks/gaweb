@@ -27,4 +27,12 @@ public class PrivateChatRepository : BaseRepository<PrivateChat>, IPrivateChatRe
             .Where(p => p.IsDeleted == false)
             .ToListAsync();
     }
+
+    public async Task<PrivateChat?> IncludedGetByIdAsync(int pvId)
+    {
+        return await _efDbContext.PrivateChats
+            .Where(g => g.Id == pvId)
+            .Include(g => g.Members)
+            .FirstAsync();
+    }
 }

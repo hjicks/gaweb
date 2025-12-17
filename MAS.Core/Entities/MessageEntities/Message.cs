@@ -21,5 +21,5 @@ public class Message : BaseEntity
 
     // one-to-many
     public User Sender { get; set; } = new User();
-    public BaseChat Destination { get; set; } = new BaseChat();
+    public BaseChat Destination { get; set; } = null!;
 }
