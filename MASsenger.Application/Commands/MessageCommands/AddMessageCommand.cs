@@ -54,10 +54,7 @@ namespace MASsenger.Application.Commands.MessageCommands
             await _messageRepository.AddAsync(newMessage);
             await _unitOfWork.SaveAsync();
 
-            await _hubContext.Clients.All.SendAsync("a", sender.Name, request.Message.Text, cancellationToken: cancellationToken);
-
-            return Result.Success(StatusCodes.Status201Created,
-                new MessageReadDto
+            MessageReadDto result = new MessageReadDto
                 {
                     Id = newMessage.Id,
                     SenderId = newMessage.SenderId,
@@ -65,7 +62,30 @@ namespace MASsenger.Application.Commands.MessageCommands
                     Text = newMessage.Text,
                     CreatedAt = newMessage.CreatedAt,
                     UpdatedAt = newMessage.UpdatedAt
-                });
+            };
+
+            if (_baseChatRepository.GetTypeByIdAsync(request.Message.DestinationId).Result == "Private")
+            {
+                PrivateChat pc = await _privateChatRepository.GetByIdAsync(destination.Id);
+                int dstUserId = sender.Id == pc.StarterId ? pc.ReceiverId : pc.StarterId;
+                BaseUser u = await _baseUserRepository.GetByIdAsync(dstUserId);
+                await _hubContext.Clients.User(u.Id.ToString()).SendAsync("AddMessage",
+                    result, cancellationToken: cancellationToken);
+            }
+            else if (_baseChatRepository.GetTypeByIdAsync(request.Message.DestinationId).Result == "Channel")
+            {
+                ChannelChat cc = await _channelChatRepository.GetByIdAsync(destination.Id);
+                foreach (User u in cc.Members)
+                {
+                    if (u.Id == sender.Id)
+                        continue;
+                    
+                    await _hubContext.Clients.User(u.Id.ToString()).SendAsync("AddMessage",
+                        result, cancellationToken: cancellationToken);
+                }
+            }
+
+                return Result.Success(StatusCodes.Status201Created, result);
         }
     }
 }
