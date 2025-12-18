@@ -17,19 +17,23 @@ namespace MASsenger.Application.Commands.MessageCommands
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMessageRepository _messageRepository;
-        private readonly IBaseRepository<BaseChat> _baseChatRepository;
+        private readonly IBaseChatRepository _baseChatRepository;
         private readonly IBaseRepository<BaseUser> _baseUserRepository;
         private readonly IHubContext<ChatHub> _hubContext;
+        private readonly IPrivateChatRepository _privateChatRepository;
+        private readonly IChannelChatRepository _channelChatRepository;
 
         public AddMessageCommandHandler(IMessageRepository messageRepository,
-            IBaseRepository<BaseChat> baseChatRepository, IBaseRepository<BaseUser> baseUserRepository,
-            IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext)
+            IBaseChatRepository baseChatRepository, IBaseRepository<BaseUser> baseUserRepository,
+            IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext, IPrivateChatRepository privateChatRepository, IChannelChatRepository channelChatRepository)
         {
             _messageRepository = messageRepository;
             _baseChatRepository = baseChatRepository;
             _baseUserRepository = baseUserRepository;
             _unitOfWork = unitOfWork;
             _hubContext = hubContext;
+            _privateChatRepository = privateChatRepository;
+            _channelChatRepository = channelChatRepository;
         }
         public async Task<Result> Handle(AddMessageCommand request, CancellationToken cancellationToken)
         {
