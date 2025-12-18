@@ -55,13 +55,13 @@ namespace MASsenger.Application.Commands.MessageCommands
             await _unitOfWork.SaveAsync();
 
             MessageReadDto result = new MessageReadDto
-                {
-                    Id = newMessage.Id,
-                    SenderId = newMessage.SenderId,
-                    DestinationId = newMessage.DestinationId,
-                    Text = newMessage.Text,
-                    CreatedAt = newMessage.CreatedAt,
-                    UpdatedAt = newMessage.UpdatedAt
+            {
+                Id = newMessage.Id,
+                SenderId = newMessage.SenderId,
+                DestinationId = newMessage.DestinationId,
+                Text = newMessage.Text,
+                CreatedAt = newMessage.CreatedAt,
+                UpdatedAt = newMessage.UpdatedAt
             };
 
             if (_baseChatRepository.GetTypeByIdAsync(request.Message.DestinationId).Result == "Private")
