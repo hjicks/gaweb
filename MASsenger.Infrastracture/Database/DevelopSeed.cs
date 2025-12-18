@@ -31,11 +31,32 @@ namespace MASsenger.Infrastracture.Database
                     PasswordSalt = hmac.Key,
                     Description = "Behold, this is the Tester."
                 };
-                await dbContext.Users.AddRangeAsync(admin, tester);
+
+                var tester2 = new User()
+                {
+                    Name = "Tester2",
+                    Username = "tester2",
+                    PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("12345678")),
+                    PasswordSalt = hmac.Key,
+                    Description = "Tester II, for testing cases where someone shouldn't get notified on messages that dont relate to them"
+                };
+
+                var tester3 = new User()
+                {
+                    Name = "Tester3",
+                    Username = "tester3",
+                    PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("12345678")),
+                    PasswordSalt = hmac.Key,
+                    Description = "Tester III for testing group's functionality"
+                };
+
+                await dbContext.Users.AddRangeAsync(admin, tester, tester2, tester3);
                 await dbContext.SaveChangesAsync();
 
                 var dbAdmin = await dbContext.Users.Where(u => u.Username == admin.Username).SingleAsync();
                 var dbTester = await dbContext.Users.Where(u => u.Username == tester.Username).SingleAsync();
+                var dbTester2 = await dbContext.Users.Where(u => u.Username == tester.Username).SingleAsync();
+                var dbTester3 = await dbContext.Users.Where(u => u.Username == tester.Username).SingleAsync();
 
                 var bot = new Bot()
                 {
@@ -74,7 +95,7 @@ namespace MASsenger.Infrastracture.Database
                     Description = "Behold, this is the Testers channel.",
                     OwnerId = dbTester.Id,
                     Admins = new List<BaseUser>() { dbTester },
-                    Members = new List<BaseUser>() { dbTester }
+                    Members = new List<BaseUser>() { dbTester, dbAdmin, dbTester3 }
                 };
                 await dbContext.ChannelChats.AddAsync(channel);
                 await dbContext.SaveChangesAsync();
