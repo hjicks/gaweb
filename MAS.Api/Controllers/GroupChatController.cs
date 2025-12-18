@@ -9,9 +9,9 @@ using System.Security.Claims;
 
 namespace MAS.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/group-chats")]
 [ApiController]
-[Authorize(Roles = "User,Bot")]
+[Authorize(Roles = "User")]
 public class GroupChatController : BaseController
 {
     public GroupChatController(ISender sender) : base(sender)
@@ -19,17 +19,40 @@ public class GroupChatController : BaseController
 
     }
 
-    [HttpGet]
-    [ProducesResponseType(200, Type = typeof(IEnumerable<GroupChatGetDto>))]
+    [HttpGet("all")]
     [Authorize(Roles = "Admin")]
-
-    public async Task<IActionResult> GetAllChannelChats()
+    public async Task<IActionResult> GetAllGroupChatsAsync()
     {
-        return Ok(await _sender.Send(new GetAllGroupChatsQuery()));
+        var result = await _sender.Send(new GetAllGroupChatsQuery());
+        return StatusCode(result.StatusCode, result);
+    }
+
+    [HttpGet("{groupChatId}")]
+    public async Task<IActionResult> GetGroupChatAsync(int groupChatId) // may need to check who is fetching this
+    {
+        var result = await _sender.Send(new GetGroupChatQuery(groupChatId));
+        if (result.Ok)
+        {
+            //Log.Information($"User {} got group chat {groupChatId} data.");
+            return StatusCode(result.StatusCode, result);
+        }
+        return StatusCode(result.StatusCode, result);
+    }
+
+    [HttpGet("members/{groupChatId}")]
+    public async Task<IActionResult> GetGroupChatMembersAsync(int groupChatId) // may need to check who is fetching this
+    {
+        var result = await _sender.Send(new GetGroupChatMembersQuery(groupChatId));
+        if (result.Ok)
+        {
+            //Log.Information($"User {} got members of group chat {groupChatId}.");
+            return StatusCode(result.StatusCode, result);
+        }
+        return StatusCode(result.StatusCode, result);
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddChannelChatAsync([FromBody] PublicGroupChatAddDto groupChat)
+    public async Task<IActionResult> AddGroupChatAsync(PublicGroupChatAddDto groupChat)
     {
         var ownerId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new AddGroupChatCommand(ownerId, groupChat));
@@ -42,15 +65,15 @@ public class GroupChatController : BaseController
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateChannelChatAsync(PublicGroupChatUpdateDto groupChat)
+    public async Task<IActionResult> UpdateGroupChatAsync(PublicGroupChatUpdateDto groupChat)
     {
         if (await _sender.Send(new UpdateGroupChatCommand(groupChat)) == Core.Enums.TransactionResultType.Done) return Ok("ChannelChat updated successfully.");
         else if (await _sender.Send(new UpdateGroupChatCommand(groupChat)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid channelChat Id.");
         return BadRequest("Something went wrong while updating the channelChat.");
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> DeleteChannelChatAsync(Int32 groupChatId)
+    [HttpDelete("{groupChatId}")]
+    public async Task<IActionResult> DeleteGroupChatAsync(int groupChatId)
     {
         if (await _sender.Send(new DeleteGroupChatCommand(groupChatId)) == Core.Enums.TransactionResultType.Done) return Ok("ChannelChat deleted successfully.");
         else if (await _sender.Send(new DeleteGroupChatCommand(groupChatId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid channelChat Id.");
