@@ -25,6 +25,7 @@ namespace MASsenger.Infrastracture
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddScoped<IBaseChatRepository, BaseChatRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IBotRepository, BotRepository>();
             services.AddScoped<IChannelChatRepository, ChannelChatRepository>();
