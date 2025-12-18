@@ -1,34 +1,33 @@
 ﻿using MAS.Application.Dtos.GroupChatDtos;
 using MAS.Application.Interfaces;
+using MAS.Application.Results;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
-namespace MAS.Application.Queries.GroupChatQueries
+namespace MAS.Application.Queries.GroupChatQueries;
+
+public record GetAllGroupChatsQuery() : IRequest<Result>;
+public class GetAllGroupChatsQueryHandler : IRequestHandler<GetAllGroupChatsQuery, Result>
 {
-    public record GetAllGroupChatsQuery() : IRequest<IEnumerable<GroupChatGetDto>>;
-    public class GetAllChannelChatsQueryHandler : IRequestHandler<GetAllGroupChatsQuery, IEnumerable<GroupChatGetDto>>
+    private readonly IGroupChatRepository _groupChatRepository;
+    public GetAllGroupChatsQueryHandler(IGroupChatRepository groupChatRepository)
     {
-        private readonly IGroupChatRepository _channelChatRepository;
-        public GetAllChannelChatsQueryHandler(IGroupChatRepository channelChatRepository)
+        _groupChatRepository = groupChatRepository;
+    }
+    public async Task<Result> Handle(GetAllGroupChatsQuery request, CancellationToken cancellationToken)
+    {
+        var groupChats = (await _groupChatRepository.GetAllAsync()).Select(g => new GroupChatGetDto
         {
-            _channelChatRepository = channelChatRepository;
-        }
-        public async Task<IEnumerable<GroupChatGetDto>> Handle(GetAllGroupChatsQuery request, CancellationToken cancellationToken)
-        {
-            return (await _channelChatRepository.GetAllAsync()).Select(c => new GroupChatGetDto
-            {
-                Id = c.Id,
-                DisplayName = c.DisplayName,
-                Groupname = c.Groupname,
-                Description = c.Description,
-                Avatar = c.Avatar,
-                CreatedAt = c.CreatedAt,
-                MsgPermissionType = c.MsgPermissionType
-            }).ToList();
-        }
+            Id = g.Id,
+            DisplayName = g.DisplayName,
+            Groupname = g.Groupname,
+            Description = g.Description,
+            Avatar = g.Avatar,
+            IsPublic = g.IsPublic,
+            MsgPermissionType = g.MsgPermissionType,
+            CreatedAt = g.CreatedAt
+        }).ToList();
+
+        return Result.Success(StatusCodes.Status200OK, groupChats); 
     }
 }

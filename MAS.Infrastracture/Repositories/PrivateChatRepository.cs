@@ -16,14 +16,14 @@ public class PrivateChatRepository : BaseRepository<PrivateChat>, IPrivateChatRe
 
     public async Task<IEnumerable<PrivateChat>> GetAllAsync()
     {
-        string query = "SELECT * FROM BaseChats WHERE Type == 'Private'";
+        string query = "SELECT * FROM Chats WHERE Type == 1";
         return (await _dapperDbContext.GetConnection().QueryAsync<PrivateChat>(query)).ToList();
     }
 
-    public async Task<IEnumerable<PrivateChat>> GetAllUserAsync(Int32 userId)
+    public async Task<IEnumerable<PrivateChat>> GetAllUserAsync(int userId)
     {
         return await _efDbContext.PrivateChats
-            .Include(p => p.Members.Where(m => m.Id == userId))
+            .Include(p => p.Members.Where(m => m.Id != userId))
             .Where(p => p.IsDeleted == false)
             .ToListAsync();
     }

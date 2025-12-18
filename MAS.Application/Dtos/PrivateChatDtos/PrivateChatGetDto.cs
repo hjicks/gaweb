@@ -1,10 +1,10 @@
-﻿using MAS.Core.Entities.UserEntities;
+﻿using MAS.Application.Dtos.UserDtos;
 
 namespace MAS.Application.Dtos.PrivateChatDtos;
 
 public record PrivateChatGetDto
 {
     public int Id { get; set; }
-    public ICollection<User> Members { get; set; } = new List<User>();
+    public UserGetDto Receiver { get; set; } = new UserGetDto();
     public DateTime CreatedAt { get; set; }
 }

@@ -75,7 +75,7 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
 
         var newMessage = new Message
         {
-            SenderId = sender!.Id,
+            Sender = sender!,
             DestinationId = destination.Id,
             Text = request.Message.Text
         };
@@ -90,7 +90,7 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
         await _messageRepository.AddAsync(newMessage);
         await _unitOfWork.SaveAsync();
 
-        await _hubContext.Clients.All.SendAsync("a", sender.DisplayName, request.Message.Text, cancellationToken: cancellationToken);
+        await _hubContext.Clients.All.SendAsync("a", sender!.DisplayName, request.Message.Text, cancellationToken: cancellationToken);
 
         return Result.Success(StatusCodes.Status201Created,
             new MessageGetDto
@@ -102,7 +102,6 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
                 FileName = newMessage.FileName,
                 FileSize = newMessage.FileSize,
                 FileContentType = newMessage.FileContentType,
-                FileContentId = request.Message.Content != null ? newMessage.Id : null,
                 CreatedAt = newMessage.CreatedAt
             });
     }

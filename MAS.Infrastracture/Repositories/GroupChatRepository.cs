@@ -16,7 +16,7 @@ public class GroupChatRepository : BaseRepository<GroupChat>, IGroupChatReposito
 
     public async Task<IEnumerable<GroupChat>> GetAllAsync()
     {
-        string query = "SELECT * FROM Chats WHERE Type == 'Channel'";
+        string query = "SELECT * FROM Chats WHERE Type == 2";
         return (await _dapperDbContext.GetConnection().QueryAsync<GroupChat>(query)).ToList();
     }
 

@@ -2,6 +2,6 @@
 
 public enum ChatType
 {
-    Private,
-    Group
+    Private = 1,
+    Group = 2
 }
