@@ -46,7 +46,8 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result>
         var session = new Session
         {
             User = dbUser,
-            Device = request.User.Device
+            ClientName = request.User.ClientName,
+            OS = request.User.OS
         };
         await _sessionRepository.AddAsync(session);
         await _unitOfWork.SaveAsync();

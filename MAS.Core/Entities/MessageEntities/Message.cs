@@ -8,11 +8,10 @@ public class Message : BaseEntity
 {
     public int SenderId { get; set; }
     public int DestinationId { get; set; }
-    public string? Text { get; set; } = string.Empty;
-    public string? FileName { get; set; } = string.Empty;
+    public string? Text { get; set; }
+    public string? FileName { get; set; }
     public ulong? FileSize { get; set; }
-    public int? FileContentId { get; set; }
-    public string? FileContentType { get; set; } = string.Empty; // MIME type
+    public string? FileContentType { get; set; } // MIME type
 
     // navigation properties
 

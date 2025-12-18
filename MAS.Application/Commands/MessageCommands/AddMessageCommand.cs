@@ -102,7 +102,7 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
                 FileName = newMessage.FileName,
                 FileSize = newMessage.FileSize,
                 FileContentType = newMessage.FileContentType,
-                FileContentId = newMessage.Id,
+                FileContentId = request.Message.Content != null ? newMessage.Id : null,
                 CreatedAt = newMessage.CreatedAt
             });
     }

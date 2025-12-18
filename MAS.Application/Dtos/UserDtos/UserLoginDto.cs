@@ -13,7 +13,12 @@ public record UserLoginDto
 #endif
     public string Password { get; set; } = string.Empty;
 #if DEBUG
-    [DefaultValue("Some kinda computer")]
+    [DefaultValue("Some kinda client")]
 #endif
-    public string Device {  get; set; } = string.Empty;
+    public string ClientName {  get; set; } = string.Empty;
+
+#if DEBUG
+    [DefaultValue("9Front")]
+#endif
+    public string OS { get; set; } = string.Empty;
 }
