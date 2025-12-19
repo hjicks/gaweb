@@ -81,6 +81,8 @@ internal class Program
 
             switch (cmd)
             {
+                case "":
+                    break;
                 case "/list":
                     Console.WriteLine(List(jwt).ToString());
                     break;
