@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
-using MASsenger.Application.Dtos.MessageDtos;
+using MAS.Application.Dtos.MessageDtos;
 using Microsoft.AspNetCore.SignalR.Client;
 
 internal class Program
@@ -25,8 +25,12 @@ internal class Program
         {
             HttpClient c = new HttpClient { BaseAddress = new Uri(baseurl) };
             c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var msg = new { destinationId, text };
-            var response = c.PostAsJsonAsync("/api/chat/message", msg).Result
+            MessageAddDto msg = new()
+            {
+                DestinationId = destinationId,
+                Text = text,
+            };
+            var response = c.PostAsJsonAsync("/api/messages", msg).Result
                 .Content.ReadAsStringAsync().Result;
             return JsonSerializer.Deserialize<JsonElement>(response);
         }
