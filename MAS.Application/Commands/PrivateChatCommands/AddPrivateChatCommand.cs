@@ -1,4 +1,6 @@
-﻿using MAS.Application.Dtos.PrivateChatDtos;
+﻿using System.Reflection;
+using MAS.Application.Dtos.PrivateChatDtos;
+using MAS.Application.Hubs;
 using MAS.Application.Interfaces;
 using MAS.Application.Results;
 using MAS.Core.Entities.ChatEntities;
@@ -6,6 +8,7 @@ using MAS.Core.Entities.UserEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 
 namespace MAS.Application.Commands.PrivateChatCommands;
 
@@ -15,11 +18,14 @@ public class AddPrivateChatCommandHandler : IRequestHandler<AddPrivateChatComman
     private readonly IPrivateChatRepository _privateChatRepository;
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
-    public AddPrivateChatCommandHandler(IPrivateChatRepository privateChatRepository,IUserRepository userRepository, IUnitOfWork unitOfWork)
+    private readonly IHubContext<ChatHub> _hubContext;
+
+    public AddPrivateChatCommandHandler(IPrivateChatRepository privateChatRepository,IUserRepository userRepository, IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext)
     {
         _privateChatRepository = privateChatRepository;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _hubContext = hubContext;
     }
 
     public async Task<Result> Handle(AddPrivateChatCommand request, CancellationToken cancellationToken)
@@ -39,12 +45,15 @@ public class AddPrivateChatCommandHandler : IRequestHandler<AddPrivateChatComman
         await _privateChatRepository.AddAsync(newPrivateChat);
         await _unitOfWork.SaveAsync();
 
-        return Result.Success(StatusCodes.Status201Created,
-            new PrivateChatGetDto
-            {
-                Id = newPrivateChat.Id,
-                Receiver = null!,
-                CreatedAt = newPrivateChat.CreatedAt
-            });
+        PrivateChatGetDto pc = new PrivateChatGetDto
+        {
+            Id = newPrivateChat.Id,
+            Receiver = null!,
+            CreatedAt = newPrivateChat.CreatedAt
+        };
+
+        await _hubContext.Clients.User(receiver.Id.ToString()).SendAsync("AddPrivateChatCommand", pc, cancellationToken: cancellationToken);
+
+        return Result.Success(StatusCodes.Status201Created, pc);
     }
 }
