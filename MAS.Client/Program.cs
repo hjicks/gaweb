@@ -61,18 +61,11 @@ internal class Program
             }).Build();
         connectionSignalR.StartAsync().Wait();
 
-        Task.Run(() =>
-        {
-            connectionSignalR.On<MessageReadDto>("AddMessage",
-                    (msg) => Console.WriteLine($"====New msg=====\nFrom: {msg.SenderId}\nTo: {msg.DestinationId}\n" +
+        connectionSignalR.On<MessageGetDto>("AddMessage",
+            (msg) => Console.WriteLine($"\n====New msg=====\nFrom: {msg.SenderId}\nTo: {msg.DestinationId}\n" +
                     $"Text: {msg.Text}"));
             while (true)
             {
-                Thread.Sleep(1000);
-            }
-        });
-        while (true)
-        {
             Console.Write("> ");
             string input = Console.ReadLine();
             IEnumerable<string> s = input.Split(" ").ToList();
