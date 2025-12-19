@@ -93,15 +93,15 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
         await _unitOfWork.SaveAsync();
 
         var msg = new MessageGetDto
-            {
-                Id = newMessage.Id,
-                SenderId = newMessage.SenderId,
-                DestinationId = newMessage.DestinationId,
-                Text = newMessage.Text,
-                FileName = newMessage.FileName,
-                FileSize = newMessage.FileSize,
-                FileContentType = newMessage.FileContentType,
-                CreatedAt = newMessage.CreatedAt
+        {
+            Id = newMessage.Id,
+            SenderId = newMessage.SenderId,
+            DestinationId = newMessage.DestinationId,
+            Text = newMessage.Text,
+            FileName = newMessage.FileName,
+            FileSize = newMessage.FileSize,
+            FileContentType = newMessage.FileContentType,
+            CreatedAt = newMessage.CreatedAt
         };
 
         if (_baseChatRepository.GetTypeByIdAsync(request.Message.DestinationId).Result == ((int)ChatType.Private).ToString())
