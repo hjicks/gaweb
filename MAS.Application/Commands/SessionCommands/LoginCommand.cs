@@ -38,11 +38,13 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result>
             return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidCredentials,
                 new[] { "Username or password is incorrect." });
 
+#if !DEBUG
+    /* seems this is really troublesome if the client crashes..., let's disable it for now */
         var hasActiveSession = await _sessionRepository.GetActiveAsync(dbUser.Id);
         if (hasActiveSession == true)
             return Result.Failure(StatusCodes.Status409Conflict, ErrorType.ActiveSessionAvailable,
                 new[] { "Please log out from your other session first." });
-
+#endif
         var session = new Session
         {
             User = dbUser,
