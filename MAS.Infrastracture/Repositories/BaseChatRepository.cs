@@ -14,7 +14,7 @@ namespace MAS.Infrastracture.Repositories.Base
 
         public async Task<string> GetTypeByIdAsync(Int32 entityId)
         {
-            string query = $"SELECT Type FROM BaseChats WHERE Id == {entityId}";
+            string query = $"SELECT Type FROM Chats WHERE Id == {entityId}";
             return (await _dapperDbContext.GetConnection().QueryFirstAsync<string>(query));
         }
     }
