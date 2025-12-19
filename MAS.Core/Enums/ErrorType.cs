@@ -11,6 +11,7 @@
         InvalidRefreshToken,
         ExpiredRefreshToken,
         PermissionDenied,
-        ActiveSessionAvailable
+        ActiveSessionAvailable,
+        ChatIsEmpty
     }
 }

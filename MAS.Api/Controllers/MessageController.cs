@@ -1,5 +1,6 @@
 ﻿using MAS.Application.Commands.MessageCommands;
 using MAS.Application.Dtos.MessageDtos;
+using MAS.Application.Queries.GroupChatQueries;
 using MAS.Application.Queries.MessageQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -24,6 +25,30 @@ public class MessageController : BaseController
     public async Task<IActionResult> GetAllMessagesAsync()
     {
         var result = await _sender.Send(new GetAllMessagesQuery());
+        return StatusCode(result.StatusCode, result);
+    }
+
+    [HttpGet("last/{chatId}")]
+    public async Task<IActionResult> GetChatLastMessageAsync(int chatId)
+    {
+        var result = await _sender.Send(new GetChatLastMessageQuery(chatId));
+        if (result.Ok)
+        {
+            Log.Information($"Chat {chatId} last message fetched.");
+            return StatusCode(result.StatusCode, result);
+        }
+        return StatusCode(result.StatusCode, result);
+    }
+
+    [HttpGet("{messageId}")]
+    public async Task<IActionResult> GetChatLastMessagesAsync(int messageId)
+    {
+        var result = await _sender.Send(new GetChatLastMessagesQuery(messageId));
+        if (result.Ok)
+        {
+            Log.Information($"Last messages before message {messageId} fetched.");
+            return StatusCode(result.StatusCode, result);
+        }
         return StatusCode(result.StatusCode, result);
     }
 
