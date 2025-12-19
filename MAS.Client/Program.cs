@@ -16,7 +16,7 @@ internal class Program
         {
             HttpClient c = new HttpClient { BaseAddress = new Uri(baseurl) };
             var msg = new { username, password };
-            var response = c.PostAsJsonAsync("/api/session/login", msg).Result
+            var response = c.PostAsJsonAsync("/api/sessions/login", msg).Result
                 .Content.ReadAsStringAsync().Result;
             return JsonSerializer.Deserialize<JsonElement>(response);
         }
@@ -39,7 +39,7 @@ internal class Program
         {
             HttpClient c = new HttpClient { BaseAddress = new Uri(baseurl) };
             c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = c.GetFromJsonAsync<JsonElement>("/api/ChannelChat").Result;
+            var response = c.GetFromJsonAsync<JsonElement>("/api/group-chats/all").Result;
             return response;
         }
 
@@ -67,9 +67,9 @@ internal class Program
 
         connectionSignalR.On<MessageGetDto>("AddMessage",
             (msg) => Console.WriteLine($"\n====New msg=====\nFrom: {msg.SenderId}\nTo: {msg.DestinationId}\n" +
-                    $"Text: {msg.Text}"));
-            while (true)
-            {
+            $"Text: {msg.Text}"));
+        while (true)
+        {
             Console.Write("> ");
             string input = Console.ReadLine();
             IEnumerable<string> s = input.Split(" ").ToList();
