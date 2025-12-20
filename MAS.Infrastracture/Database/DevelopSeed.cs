@@ -7,6 +7,9 @@ using System.Security.Cryptography;
 
 namespace MAS.Infrastracture.Database;
 
+/*
+ * how many easter eggs you can find?
+ */
 public class DevelopSeed
 {
     public static async Task Seed(EfDbContext dbContext)
@@ -17,13 +20,14 @@ public class DevelopSeed
         {
             var admin = new User()
             {
+                /* ken */
                 DisplayName = "Admin",
                 Username = "Admin",
                 PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("sysadmin")),
                 PasswordSalt = hmac.Key,
                 Bio = "Behold, this is the Admin.",
                 IsVerified = true,
-                Sessions = new List<Session> { new() { ClientName = "test client", OS = "test OS" } }
+                Sessions = new List<Session> { new() { ClientName = "mMAS", OS = "Plan 9 from Bell Labs" } }
             };
             var tester = new User()
             {
@@ -32,8 +36,30 @@ public class DevelopSeed
                 PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("12345678")),
                 PasswordSalt = hmac.Key,
                 Bio = "Behold, this is the Tester.",
-                Sessions = new List<Session> { new() { ClientName = "test client", OS = "test OS" } }
+                Sessions = new List<Session> { new() { ClientName = "HexMAS", OS = "DuskOS" } }
             };
+
+            var lonelydog = new User()
+            {
+                DisplayName = "dog",    /* used to test for cases where a message should not be recivied */
+                Username = "lonelydog", /* cont'd, i.e: this dog must not be in same group with others   */
+                PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("12345678")),
+                PasswordSalt = hmac.Key, /* cont'd: or get messages from other private chats             */
+                Bio = "I'm just a dog, nobody loves me.",
+                Sessions = new List<Session> { new() { ClientName = "Massi", OS = "OpenBSD" } }
+            };
+
+            /* bots ahead */
+            var vsaeed = new User()
+            {
+                DisplayName = "virtual saeed",
+                Username = "vsaeed",
+                PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("12345678")),
+                PasswordSalt = hmac.Key,
+                Bio = "mildly bored",
+                Sessions = new List<Session> { new() { ClientName = "xmas", OS = "OpenBSD" } }
+            };
+
             var bot = new User()
             {
                 DisplayName = "Test Bot",
@@ -42,7 +68,7 @@ public class DevelopSeed
                 PasswordSalt = hmac.Key,
                 Bio = "Behold, this the Test bot.",
             };
-            await dbContext.Users.AddRangeAsync(admin, tester, bot);
+            await dbContext.Users.AddRangeAsync(admin, tester, lonelydog, vsaeed);
             await dbContext.SaveChangesAsync();
 
             var privateChat = new PrivateChat()
@@ -63,7 +89,9 @@ public class DevelopSeed
                 Description = "Behold, this is the Testers group.",
                 IsPublic = true,
                 Members = new List<GroupChatUser>()
-                { new() { Member = tester, Role = GroupChatRole.Owner } },
+                { new() { Member = admin, Role = GroupChatRole.Owner },
+                  new() { Member = tester, Role = GroupChatRole.Admin },
+                  new() { Member = vsaeed, Role = GroupChatRole.Member } },
                 Messages = new List<Message>()
                 {
                     new() { Text = "Testers Group created.", Sender = admin },
@@ -72,7 +100,7 @@ public class DevelopSeed
                     {
                         FileName = "textfile",
                         FileSize = 3,
-                        FileContent = new FileContent() { Content = new byte[] { 72, 105, 33 } },
+                        FileContent = new FileContent() { Content = new byte[] { 0x6c, 0x6f, 0x6, 0xa, 0x0 } },
                         FileContentType = "text/plain",
                         Sender = tester
                     }

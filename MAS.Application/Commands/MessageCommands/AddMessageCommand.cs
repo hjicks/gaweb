@@ -3,7 +3,9 @@ using MAS.Application.Hubs;
 using MAS.Application.Interfaces;
 using MAS.Application.Results;
 using MAS.Core.Entities.ChatEntities;
+using MAS.Core.Entities.JoinEntities;
 using MAS.Core.Entities.MessageEntities;
+using MAS.Core.Entities.UserEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -16,14 +18,14 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
 {
     private readonly IMessageRepository _messageRepository;
     private readonly IUserRepository _userRepository;
-    private readonly IBaseRepository<BaseChat> _baseChatRepository;
+    private readonly IBaseChatRepository _baseChatRepository;
     private readonly IPrivateChatRepository _privateChatRepository;
     private readonly IGroupChatRepository _groupChatRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHubContext<ChatHub> _hubContext;
 
     public AddMessageCommandHandler(IMessageRepository messageRepository,
-        IUserRepository userRepository, IBaseRepository<BaseChat> baseChatRepository,
+        IUserRepository userRepository, IBaseChatRepository baseChatRepository,
         IPrivateChatRepository privateChatRepository, IGroupChatRepository groupChatRepository,
         IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext)
     {
@@ -90,19 +92,40 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
         await _messageRepository.AddAsync(newMessage);
         await _unitOfWork.SaveAsync();
 
-        await _hubContext.Clients.All.SendAsync("a", sender!.DisplayName, request.Message.Text, cancellationToken: cancellationToken);
+        var msg = new MessageGetDto
+        {
+            Id = newMessage.Id,
+            SenderId = newMessage.SenderId,
+            DestinationId = newMessage.DestinationId,
+            Text = newMessage.Text,
+            FileName = newMessage.FileName,
+            FileSize = newMessage.FileSize,
+            FileContentType = newMessage.FileContentType,
+            CreatedAt = newMessage.CreatedAt
+        };
 
-        return Result.Success(StatusCodes.Status201Created,
-            new MessageGetDto
+        if (_baseChatRepository.GetTypeByIdAsync(request.Message.DestinationId).Result == ((int)ChatType.Private).ToString())
+        {
+            PrivateChat pc = await _privateChatRepository.GetByIdAsync(destination.Id);
+            int dstUserId = sender!.Id == pc.Members.First<User>().Id ? pc.Members.Last<User>().Id : pc.Members.First<User>().Id;
+            User u = await _userRepository.GetByIdAsync(dstUserId);
+            await _hubContext.Clients.User(u.Id.ToString()).SendAsync("AddMessage",
+                msg, cancellationToken: cancellationToken);
+        }
+        else if (_baseChatRepository.GetTypeByIdAsync(request.Message.DestinationId).Result == ((int)ChatType.Group).ToString())
+        {
+            GroupChat gc = await _groupChatRepository.GetByIdAsync(destination.Id);
+            foreach(GroupChatUser gcu in gc.Members)
             {
-                Id = newMessage.Id,
-                SenderId = newMessage.SenderId,
-                DestinationId = newMessage.DestinationId,
-                Text = newMessage.Text,
-                FileName = newMessage.FileName,
-                FileSize = newMessage.FileSize,
-                FileContentType = newMessage.FileContentType,
-                CreatedAt = newMessage.CreatedAt
-            });
+                /* you don't want to send that message to sender, do you? */
+                if (gcu.MemberId == sender!.Id)
+                    continue;
+
+                await _hubContext.Clients.User(gcu.MemberId.ToString()).SendAsync("AddMessage",
+                    msg, cancellationToken: cancellationToken);
+            }
+        }
+
+        return Result.Success(StatusCodes.Status201Created, msg);
     }
 }

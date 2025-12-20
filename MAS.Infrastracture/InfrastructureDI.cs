@@ -25,6 +25,7 @@ namespace MAS.Infrastracture
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddScoped<IBaseChatRepository, BaseChatRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IGroupChatRepository, GroupChatRepository>();
             services.AddScoped<IPrivateChatRepository, PrivateChatRepository>();
