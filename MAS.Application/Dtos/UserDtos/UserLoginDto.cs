@@ -1,16 +1,24 @@
 ﻿using System.ComponentModel;
 
-namespace MAS.Application.Dtos.UserDtos
+namespace MAS.Application.Dtos.UserDtos;
+
+public record UserLoginDto
 {
-    public record UserLoginDto
-    {
 #if DEBUG
-        [DefaultValue("Admin")]
+    [DefaultValue("Admin")]
 #endif
-        public string Username { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
 #if DEBUG
-        [DefaultValue("sysadmin")]
+    [DefaultValue("sysadmin")]
 #endif
-        public string Password { get; set; } = string.Empty;
-    }
+    public string Password { get; set; } = string.Empty;
+#if DEBUG
+    [DefaultValue("Some kinda client")]
+#endif
+    public string ClientName {  get; set; } = string.Empty;
+
+#if DEBUG
+    [DefaultValue("9Front")]
+#endif
+    public string OS { get; set; } = string.Empty;
 }

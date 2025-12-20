@@ -1,8 +1,7 @@
-﻿namespace MAS.Core.Enums
+﻿namespace MAS.Core.Enums;
+
+public enum GroupMsgPermissionType
 {
-    public enum GroupMsgPermissionType
-    {
-        AllMembers,
-        OnlyAdmins
-    }
+    AllMembers = 1,
+    OnlyAdmins = 2
 }

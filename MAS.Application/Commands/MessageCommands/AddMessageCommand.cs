@@ -4,63 +4,105 @@ using MAS.Application.Interfaces;
 using MAS.Application.Results;
 using MAS.Core.Entities.ChatEntities;
 using MAS.Core.Entities.MessageEntities;
-using MAS.Core.Entities.UserEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 
-namespace MAS.Application.Commands.MessageCommands
+namespace MAS.Application.Commands.MessageCommands;
+
+public record AddMessageCommand(int SenderId, MessageAddDto Message) : IRequest<Result>;
+public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Result>
 {
-    public record AddMessageCommand(int SenderId, MessageAddDto Message) : IRequest<Result>;
-    public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Result>
+    private readonly IMessageRepository _messageRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IBaseRepository<BaseChat> _baseChatRepository;
+    private readonly IPrivateChatRepository _privateChatRepository;
+    private readonly IGroupChatRepository _groupChatRepository;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IHubContext<ChatHub> _hubContext;
+
+    public AddMessageCommandHandler(IMessageRepository messageRepository,
+        IUserRepository userRepository, IBaseRepository<BaseChat> baseChatRepository,
+        IPrivateChatRepository privateChatRepository, IGroupChatRepository groupChatRepository,
+        IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext)
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMessageRepository _messageRepository;
-        private readonly IBaseRepository<BaseChat> _baseChatRepository;
-        private readonly IBaseRepository<User> _baseUserRepository;
-        private readonly IHubContext<ChatHub> _hubContext;
+        _messageRepository = messageRepository;
+        _userRepository = userRepository;
+        _baseChatRepository = baseChatRepository;
+        _privateChatRepository = privateChatRepository;
+        _groupChatRepository = groupChatRepository;
+        _unitOfWork = unitOfWork;
+        _hubContext = hubContext;
+    }
+    public async Task<Result> Handle(AddMessageCommand request, CancellationToken cancellationToken)
+    {
+        var sender = await _userRepository.GetByIdAsync(request.SenderId);
 
-        public AddMessageCommandHandler(IMessageRepository messageRepository,
-            IBaseRepository<BaseChat> baseChatRepository, IBaseRepository<User> baseUserRepository,
-            IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext)
+        var destination = await _baseChatRepository.GetByIdAsync(request.Message.DestinationId);
+        if (destination == null)
+            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
+                new[] { "Destination chat not found." });
+
+        if (destination.Type == ChatType.Group)
         {
-            _messageRepository = messageRepository;
-            _baseChatRepository = baseChatRepository;
-            _baseUserRepository = baseUserRepository;
-            _unitOfWork = unitOfWork;
-            _hubContext = hubContext;
+            var group = await _groupChatRepository.IncludedGetByIdAsync(destination.Id);
+            var groupMember = group!.Members.Where(m => m.MemberId == request.SenderId).SingleOrDefault();
+
+            if (groupMember == null)
+                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied,
+                    new[] { "You cannot send messages to groups you are not joined to." });
+
+            if (groupMember!.IsBanned == true)
+                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied,
+                    new[] { "You are banned from this group." });
+
+            if (group!.MsgPermissionType == GroupMsgPermissionType.OnlyAdmins &&
+                (groupMember!.Role != GroupChatRole.Owner && groupMember.Role != GroupChatRole.Admin))
+                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied,
+                    new[] { "Only owner and admins can send messages in this group." });
         }
-        public async Task<Result> Handle(AddMessageCommand request, CancellationToken cancellationToken)
+
+        if (destination.Type == ChatType.Private)
         {
-            var sender = await _baseUserRepository.GetByIdAsync(request.SenderId);
+            var pv = await _privateChatRepository.IncludedGetByIdAsync(destination.Id);
+            var pvMember = pv!.Members.Where(m => m.Id == request.SenderId).SingleOrDefault();
 
-            var destination = await _baseChatRepository.GetByIdAsync(request.Message.DestinationId);
-            if (destination == null)
-                return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
-                    new[] { "Destination chat not found." });
+            if (pvMember == null)
+                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied,
+                    new[] { "You have not started a private chat with this user yet." });
+        }
 
-            var newMessage = new Message
+        var newMessage = new Message
+        {
+            Sender = sender!,
+            DestinationId = destination.Id,
+            Text = request.Message.Text
+        };
+        if (request.Message.Content != null)
+        {
+            newMessage.FileName = request.Message.FileName;
+            newMessage.FileSize = request.Message.FileSize;
+            newMessage.FileContentType = request.Message.FileContentType;
+            newMessage.FileContent = new FileContent { Content = request.Message.Content };
+        }
+
+        await _messageRepository.AddAsync(newMessage);
+        await _unitOfWork.SaveAsync();
+
+        await _hubContext.Clients.All.SendAsync("a", sender!.DisplayName, request.Message.Text, cancellationToken: cancellationToken);
+
+        return Result.Success(StatusCodes.Status201Created,
+            new MessageGetDto
             {
-                SenderId = sender!.Id,
-                DestinationId = destination.Id,
-                Text = request.Message.Text
-            };
-
-            await _messageRepository.AddAsync(newMessage);
-            await _unitOfWork.SaveAsync();
-
-            await _hubContext.Clients.All.SendAsync("a", sender.DisplayName, request.Message.Text, cancellationToken: cancellationToken);
-
-            return Result.Success(StatusCodes.Status201Created,
-                new MessageGetDto
-                {
-                    Id = newMessage.Id,
-                    SenderId = newMessage.SenderId,
-                    DestinationId = newMessage.DestinationId,
-                    Text = newMessage.Text,
-                    CreatedAt = newMessage.CreatedAt
-                });
-        }
+                Id = newMessage.Id,
+                SenderId = newMessage.SenderId,
+                DestinationId = newMessage.DestinationId,
+                Text = newMessage.Text,
+                FileName = newMessage.FileName,
+                FileSize = newMessage.FileSize,
+                FileContentType = newMessage.FileContentType,
+                CreatedAt = newMessage.CreatedAt
+            });
     }
 }

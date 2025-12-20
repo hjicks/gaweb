@@ -1,19 +1,15 @@
 using MAS.Core.Entities.Base;
 using MAS.Core.Entities.MessageEntities;
-using MAS.Core.Entities.UserEntities;
-using System.ComponentModel.DataAnnotations.Schema;
+using MAS.Core.Enums;
 
-namespace MAS.Core.Entities.ChatEntities
+namespace MAS.Core.Entities.ChatEntities;
+
+public abstract class BaseChat : BaseEntity
 {
-	public class BaseChat : BaseEntity
-	{
-        // navigation properties
+    public ChatType Type { get; private set; }
 
-        // many-to-one
-        public ICollection<Message> Messages { get; set; } = new List<Message>();
+    // navigation properties
 
-        // many-to-many
-        [NotMapped]
-        public ICollection<User> Members { get; set; } = new List<User>();
-    }
+    // many-to-one
+    public ICollection<Message> Messages { get; set; } = new List<Message>();
 }

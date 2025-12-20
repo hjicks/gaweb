@@ -1,9 +1,8 @@
-﻿namespace MAS.Core.Enums
+﻿namespace MAS.Core.Enums;
+
+public enum GroupChatRole
 {
-    public enum GroupChatRole
-    {
-        Member,
-        Admin,
-        Owner
-    }
+    Member = 1,
+    Admin = 2,
+    Owner = 3
 }
