@@ -21,8 +21,7 @@ public class DeletePrivateChatCommandHandler : IRequestHandler<DeletePrivateChat
     {
         var privateChat = await _privateChatRepository.GetByIdAsync(request.PrivateChatId);
         if (privateChat == null)
-            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
-                new[] { "Private chat not found." });
+            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.ChatNotFound);
 
         _privateChatRepository.Delete(privateChat);
         await _unitOfWork.SaveAsync();

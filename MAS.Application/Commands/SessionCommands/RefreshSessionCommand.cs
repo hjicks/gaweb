@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace MAS.Application.Commands.SessionCommands;
 
-public record RefreshSessionCommand(Int32 SessionId, Guid RefreshToken) : IRequest<Result>;
+public record RefreshSessionCommand(int SessionId, Guid RefreshToken) : IRequest<Result>;
 public class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionCommand, Result>
 {
     private readonly ISessionRepository _sessionRepository;
@@ -25,16 +25,13 @@ public class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionComman
     {
         var session = await _sessionRepository.GetByIdAsync(request.SessionId);
         if (session == null)
-            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
-                new[] { "Session not found." });
+            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.SessionNotFound);
 
         if (session.Token != request.RefreshToken)
-            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidRefreshToken,
-                new[] { "FBI, open up!" });
+            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidOrExpiredRefreshToken);
 
         if (session.ExpiresAt < DateTime.Now || session.IsRevoked == true)
-            return Result.Failure(StatusCodes.Status419AuthenticationTimeout, ErrorType.ExpiredRefreshToken,
-                new[] { "Session is expired, please login." });
+            return Result.Failure(StatusCodes.Status419AuthenticationTimeout, ErrorType.InvalidOrExpiredRefreshToken);
 
         session.Token = Guid.NewGuid();
         session.ExpiresAt = DateTime.UtcNow.AddDays(7);

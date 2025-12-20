@@ -22,8 +22,7 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
     {
         var user = await _userRepository.GetByIdAsync(request.UserId);
         if (user == null)
-            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
-                new[] { "User not found." });
+            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.UserNotFound);
 
         using var hmac = new HMACSHA512(user.PasswordSalt);
         user.DisplayName = request.User.DisplayName;

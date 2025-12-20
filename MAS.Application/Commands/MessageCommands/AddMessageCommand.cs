@@ -43,8 +43,7 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
 
         var destination = await _baseChatRepository.GetByIdAsync(request.Message.DestinationId);
         if (destination == null)
-            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
-                new[] { "Destination chat not found." });
+            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.ChatNotFound);
 
         if (destination.Type == ChatType.Group)
         {
@@ -52,17 +51,14 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
             var groupMember = group!.Members.Where(m => m.MemberId == request.SenderId).SingleOrDefault();
 
             if (groupMember == null)
-                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied,
-                    new[] { "You cannot send messages to groups you are not joined to." });
+                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied);
 
             if (groupMember!.IsBanned == true)
-                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied,
-                    new[] { "You are banned from this group." });
+                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied);
 
             if (group!.MsgPermissionType == GroupMsgPermissionType.OnlyAdmins &&
                 (groupMember!.Role != GroupChatRole.Owner && groupMember.Role != GroupChatRole.Admin))
-                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied,
-                    new[] { "Only owner and admins can send messages in this group." });
+                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied);
         }
 
         if (destination.Type == ChatType.Private)

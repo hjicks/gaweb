@@ -22,13 +22,11 @@ public class GetChatLastMessageQueryHandler : IRequestHandler<GetChatLastMessage
     {
         var chat = await _baseChatRepository.GetByIdAsync(request.ChatId);
         if (chat == null)
-            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
-                new[] { "Chat not found." });
+            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.ChatNotFound);
 
         var message = await _messageRepository.GetChatLastMessageAsync(request.ChatId);
         if (message == null)
-            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.ChatIsEmpty,
-                new[] { "Chat have no message." });
+            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.ChatIsEmpty);
 
         return Result.Success(StatusCodes.Status200OK, new MessageGetDto
         {

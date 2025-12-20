@@ -29,21 +29,18 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result>
     {
         var dbUser = await _userRepository.GetByUsernameAsync(request.User.Username);
         if (dbUser == null)
-            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidCredentials,
-                new[] { "Username or password is incorrect." });
+            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidCredentials);
 
         using var hmac = new HMACSHA512(dbUser.PasswordSalt);
         var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(request.User.Password));
         if (!computedHash.SequenceEqual(dbUser.PasswordHash))
-            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidCredentials,
-                new[] { "Username or password is incorrect." });
+            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidCredentials);
 
 #if !DEBUG
     /* seems this is really troublesome if the client crashes..., let's disable it for now */
         var hasActiveSession = await _sessionRepository.GetActiveAsync(dbUser.Id);
         if (hasActiveSession == true)
-            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.ActiveSessionAvailable,
-                new[] { "Please log out from your other session first." });
+            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.ActiveSessionAvailable);
 #endif
         var session = new Session
         {

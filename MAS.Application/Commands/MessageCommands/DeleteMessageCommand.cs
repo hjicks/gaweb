@@ -21,12 +21,10 @@ public class DeleteMessageCommandHandler : IRequestHandler<DeleteMessageCommand,
     {
         var message = await _messageRepository.GetByIdAsync(request.MessageId);
         if (message == null)
-            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
-                new[] { "Message not found." });
+            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.MessageNotFound);
 
         if (message.SenderId != request.SenderId)
-            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied,
-                new[] { "You are not allowed to delete someone else's message." });
+            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied);
 
         _messageRepository.Delete(message);
         await _unitOfWork.SaveAsync();

@@ -20,8 +20,7 @@ public class GetGroupChatQueryHandler : IRequestHandler<GetGroupChatQuery, Resul
         var groupChat = await _groupChatRepository.GetByIdAsync(request.GroupChatId);
 
         if (groupChat == null)
-            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
-                new[] { "Group chat not found." });
+            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.ChatNotFound);
 
         return Result.Success(StatusCodes.Status200OK, new GroupChatGetDto
         {

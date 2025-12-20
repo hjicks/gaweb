@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace MAS.Application.Commands.GroupChatCommands;
 
-public record AddGroupChatCommand(Int32 OwnerId, PublicGroupChatAddDto GroupChat) : IRequest<Result>;
+public record AddGroupChatCommand(int OwnerId, PublicGroupChatAddDto GroupChat) : IRequest<Result>;
 public class AddChannelChatCommandHandler : IRequestHandler<AddGroupChatCommand, Result>
 {
     private readonly IGroupChatRepository _groupChatRepository;
@@ -27,8 +27,7 @@ public class AddChannelChatCommandHandler : IRequestHandler<AddGroupChatCommand,
     {
         var owner = await _userRepository.GetByIdAsync(request.OwnerId);
         if (owner == null)
-            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
-                new[] { "User not found." });
+            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.UserNotFound);
 
         var newPublicGroupChat = new GroupChat
         {
