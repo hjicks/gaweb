@@ -30,14 +30,15 @@ public sealed class ValidationBehavior<TRequest, TResponse>
         var validationResults = await Task.WhenAll(
             _validators.Select(validator => validator.ValidateAsync(context)));
 
-        var errors = new List<string>() { ResponseMessages.Error[ErrorType.Validation] };
-        errors.AddRange(validationResults
+        var validationErrors = validationResults
             .SelectMany(validationResult => validationResult.Errors)
             .Where(validationFailure => validationFailure != null)
-            .Select(failure => failure.ErrorMessage));
+            .Select(failure => failure.ErrorMessage);
 
-        if (errors.Any())
+        if (validationErrors.Any())
         {
+            var errors = new List<string>() { ResponseMessages.Error[ErrorType.Validation] };
+            errors.AddRange(validationErrors);
             return Result.Failure(StatusCodes.Status409Conflict, ErrorType.Validation, errors);
         }
 
