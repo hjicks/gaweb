@@ -10,12 +10,12 @@ internal class Program
     {
         string baseurl = "https://localhost:7088";
         JsonElement r;
-        string username, password;
+        string username, password, clientName, os;
 
-        JsonElement Login(string username, string password)
+        JsonElement Login(string username, string password, string clientName, string os)
         {
             HttpClient c = new HttpClient { BaseAddress = new Uri(baseurl) };
-            var msg = new { username, password };
+            var msg = new { username, password, clientName, os };
             var response = c.PostAsJsonAsync("/api/sessions/login", msg).Result
                 .Content.ReadAsStringAsync().Result;
             return JsonSerializer.Deserialize<JsonElement>(response);
@@ -43,18 +43,22 @@ internal class Program
             return response;
         }
 
-        if (args.Length == 2)
+        if (args.Length == 4)
         {
             username = args[0];
             password = args[1];
+            clientName = args[2];
+            os = args[3];
         }
         else
         {
             username = "Admin";
             password = "sysadmin";
+            clientName = "CLI client";
+            os = "Windows 11";
         }
         Console.WriteLine($"Authenticating as {username}");
-        r = Login(username, password);
+        r = Login(username, password, clientName, os);
         
         string jwt = r.GetProperty("response").GetProperty("jwt").ToString();
         Console.WriteLine($"Auth successed..., jwt token is {jwt}");
