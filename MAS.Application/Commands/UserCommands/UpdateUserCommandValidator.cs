@@ -11,13 +11,6 @@ namespace MAS.Application.Commands.UserCommands
     {
         public UpdateUserCommandValidator()
         {
-            RuleFor(c => c.UserId)
-                .Cascade(CascadeMode.Stop)
-                .NotEmpty()
-                .WithMessage("UserId is required.")
-                .GreaterThan(0)
-                .WithMessage("UserId must be greater than zero.");
-
             RuleFor(c => c.User.DisplayName)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
