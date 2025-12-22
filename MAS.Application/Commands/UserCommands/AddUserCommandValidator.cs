@@ -16,8 +16,8 @@ namespace MAS.Application.Commands.UserCommands
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                 .WithMessage("DisplayName is required.")
-                .Length(1, 64)
-                .WithMessage("DisplayName must be between 1 and 64 characters.");
+                .Length(1, 32)
+                .WithMessage("DisplayName must be between 1 and 32 characters.");
 
             RuleFor(c => c.User.Username)
                 .Cascade(CascadeMode.Stop)
@@ -36,17 +36,18 @@ namespace MAS.Application.Commands.UserCommands
                 .WithMessage("Username or password is incorrect.");
 
             RuleFor(c => c.User.Bio)
-                .Cascade(CascadeMode.Stop)
                 .MaximumLength(200)
                 .WithMessage("Bio cannot exceed 200 characters.");
 
             RuleFor(c => c.User.ClientName)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                 .WithMessage("ClientName is required.")
                 .Length(1, 64)
                 .WithMessage("ClientName must be between 1 and 64 characters.");
 
             RuleFor(c => c.User.OS)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty()
                 .WithMessage("OS is required.")
                 .Length(1, 64)
