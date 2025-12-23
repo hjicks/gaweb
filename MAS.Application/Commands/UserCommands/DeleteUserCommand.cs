@@ -21,8 +21,7 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Resul
     {
         var user = await _userRepository.GetByIdAsync(request.UserId);
         if (user == null)
-            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
-                new[] { "User not found." });
+            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.UserNotFound);
 
         _userRepository.Delete(user);
         await _unitOfWork.SaveAsync();

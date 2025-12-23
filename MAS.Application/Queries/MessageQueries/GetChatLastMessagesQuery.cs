@@ -19,8 +19,7 @@ public class GetChatLastMessagesQueryHandler : IRequestHandler<GetChatLastMessag
     {
         var message = await _messageRepository.GetByIdAsync(request.MessageId);
         if (message == null)
-            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
-                new[] { "Message not found." });
+            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.MessageNotFound);
 
         var messages = (await _messageRepository.GetChatLastMessagesAsync(message.DestinationId, message.CreatedAt, 20))
             .Select(m => new MessageGetDto

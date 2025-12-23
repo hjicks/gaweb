@@ -1,17 +1,19 @@
-﻿namespace MAS.Core.Enums
+﻿namespace MAS.Core.Enums;
+
+public enum ErrorType
 {
-    public enum ErrorType
-    {
-        Exception,
-        Validation,
-        NotFound,
-        AlreadyExists,
-        InvalidRequestModel,
-        InvalidCredentials,
-        InvalidRefreshToken,
-        ExpiredRefreshToken,
-        PermissionDenied,
-        ActiveSessionAvailable,
-        ChatIsEmpty
-    }
+    Exception,
+    Unauthorized,
+    InvalidRequestModel,
+    Validation,
+    UserNotFound,
+    SessionNotFound,
+    ChatNotFound,
+    MessageNotFound,
+    UsernameAlreadyExists,
+    InvalidCredentials,
+    InvalidOrExpiredRefreshToken,
+    PermissionDenied,
+    ActiveSessionAvailable,
+    ChatIsEmpty
 }

@@ -1,27 +1,31 @@
 ﻿using MAS.Application.Results;
 using MAS.Core.Enums;
 using Serilog;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
-namespace MAS.Api.Middlewares
+namespace MAS.Api.Middlewares;
+
+public class ExceptionHandlingMiddleware : IMiddleware
 {
-    public class ExceptionHandlingMiddleware : IMiddleware
+    private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
     {
-        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+        Converters = { new JsonStringEnumConverter() }
+    };
+
+    public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+    {
+        try
         {
-            try
-            {
-                await next(context);
-            }
-            catch (Exception exception)
-            {
-                Log.Error("Exception occurred: {Exception}", exception);
-
-                context.Response.StatusCode =
-                    StatusCodes.Status500InternalServerError;
-
-                await context.Response.WriteAsJsonAsync(
-                    Result.Failure(ErrorType.Exception, new[] { "Server Error" }));
-            }
+            await next(context);
+        }
+        catch (Exception exception)
+        {
+            Log.Error("Exception occurred: {Exception}", exception);
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            context.Response.ContentType = "application/json";
+            var response = Result.Failure(ErrorType.Exception);
+            await context.Response.WriteAsJsonAsync(response, _jsonSerializerOptions);
         }
     }
 }

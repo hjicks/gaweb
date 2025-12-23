@@ -28,8 +28,7 @@ public class AddUserCommandHandler : IRequestHandler<AddUserCommand, Result>
     {
         var dbUser = await _userRepository.GetByUsernameAsync(request.User.Username);
         if (dbUser != null)
-            return Result.Failure(StatusCodes.Status422UnprocessableEntity, ErrorType.AlreadyExists,
-                new[] { "Username is already taken. Please choose another." });
+            return Result.Failure(StatusCodes.Status422UnprocessableEntity, ErrorType.UsernameAlreadyExists);
 
         using var hmac = new HMACSHA512();
         var newUser = new User

@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using MAS.Application.Dtos.PrivateChatDtos;
+﻿using MAS.Application.Dtos.PrivateChatDtos;
 using MAS.Application.Hubs;
 using MAS.Application.Interfaces;
 using MAS.Application.Results;
@@ -34,8 +33,7 @@ public class AddPrivateChatCommandHandler : IRequestHandler<AddPrivateChatComman
         var receiver = await _userRepository.GetByIdAsync(request.ReceiverId);
 
         if (receiver == null)
-            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.NotFound,
-                new[] { "Receiver not found." });
+            return Result.Failure(StatusCodes.Status404NotFound, ErrorType.UserNotFound);
         
         var newPrivateChat = new PrivateChat
         {
