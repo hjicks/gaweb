@@ -4,10 +4,11 @@ using MAS.Application.Results;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using System.Security.Cryptography;
 
 namespace MAS.Application.Commands.SessionCommands;
 
-public record RefreshSessionCommand(Guid RefreshToken) : IRequest<Result>;
+public record RefreshSessionCommand(string RefreshToken) : IRequest<Result>;
 public class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionCommand, Result>
 {
     private readonly ISessionRepository _sessionRepository;
@@ -33,7 +34,7 @@ public class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionComman
         if (session.ExpiresAt < DateTime.Now || session.IsRevoked == true)
             return Result.Failure(StatusCodes.Status419AuthenticationTimeout, ErrorType.InvalidOrExpiredRefreshToken);
 
-        session.Token = Guid.NewGuid();
+        session.Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
         session.ExpiresAt = DateTime.UtcNow.AddDays(7);
         session.UpdatedAt = DateTime.UtcNow;
         _sessionRepository.Update(session);

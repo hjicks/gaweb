@@ -1,4 +1,5 @@
-﻿using MAS.Application.Interfaces;
+﻿using Dapper;
+using MAS.Application.Interfaces;
 using MAS.Core.Entities.UserEntities;
 using MAS.Infrastracture.Database;
 using MAS.Infrastracture.Repositories.Base;
@@ -15,7 +16,8 @@ public class SessionRepository : BaseRepository<Session>, ISessionRepository
 
     public async Task<IEnumerable<Session>> GetAllAsync()
     {
-        return await _efDbContext.Sessions.ToListAsync();
+        string query = "SELECT * FROM Sessions";
+        return (await _dapperDbContext.GetConnection().QueryAsync<Session>(query)).ToList();
     }
 
     public async Task<bool> GetActiveAsync(int userId)
@@ -23,7 +25,7 @@ public class SessionRepository : BaseRepository<Session>, ISessionRepository
         return await _efDbContext.Sessions.Where(s => s.UserId == userId && s.IsRevoked == false).AnyAsync();
     }
 
-    public async Task<Session?> GetByTokenAsync(Guid sessionToken)
+    public async Task<Session?> GetByTokenAsync(string sessionToken)
     {
         return await _efDbContext.Sessions.Where(s => s.Token == sessionToken).SingleOrDefaultAsync();
     }

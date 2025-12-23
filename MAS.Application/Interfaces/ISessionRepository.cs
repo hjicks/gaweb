@@ -6,5 +6,5 @@ public interface ISessionRepository : IBaseRepository<Session>
 {
     Task<IEnumerable<Session>> GetAllAsync();
     Task<bool> GetActiveAsync(int userId);
-    Task<Session?> GetByTokenAsync(Guid sessionToken);
+    Task<Session?> GetByTokenAsync(string sessionToken);
 }

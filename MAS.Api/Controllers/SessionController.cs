@@ -1,5 +1,6 @@
 ﻿using MAS.Application.Commands.SessionCommands;
 using MAS.Application.Dtos.UserDtos;
+using MAS.Application.Queries.SessionQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,14 @@ public class SessionController : BaseController
     public SessionController(ISender sender) : base(sender)
     {
 
+    }
+
+    [HttpGet("all")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetAllSessionsAsync()
+    {
+        var result = await _sender.Send(new GetAllSessionsQuery());
+        return StatusCode(result.StatusCode, result);
     }
 
     [HttpPost("login"), AllowAnonymous]
@@ -43,7 +52,7 @@ public class SessionController : BaseController
     }
 
     [HttpPost("refresh/{refreshToken}"), AllowAnonymous]
-    public async Task<IActionResult> RefreshJwtAsync(Guid refreshToken)
+    public async Task<IActionResult> RefreshJwtAsync(string refreshToken)
     {
         var result = await _sender.Send(new RefreshSessionCommand(refreshToken));
         if (result.Ok)
