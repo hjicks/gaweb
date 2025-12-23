@@ -42,16 +42,16 @@ public class SessionController : BaseController
         return StatusCode(result.StatusCode, result);
     }
 
-    [HttpPost("refresh/{sessionId}/{refreshToken}"), AllowAnonymous]
-    public async Task<IActionResult> RefreshJwtAsync(int sessionId, Guid refreshToken)
+    [HttpPost("refresh/{refreshToken}"), AllowAnonymous]
+    public async Task<IActionResult> RefreshJwtAsync(Guid refreshToken)
     {
-        var result = await _sender.Send(new RefreshSessionCommand(sessionId, refreshToken));
+        var result = await _sender.Send(new RefreshSessionCommand(refreshToken));
         if (result.Ok)
         {
-            Log.Information($"Jwt of user with id {sessionId} renewed.");
+            Log.Information($"Jwt of session with token {refreshToken} renewed.");
             return StatusCode(result.StatusCode, result);
         }
-        Log.Information($"Unsuccessful attempt to refresh session {sessionId}.");
+        Log.Information($"Unsuccessful attempt to refresh session with token {refreshToken}.");
         return StatusCode(result.StatusCode, result);
     }
 }

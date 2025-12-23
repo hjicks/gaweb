@@ -17,8 +17,14 @@ public class SessionRepository : BaseRepository<Session>, ISessionRepository
     {
         return await _efDbContext.Sessions.ToListAsync();
     }
+
     public async Task<bool> GetActiveAsync(int userId)
     {
         return await _efDbContext.Sessions.Where(s => s.UserId == userId && s.IsRevoked == false).AnyAsync();
+    }
+
+    public async Task<Session?> GetByTokenAsync(Guid sessionToken)
+    {
+        return await _efDbContext.Sessions.Where(s => s.Token == sessionToken).SingleOrDefaultAsync();
     }
 }

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace MAS.Application.Commands.SessionCommands;
 
-public record RefreshSessionCommand(int SessionId, Guid RefreshToken) : IRequest<Result>;
+public record RefreshSessionCommand(Guid RefreshToken) : IRequest<Result>;
 public class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionCommand, Result>
 {
     private readonly ISessionRepository _sessionRepository;
@@ -23,7 +23,7 @@ public class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionComman
     }
     public async Task<Result> Handle(RefreshSessionCommand request, CancellationToken cancellationToken)
     {
-        var session = await _sessionRepository.GetByIdAsync(request.SessionId);
+        var session = await _sessionRepository.GetByTokenAsync(request.RefreshToken);
         if (session == null)
             return Result.Failure(StatusCodes.Status404NotFound, ErrorType.SessionNotFound);
 

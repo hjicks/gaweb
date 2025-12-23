@@ -29,6 +29,16 @@ public class DevelopSeed
                 IsVerified = true,
                 Sessions = new List<Session> { new() { ClientName = "mMAS", OS = "Plan 9 from Bell Labs" } }
             };
+            var chatBot = new User()
+            {
+                DisplayName = "MAS ChatBot",
+                Username = "MASChatBot",
+                PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("MASBOT1234")),
+                PasswordSalt = hmac.Key,
+                Bio = "This bot is connected to a LLM. Feel free to chat.",
+                IsBot = true,
+                IsVerified = true
+            };
             var tester = new User()
             {
                 DisplayName = "Tester",    // this is a random user, nothing fancy
@@ -57,6 +67,7 @@ public class DevelopSeed
                 PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("12345678")),
                 PasswordSalt = hmac.Key,
                 Bio = "mildly bored",
+                IsBot = true,
                 Sessions = new List<Session> { new() { ClientName = "xmas", OS = "OpenBSD" } }
             };
 
@@ -67,8 +78,9 @@ public class DevelopSeed
                 PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("thisisatoken")),
                 PasswordSalt = hmac.Key,
                 Bio = "Behold, this the Test bot.",
+                IsBot = true
             };
-            await dbContext.Users.AddRangeAsync(admin, tester, lonelydog, vsaeed);
+            await dbContext.Users.AddRangeAsync(admin, chatBot, tester, lonelydog, vsaeed);
             await dbContext.SaveChangesAsync();
 
             var privateChat = new PrivateChat()

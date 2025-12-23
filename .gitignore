@@ -1,5 +1,4 @@
 ## Ignore Visual Studio temporary files and build results
-
 [Dd]ebug/
 [Rr]elease/
 [Bb]in/
@@ -8,7 +7,6 @@
 *.user
 
 ## Ignore migrations and database related files
-
 Migrations/
 *.db
 *.db-shm
@@ -16,3 +14,6 @@ Migrations/
 
 ## Ignore logs
 Logs/
+
+## Ignore chat bot token file
+token.txt
