@@ -4,9 +4,6 @@ namespace MAS.ChatBot;
 
 public class MasResponse
 {
-    [JsonPropertyName("ok")]
-    public bool Ok { get; set; }
-
     [JsonPropertyName("response")]
     public SessionRefreshResponse Response { get; set; } = new SessionRefreshResponse();
 }
