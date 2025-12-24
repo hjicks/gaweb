@@ -1,4 +1,5 @@
 ﻿using MAS.Application.Commands.GroupChatCommands;
+using MAS.Application.Commands.PrivateChatCommands;
 using MAS.Application.Dtos.GroupChatDtos;
 using MAS.Application.Queries.GroupChatQueries;
 using MediatR;
@@ -28,31 +29,31 @@ public class GroupChatController : BaseController
     }
 
     [HttpGet("{groupChatId}")]
-    public async Task<IActionResult> GetGroupChatAsync(int groupChatId) // may need to check who is fetching this
+    public async Task<IActionResult> GetGroupChatAsync(int groupChatId)
     {
         var result = await _sender.Send(new GetGroupChatQuery(groupChatId));
         if (result.Ok)
         {
-            //Log.Information($"User {} got group chat {groupChatId} data.");
+            Log.Information($"Group chat {groupChatId} information fetched.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
     }
 
     [HttpGet("members/{groupChatId}")]
-    public async Task<IActionResult> GetGroupChatMembersAsync(int groupChatId) // may need to check who is fetching this
+    public async Task<IActionResult> GetGroupChatMembersAsync(int groupChatId)
     {
         var result = await _sender.Send(new GetGroupChatMembersQuery(groupChatId));
         if (result.Ok)
         {
-            //Log.Information($"User {} got members of group chat {groupChatId}.");
+            Log.Information($"Members of group chat {groupChatId} fetched.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddGroupChatAsync(PublicGroupChatAddDto groupChat)
+    public async Task<IActionResult> AddGroupChatAsync(GroupChatAddDto groupChat)
     {
         var ownerId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new AddGroupChatCommand(ownerId, groupChat));
@@ -65,18 +66,26 @@ public class GroupChatController : BaseController
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateGroupChatAsync(PublicGroupChatUpdateDto groupChat)
+    public async Task<IActionResult> UpdateGroupChatAsync(GroupChatUpdateDto groupChat)
     {
-        if (await _sender.Send(new UpdateGroupChatCommand(groupChat)) == Core.Enums.TransactionResultType.Done) return Ok("ChannelChat updated successfully.");
-        else if (await _sender.Send(new UpdateGroupChatCommand(groupChat)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid channelChat Id.");
-        return BadRequest("Something went wrong while updating the channelChat.");
+        var result = await _sender.Send(new UpdateGroupChatCommand(groupChat));
+        if (result.Ok)
+        {
+            Log.Information($"Group {groupChat.Id} information updated.");
+            return StatusCode(result.StatusCode, result);
+        }
+        return StatusCode(result.StatusCode, result);
     }
 
     [HttpDelete("{groupChatId}")]
     public async Task<IActionResult> DeleteGroupChatAsync(int groupChatId)
     {
-        if (await _sender.Send(new DeleteGroupChatCommand(groupChatId)) == Core.Enums.TransactionResultType.Done) return Ok("ChannelChat deleted successfully.");
-        else if (await _sender.Send(new DeleteGroupChatCommand(groupChatId)) == Core.Enums.TransactionResultType.ForeignKeyNotFound) return Ok("Invalid channelChat Id.");
-        return BadRequest("Something went wrong while deleting the channelChat.");
+        var result = await _sender.Send(new DeleteGroupChatCommand(groupChatId));
+        if (result.Ok)
+        {
+            Log.Information($"Group chat {groupChatId} deleted.");
+            return StatusCode(result.StatusCode, result);
+        }
+        return StatusCode(result.StatusCode, result);
     }
 }

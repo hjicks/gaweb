@@ -1,28 +1,32 @@
 ﻿using MAS.Application.Interfaces;
+using MAS.Application.Results;
 using MAS.Core.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace MAS.Application.Commands.GroupChatCommands
 {
-    public record DeleteGroupChatCommand(Int32 GroupChatId) : IRequest<TransactionResultType>;
-    public class DeleteChannelChatCommandHandler : IRequestHandler<DeleteGroupChatCommand, TransactionResultType>
+    public record DeleteGroupChatCommand(int GroupChatId) : IRequest<Result>;
+    public class DeleteGroupChatCommandHandler : IRequestHandler<DeleteGroupChatCommand, Result>
     {
         private readonly IGroupChatRepository _groupChatRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public DeleteChannelChatCommandHandler(IGroupChatRepository groupChatRepository, IUnitOfWork unitOfWork)
+        public DeleteGroupChatCommandHandler(IGroupChatRepository groupChatRepository, IUnitOfWork unitOfWork)
         {
             _groupChatRepository = groupChatRepository;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<TransactionResultType> Handle(DeleteGroupChatCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(DeleteGroupChatCommand request, CancellationToken cancellationToken)
         {
             var groupChat = await _groupChatRepository.GetByIdAsync(request.GroupChatId);
             if (groupChat == null)
-                return TransactionResultType.ForeignKeyNotFound;
+                return Result.Failure(StatusCodes.Status404NotFound, ErrorType.ChatNotFound);
+
             _groupChatRepository.Delete(groupChat);
             await _unitOfWork.SaveAsync();
-            return TransactionResultType.Done;
+
+            return Result.Success(StatusCodes.Status200OK, "Chat deleted successfully.");
         }
     }
 }
