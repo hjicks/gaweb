@@ -28,11 +28,11 @@ public class PrivateChatRepository : BaseRepository<PrivateChat>, IPrivateChatRe
             .ToListAsync();
     }
 
-    public async Task<PrivateChat?> IncludedGetByIdAsync(int pvId)
+    public async Task<PrivateChat?> GetByIdWithMembersAsync(int pvId)
     {
         return await _efDbContext.PrivateChats
             .Where(g => g.Id == pvId)
             .Include(g => g.Members)
-            .FirstAsync();
+            .SingleOrDefaultAsync();
     }
 }

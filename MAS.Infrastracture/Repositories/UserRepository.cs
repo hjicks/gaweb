@@ -25,6 +25,14 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         return await _efDbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
     }
 
+    public async Task<User?> GetByIdWithPrivateChatsAsync(int userId)
+    {
+        return await _efDbContext.Users
+            .Where(u => u.Id == userId)
+            .Include(u => u.PrivateChats)
+            .SingleOrDefaultAsync();
+    }
+
     public async Task<bool> IsExistsAsync(int userId)
     {
         return await _efDbContext.Users.AnyAsync(u => u.Id == userId);

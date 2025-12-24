@@ -29,6 +29,10 @@ public class AddChannelChatCommandHandler : IRequestHandler<AddGroupChatCommand,
         if (owner == null)
             return Result.Failure(StatusCodes.Status404NotFound, ErrorType.UserNotFound);
 
+        var groupExists = await _groupChatRepository.IsExistsAsync(request.GroupChat.Groupname);
+        if (groupExists)
+            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.GroupnameAlreadyExists);
+
         var newPublicGroupChat = new GroupChat
         {
             DisplayName = request.GroupChat.DisplayName,

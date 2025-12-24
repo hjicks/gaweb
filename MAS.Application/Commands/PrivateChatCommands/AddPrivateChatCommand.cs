@@ -29,12 +29,29 @@ public class AddPrivateChatCommandHandler : IRequestHandler<AddPrivateChatComman
 
     public async Task<Result> Handle(AddPrivateChatCommand request, CancellationToken cancellationToken)
     {
-        var starter = await _userRepository.GetByIdAsync(request.StarterId);
-        var receiver = await _userRepository.GetByIdAsync(request.ReceiverId);
+        if (request.StarterId == request.ReceiverId)
+        {
+            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied);
+        }
+
+        var starter = await _userRepository.GetByIdWithPrivateChatsAsync(request.StarterId);
+        var receiver = await _userRepository.GetByIdWithPrivateChatsAsync(request.ReceiverId);
 
         if (receiver == null)
             return Result.Failure(StatusCodes.Status404NotFound, ErrorType.UserNotFound);
-        
+
+        var starterPvChatsId = starter!.PrivateChats.Select(p => p.Id).ToList();
+        var receiverPvChatsId = receiver.PrivateChats.Select(p => p.Id).ToList();
+
+        foreach (var starterPvChatId in starterPvChatsId)
+        {
+            foreach (var receiverPvChatId in receiverPvChatsId)
+            {
+                if (starterPvChatId == receiverPvChatId)
+                    return Result.Failure(StatusCodes.Status409Conflict, ErrorType.ChatAlreadyExists);
+            }
+        }
+
         var newPrivateChat = new PrivateChat
         {
             Members = new List<User> { starter!, receiver }

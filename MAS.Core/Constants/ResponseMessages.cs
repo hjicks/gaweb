@@ -15,6 +15,8 @@ public class ResponseMessages
         { ErrorType.ChatNotFound, "Chat not found in the system." },
         { ErrorType.MessageNotFound, "Message not found in the system." },
         { ErrorType.UsernameAlreadyExists, "Username is already taken. Please choose another." },
+        { ErrorType.GroupnameAlreadyExists, "Groupname is already taken. Please choose another." },
+        { ErrorType.ChatAlreadyExists, "Chat already exists in the system." },
         { ErrorType.InvalidCredentials, "Username or password is incorrect." },
         { ErrorType.InvalidOrExpiredRefreshToken, "Your refresh token is invalid or expired." },
         { ErrorType.PermissionDenied, "You are not authorized to perform this action." },

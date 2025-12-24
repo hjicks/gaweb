@@ -47,7 +47,7 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
 
         if (destination.Type == ChatType.Group)
         {
-            var group = await _groupChatRepository.IncludedGetByIdAsync(destination.Id);
+            var group = await _groupChatRepository.GetByIdWithMembersAsync(destination.Id);
             var groupMember = group!.Members.Where(m => m.MemberId == request.SenderId).SingleOrDefault();
 
             if (groupMember == null)
@@ -63,7 +63,7 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
 
         if (destination.Type == ChatType.Private)
         {
-            var pv = await _privateChatRepository.IncludedGetByIdAsync(destination.Id);
+            var pv = await _privateChatRepository.GetByIdWithMembersAsync(destination.Id);
             var pvMember = pv!.Members.Where(m => m.Id == request.SenderId).SingleOrDefault();
 
             if (pvMember == null)

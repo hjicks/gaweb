@@ -11,6 +11,8 @@ public enum ErrorType
     ChatNotFound,
     MessageNotFound,
     UsernameAlreadyExists,
+    GroupnameAlreadyExists,
+    ChatAlreadyExists,
     InvalidCredentials,
     InvalidOrExpiredRefreshToken,
     PermissionDenied,
