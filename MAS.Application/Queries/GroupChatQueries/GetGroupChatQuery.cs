@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace MAS.Application.Queries.GroupChatQueries;
 
-public record GetGroupChatQuery(int GroupChatId) : IRequest<Result>;
+public record GetGroupChatQuery(int UserId, int GroupChatId) : IRequest<Result>;
 public class GetGroupChatQueryHandler : IRequestHandler<GetGroupChatQuery, Result>
 {
     private readonly IGroupChatRepository _groupChatRepository;
@@ -17,17 +17,17 @@ public class GetGroupChatQueryHandler : IRequestHandler<GetGroupChatQuery, Resul
     }
     public async Task<Result> Handle(GetGroupChatQuery request, CancellationToken cancellationToken)
     {
-        var groupChat = await _groupChatRepository.GetByIdAsync(request.GroupChatId);
+        var groupChat = await _groupChatRepository.GetByIdWithMemberAsync(request.UserId, request.GroupChatId);
 
-        if (groupChat == null)
+        if (groupChat == null || groupChat.Members.Single().IsBanned == true)
             return Result.Failure(StatusCodes.Status404NotFound, ErrorType.ChatNotFound);
 
         return Result.Success(StatusCodes.Status200OK, new GroupChatGetDto
         {
             Id = groupChat.Id,
             DisplayName = groupChat.DisplayName,
-            Groupname = groupChat.DisplayName,
-            Description = groupChat.DisplayName,
+            Groupname = groupChat.Groupname,
+            Description = groupChat.Description,
             Avatar = groupChat.Avatar,
             IsPublic = groupChat.IsPublic,
             MsgPermissionType = groupChat.MsgPermissionType,

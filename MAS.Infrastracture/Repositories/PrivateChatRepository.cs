@@ -22,10 +22,15 @@ public class PrivateChatRepository : BaseRepository<PrivateChat>, IPrivateChatRe
 
     public async Task<IEnumerable<PrivateChat>> GetAllUserAsync(int userId)
     {
-        return await _efDbContext.PrivateChats
-            .Include(p => p.Members.Where(m => m.Id != userId))
-            .Where(p => p.IsDeleted == false)
+        var privateChatsIds = await _efDbContext.PrivateChatUsers
+            .Where(p => p.UserId == userId)
+            .Select(p => p.PrivateChatId)
             .ToListAsync();
+        var privateChats = await _efDbContext.PrivateChats
+            .Where(p => privateChatsIds.Contains(p.Id) && p.IsDeleted == false)
+            .Include(p => p.Members.Where(m => m.Id != userId))
+            .ToListAsync();
+        return privateChats;
     }
 
     public async Task<PrivateChat?> GetByIdWithMembersAsync(int pvId)

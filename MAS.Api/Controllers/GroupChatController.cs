@@ -1,5 +1,4 @@
 ﻿using MAS.Application.Commands.GroupChatCommands;
-using MAS.Application.Commands.PrivateChatCommands;
 using MAS.Application.Dtos.GroupChatDtos;
 using MAS.Application.Queries.GroupChatQueries;
 using MediatR;
@@ -28,10 +27,19 @@ public class GroupChatController : BaseController
         return StatusCode(result.StatusCode, result);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetAllUserGroupChatsAsync()
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var result = await _sender.Send(new GetAllUserGroupChatsQuery(userId));
+        return StatusCode(result.StatusCode, result);
+    }
+
     [HttpGet("{groupChatId}")]
     public async Task<IActionResult> GetGroupChatAsync(int groupChatId)
     {
-        var result = await _sender.Send(new GetGroupChatQuery(groupChatId));
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var result = await _sender.Send(new GetGroupChatQuery(userId, groupChatId));
         if (result.Ok)
         {
             Log.Information($"Group chat {groupChatId} information fetched.");

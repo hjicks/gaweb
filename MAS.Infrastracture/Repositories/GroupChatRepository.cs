@@ -20,9 +20,29 @@ public class GroupChatRepository : BaseRepository<GroupChat>, IGroupChatReposito
         return (await _dapperDbContext.GetConnection().QueryAsync<GroupChat>(query)).ToList();
     }
 
+    public async Task<IEnumerable<GroupChat>> GetAllUserAsync(int userId)
+    {
+        var groupChatsIds = await _efDbContext.GroupChatUsers
+            .Where(g => g.MemberId == userId && g.IsBanned == false)
+            .Select(g => g.GroupChatId)
+            .ToListAsync();
+        var groupChats = await _efDbContext.GroupChats
+            .Where(g => groupChatsIds.Contains(g.Id) && g.IsDeleted == false)
+            .ToListAsync();
+        return groupChats;
+    }
+
     public async Task<GroupChat?> GetByGroupnameAsync(string groupname)
     {
         return await _efDbContext.GroupChats.SingleOrDefaultAsync(g => g.Groupname == groupname);
+    }
+
+    public async Task<GroupChat?> GetByIdWithMemberAsync(int userId, int groupId)
+    {
+        return await _efDbContext.GroupChats
+            .Where(g => g.Id == groupId)
+            .Include(g => g.Members.Where(m => m.MemberId == userId))
+            .SingleOrDefaultAsync();
     }
 
     public async Task<GroupChat?> GetByIdWithMembersAsync(int groupId)
