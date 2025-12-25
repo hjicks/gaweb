@@ -4,7 +4,6 @@ using MAS.Application.Results;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System.Security.Cryptography;
 
 namespace MAS.Application.Commands.UserCommands;
 
@@ -13,10 +12,13 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
 {
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
-    public UpdateUserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork)
+    private readonly IHashService _hashService;
+    public UpdateUserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork,
+        IHashService hashService)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _hashService = hashService;
     }
     public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
@@ -24,10 +26,11 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
         if (user == null)
             return Result.Failure(StatusCodes.Status404NotFound, ErrorType.UserNotFound);
 
-        using var hmac = new HMACSHA512(user.PasswordSalt);
+        var passwordHash = _hashService.HashPassword(request.User.Password);
         user.DisplayName = request.User.DisplayName;
         user.Username = request.User.Username;
-        user.PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(request.User.Password));
+        user.PasswordHash = passwordHash.Hash;
+        user.PasswordSalt = passwordHash.Salt;
         user.Bio = request.User.Bio;
         user.Avatar = request.User.Avatar;
         _userRepository.Update(user);

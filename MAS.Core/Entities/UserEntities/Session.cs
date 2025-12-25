@@ -1,12 +1,11 @@
 ﻿using MAS.Core.Entities.Base;
-using System.Security.Cryptography;
 
 namespace MAS.Core.Entities.UserEntities;
 
 public class Session : BaseEntity
 {
-    public string Token { get; set; } = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
-    public DateTime ExpiresAt { get; set; } = DateTime.UtcNow.AddDays(7);
+    public byte[] TokenHash { get; set; } = Array.Empty<byte>();
+    public DateTime ExpiresAt { get; set; }
     public int UserId { get; set; }
     public string ClientName { get; set; } = string.Empty;
     public string OS { get; set; } = string.Empty;
