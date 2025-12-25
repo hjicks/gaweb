@@ -7,6 +7,7 @@ public interface IGroupChatRepository : IBaseRepository<GroupChat>
 {
     Task<IEnumerable<GroupChat>> GetAllAsync();
     Task<IEnumerable<GroupChat>> GetAllUserAsync(int userId);
+    Task<IEnumerable<GroupChatUser>> GetAllUserMembershipsAsync(int userId);
     Task<GroupChat?> GetByGroupnameAsync(string groupname);
     Task<GroupChat?> GetByIdWithMemberAsync(int userId, int groupId);
     Task<GroupChat?> GetByIdWithMembersAsync(int groupId);

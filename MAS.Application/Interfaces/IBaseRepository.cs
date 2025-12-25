@@ -1,10 +1,11 @@
-﻿namespace MAS.Application.Interfaces
+﻿namespace MAS.Application.Interfaces;
+
+public interface IBaseRepository<TEntity>
 {
-    public interface IBaseRepository<TEntity>
-    {
-        Task<TEntity?> GetByIdAsync(Int32 entityId);
-        Task AddAsync(TEntity entity);
-        void Update(TEntity entity);
-        void Delete(TEntity entity);
-    }
+    Task<TEntity?> GetByIdAsync(int entityId);
+    Task AddAsync(TEntity entity);
+    void Update(TEntity entity);
+    void UpdateRange(IEnumerable<TEntity> entities);
+    void Delete(TEntity entity);
+    void DeleteRange(IEnumerable<TEntity> entities);
 }

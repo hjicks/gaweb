@@ -33,6 +33,13 @@ public class GroupChatRepository : BaseRepository<GroupChat>, IGroupChatReposito
         return groupChats;
     }
 
+    public async Task<IEnumerable<GroupChatUser>> GetAllUserMembershipsAsync(int userId)
+    {
+        return await _efDbContext.GroupChatUsers
+            .Where(g => g.MemberId == userId)
+            .ToListAsync();
+    }
+
     public async Task<GroupChat?> GetByGroupnameAsync(string groupname)
     {
         return await _efDbContext.GroupChats.SingleOrDefaultAsync(g => g.Groupname == groupname);

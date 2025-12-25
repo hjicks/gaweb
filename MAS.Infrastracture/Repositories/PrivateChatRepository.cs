@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using MAS.Application.Interfaces;
 using MAS.Core.Entities.ChatEntities;
+using MAS.Core.Entities.JoinEntities;
 using MAS.Infrastracture.Database;
 using MAS.Infrastracture.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,13 @@ public class PrivateChatRepository : BaseRepository<PrivateChat>, IPrivateChatRe
             .Include(p => p.Members.Where(m => m.Id != userId))
             .ToListAsync();
         return privateChats;
+    }
+
+    public async Task<IEnumerable<PrivateChatUser>> GetAllUserMembershipsAsync(int userId)
+    {
+        return await _efDbContext.PrivateChatUsers
+            .Where(p => p.UserId == userId)
+            .ToListAsync();
     }
 
     public async Task<PrivateChat?> GetByIdWithMembersAsync(int pvId)

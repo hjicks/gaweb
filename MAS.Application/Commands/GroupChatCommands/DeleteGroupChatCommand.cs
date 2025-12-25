@@ -11,10 +11,13 @@ public record DeleteGroupChatCommand(int UserId, int GroupChatId) : IRequest<Res
 public class DeleteGroupChatCommandHandler : IRequestHandler<DeleteGroupChatCommand, Result>
 {
     private readonly IGroupChatRepository _groupChatRepository;
+    private readonly IMessageRepository _messageRepository;
     private readonly IUnitOfWork _unitOfWork;
-    public DeleteGroupChatCommandHandler(IGroupChatRepository groupChatRepository, IUnitOfWork unitOfWork)
+    public DeleteGroupChatCommandHandler(IGroupChatRepository groupChatRepository,
+        IMessageRepository messageRepository, IUnitOfWork unitOfWork)
     {
         _groupChatRepository = groupChatRepository;
+        _messageRepository = messageRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -32,8 +35,13 @@ public class DeleteGroupChatCommandHandler : IRequestHandler<DeleteGroupChatComm
         groupChat.Groupname = null;
         groupChat.Description = null;
         groupChat.Avatar = null;
-
         _groupChatRepository.Update(groupChat);
+
+        var groupMessages = await _messageRepository.GetAllChatAsync(request.GroupChatId);
+        foreach (var message in groupMessages)
+            message.IsDeleted = true;
+        _messageRepository.UpdateRange(groupMessages);
+
         await _unitOfWork.SaveAsync();
 
         return Result.Success(StatusCodes.Status200OK, "Chat deleted successfully.");

@@ -27,6 +27,6 @@ public class SessionRepository : BaseRepository<Session>, ISessionRepository
 
     public async Task<Session?> GetByTokenAsync(string sessionToken)
     {
-        return await _efDbContext.Sessions.Where(s => s.Token == sessionToken).SingleOrDefaultAsync();
+        return await _efDbContext.Sessions.Where(s => s.Token == sessionToken && s.IsDeleted == false).SingleOrDefaultAsync();
     }
 }
