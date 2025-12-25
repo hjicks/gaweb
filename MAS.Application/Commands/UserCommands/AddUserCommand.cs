@@ -26,8 +26,8 @@ public class AddUserCommandHandler : IRequestHandler<AddUserCommand, Result>
     }
     public async Task<Result> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
-        var dbUser = await _userRepository.GetByUsernameAsync(request.User.Username);
-        if (dbUser != null)
+        var userExists = await _userRepository.IsExistsAsync(request.User.Username);
+        if (userExists)
             return Result.Failure(StatusCodes.Status422UnprocessableEntity, ErrorType.UsernameAlreadyExists);
 
         using var hmac = new HMACSHA512();

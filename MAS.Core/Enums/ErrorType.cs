@@ -9,11 +9,16 @@ public enum ErrorType
     UserNotFound,
     SessionNotFound,
     ChatNotFound,
+    MemberNotFound,
     MessageNotFound,
     UsernameAlreadyExists,
+    GroupnameAlreadyExists,
+    ChatAlreadyExists,
     InvalidCredentials,
     InvalidOrExpiredRefreshToken,
     PermissionDenied,
     ActiveSessionAvailable,
-    ChatIsEmpty
+    ChatIsEmpty,
+    MemberAlreadyJoinedOrIsBanned,
+    MemberIsBanned
 }

@@ -9,13 +9,13 @@ using Microsoft.AspNetCore.Http;
 
 namespace MAS.Application.Commands.GroupChatCommands;
 
-public record AddGroupChatCommand(int OwnerId, PublicGroupChatAddDto GroupChat) : IRequest<Result>;
-public class AddChannelChatCommandHandler : IRequestHandler<AddGroupChatCommand, Result>
+public record AddGroupChatCommand(int OwnerId, GroupChatAddDto GroupChat) : IRequest<Result>;
+public class AddGroupChatCommandHandler : IRequestHandler<AddGroupChatCommand, Result>
 {
     private readonly IGroupChatRepository _groupChatRepository;
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
-    public AddChannelChatCommandHandler(IGroupChatRepository groupChatRepository, IUserRepository userRepository,
+    public AddGroupChatCommandHandler(IGroupChatRepository groupChatRepository, IUserRepository userRepository,
         IUnitOfWork unitOfWork)
     {
         _groupChatRepository = groupChatRepository;
@@ -29,30 +29,43 @@ public class AddChannelChatCommandHandler : IRequestHandler<AddGroupChatCommand,
         if (owner == null)
             return Result.Failure(StatusCodes.Status404NotFound, ErrorType.UserNotFound);
 
-        var newPublicGroupChat = new GroupChat
+        bool IsPublic = false;
+
+        if (request.GroupChat.Groupname != null)
         {
+            var groupExists = await _groupChatRepository.IsExistsAsync(request.GroupChat.Groupname);
+            if (groupExists)
+                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.GroupnameAlreadyExists);
+            IsPublic = true;
+        }
+
+        var newGroupChat = new GroupChat
+        {
+            IsPublic = IsPublic,
             DisplayName = request.GroupChat.DisplayName,
-            Groupname = request.GroupChat.Groupname,
+            Groupname = IsPublic ? request.GroupChat.Groupname! : Guid.NewGuid().ToString(),
             Description = request.GroupChat.Description,
             Avatar = request.GroupChat.Avatar,
             MsgPermissionType = request.GroupChat.MsgPermissionType,
-            IsPublic = true,
             Members = new List<GroupChatUser>
             {
                 new() { Member = owner, Role = GroupChatRole.Owner }
             }
         };
 
-        await _groupChatRepository.AddAsync(newPublicGroupChat);
+        await _groupChatRepository.AddAsync(newGroupChat);
         await _unitOfWork.SaveAsync();
         
-        return Result.Success(StatusCodes.Status200OK, new PublicGroupChatAddDto
+        return Result.Success(StatusCodes.Status200OK, new GroupChatGetDto
         {
-            DisplayName = newPublicGroupChat.DisplayName,
-            Groupname = newPublicGroupChat.Groupname,
-            Description = newPublicGroupChat.Description,
-            Avatar = newPublicGroupChat.Avatar,
-            MsgPermissionType = newPublicGroupChat.MsgPermissionType
+            Id = newGroupChat.Id,
+            DisplayName = newGroupChat.DisplayName,
+            Groupname = newGroupChat.Groupname,
+            Description = newGroupChat.Description,
+            Avatar = newGroupChat.Avatar,
+            IsPublic = newGroupChat.IsPublic,
+            MsgPermissionType = newGroupChat.MsgPermissionType,
+            CreatedAt = newGroupChat.CreatedAt
         });
     }
 }

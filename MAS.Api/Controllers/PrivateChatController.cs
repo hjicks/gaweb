@@ -1,4 +1,5 @@
-﻿using MAS.Application.Commands.PrivateChatCommands;
+﻿using MAS.Application.Commands.GroupChatCommands;
+using MAS.Application.Commands.PrivateChatCommands;
 using MAS.Application.Queries.PrivateChatQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -49,12 +50,26 @@ public class PrivateChatController : BaseController
     }
 
     [HttpDelete("{privateChatId}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeletePrivateChatAsync(int privateChatId)
     {
         var result = await _sender.Send(new DeletePrivateChatCommand(privateChatId));
         if (result.Ok)
         {
             Log.Information($"Private chat {privateChatId} deleted.");
+            return StatusCode(result.StatusCode, result);
+        }
+        return StatusCode(result.StatusCode, result);
+    }
+
+    [HttpDelete("{privateChatId}/members")]
+    public async Task<IActionResult> LeavePrivateChatAsync(int privateChatId)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var result = await _sender.Send(new LeavePrivateChatCommand(userId, privateChatId));
+        if (result.Ok)
+        {
+            Log.Information($"User {userId} left private chat {privateChatId}.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);

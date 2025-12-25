@@ -20,6 +20,13 @@ public class MessageRepository : BaseRepository<Message>, IMessageRepository
         return (await _dapperDbContext.GetConnection().QueryAsync<Message>(query)).ToList();
     }
 
+    public async Task<IEnumerable<Message>> GetAllChatAsync(int chatId)
+    {
+        return await _efDbContext.Messages
+            .Where(m => m.DestinationId == chatId && m.IsDeleted == false)
+            .ToListAsync();
+    }
+
     public async Task<Message?> GetChatLastMessageAsync(int chatId)
     {
         return await _efDbContext.Messages

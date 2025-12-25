@@ -23,6 +23,9 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, Result>
             return Result.Failure(StatusCodes.Status404NotFound, ErrorType.SessionNotFound);
 
         dbSession.IsRevoked = true;
+        dbSession.RevokedAt = DateTime.UtcNow;
+        dbSession.IsDeleted = true;
+
         _sessionRepository.Update(dbSession);
         await _unitOfWork.SaveAsync();
 

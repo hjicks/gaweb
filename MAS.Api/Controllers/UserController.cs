@@ -52,6 +52,19 @@ public class UserController : BaseController
         return StatusCode(result.StatusCode, result);
     }
 
+    [HttpPut("last-seen")]
+    public async Task<IActionResult> UpdateUserLastSeenAsync(UserLastSeenUpdateDto user)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var result = await _sender.Send(new UpdateUserLastSeenCommand(userId, user));
+        if (result.Ok)
+        {
+            Log.Information($"User {userId} last seen updated.");
+            return StatusCode(result.StatusCode, result);
+        }
+        return StatusCode(result.StatusCode, result);
+    }
+
     [HttpDelete]
     public async Task<IActionResult> DeleteUserAsync()
     {

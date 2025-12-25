@@ -1,0 +1,33 @@
+﻿using MAS.Application.Dtos.GroupChatDtos;
+using MAS.Application.Interfaces;
+using MAS.Application.Results;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+
+namespace MAS.Application.Queries.GroupChatQueries;
+
+public record GetAllUserGroupChatsQuery(int UserId) : IRequest<Result>;
+public class GetAllUserGroupChatsQueryHandler : IRequestHandler<GetAllUserGroupChatsQuery, Result>
+{
+    private readonly IGroupChatRepository _groupChatRepository;
+    public GetAllUserGroupChatsQueryHandler(IGroupChatRepository groupChatRepository)
+    {
+        _groupChatRepository = groupChatRepository;
+    }
+    public async Task<Result> Handle(GetAllUserGroupChatsQuery request, CancellationToken cancellationToken)
+    {
+        var groupChats = (await _groupChatRepository.GetAllUserAsync(request.UserId)).Select(g => new GroupChatGetDto
+        {
+            Id = g.Id,
+            IsPublic = g.IsPublic,
+            DisplayName = g.DisplayName,
+            Groupname = g.Groupname,
+            Description = g.Description,
+            Avatar = g.Avatar,
+            MsgPermissionType = g.MsgPermissionType,
+            CreatedAt = g.CreatedAt
+        }).ToList();
+
+        return Result.Success(StatusCodes.Status200OK, groupChats);
+    }
+}

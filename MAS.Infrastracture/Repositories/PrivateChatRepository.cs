@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using MAS.Application.Interfaces;
 using MAS.Core.Entities.ChatEntities;
+using MAS.Core.Entities.JoinEntities;
 using MAS.Infrastracture.Database;
 using MAS.Infrastracture.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
@@ -22,17 +23,29 @@ public class PrivateChatRepository : BaseRepository<PrivateChat>, IPrivateChatRe
 
     public async Task<IEnumerable<PrivateChat>> GetAllUserAsync(int userId)
     {
-        return await _efDbContext.PrivateChats
+        var privateChatsIds = await _efDbContext.PrivateChatUsers
+            .Where(p => p.UserId == userId)
+            .Select(p => p.PrivateChatId)
+            .ToListAsync();
+        var privateChats = await _efDbContext.PrivateChats
+            .Where(p => privateChatsIds.Contains(p.Id) && p.IsDeleted == false)
             .Include(p => p.Members.Where(m => m.Id != userId))
-            .Where(p => p.IsDeleted == false)
+            .ToListAsync();
+        return privateChats;
+    }
+
+    public async Task<IEnumerable<PrivateChatUser>> GetAllUserMembershipsAsync(int userId)
+    {
+        return await _efDbContext.PrivateChatUsers
+            .Where(p => p.UserId == userId)
             .ToListAsync();
     }
 
-    public async Task<PrivateChat?> IncludedGetByIdAsync(int pvId)
+    public async Task<PrivateChat?> GetByIdWithMembersAsync(int pvId)
     {
         return await _efDbContext.PrivateChats
             .Where(g => g.Id == pvId)
             .Include(g => g.Members)
-            .FirstAsync();
+            .SingleOrDefaultAsync();
     }
 }

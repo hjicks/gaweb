@@ -10,7 +10,7 @@ public record Result
     [JsonIgnore]
     public int StatusCode { get; set; } = StatusCodes.Status400BadRequest;
 
-    [JsonPropertyOrder(0)]
+    [JsonIgnore]
     public bool Ok { get; set; } = false;
 
     public Result(int statusCode, bool ok)
@@ -45,7 +45,6 @@ public record Result
 
 public record SuccessResult<TResponse> : Result
 {
-    [JsonPropertyOrder(1)]
     public TResponse Response { get; set; } = default!;
 
     public SuccessResult(int statusCode, bool ok, TResponse response)
@@ -57,10 +56,8 @@ public record SuccessResult<TResponse> : Result
 
 public record FailureResult : Result
 {
-    [JsonPropertyOrder(1)]
     public ErrorType Error { get; set; }
 
-    [JsonPropertyOrder(2)]
     public IEnumerable<string> Description { get; set; } = null!;
 
     public FailureResult(int statusCode, bool ok, ErrorType error, IEnumerable<string> description)

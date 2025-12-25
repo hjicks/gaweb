@@ -17,7 +17,7 @@ public class GetGroupChatMembersQueryHandler : IRequestHandler<GetGroupChatMembe
     }
     public async Task<Result> Handle(GetGroupChatMembersQuery request, CancellationToken cancellationToken)
     {
-        var groupChat = await _groupChatRepository.IncludedGetByIdAsync(request.GroupChatId);
+        var groupChat = await _groupChatRepository.GetByIdWithMembersAsync(request.GroupChatId);
 
         if (groupChat == null)
             return Result.Failure(StatusCodes.Status404NotFound, ErrorType.ChatNotFound);

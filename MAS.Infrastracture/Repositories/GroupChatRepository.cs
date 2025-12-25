@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using MAS.Application.Interfaces;
 using MAS.Core.Entities.ChatEntities;
+using MAS.Core.Entities.JoinEntities;
 using MAS.Infrastracture.Database;
 using MAS.Infrastracture.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
@@ -20,11 +21,61 @@ public class GroupChatRepository : BaseRepository<GroupChat>, IGroupChatReposito
         return (await _dapperDbContext.GetConnection().QueryAsync<GroupChat>(query)).ToList();
     }
 
-    public async Task<GroupChat?> IncludedGetByIdAsync(int groupId)
+    public async Task<IEnumerable<GroupChat>> GetAllUserAsync(int userId)
+    {
+        var groupChatsIds = await _efDbContext.GroupChatUsers
+            .Where(g => g.MemberId == userId && g.IsBanned == false)
+            .Select(g => g.GroupChatId)
+            .ToListAsync();
+        var groupChats = await _efDbContext.GroupChats
+            .Where(g => groupChatsIds.Contains(g.Id) && g.IsDeleted == false)
+            .ToListAsync();
+        return groupChats;
+    }
+
+    public async Task<IEnumerable<GroupChatUser>> GetAllUserMembershipsAsync(int userId)
+    {
+        return await _efDbContext.GroupChatUsers
+            .Where(g => g.MemberId == userId)
+            .ToListAsync();
+    }
+
+    public async Task<GroupChat?> GetByGroupnameAsync(string groupname)
+    {
+        return await _efDbContext.GroupChats.SingleOrDefaultAsync(g => g.Groupname == groupname);
+    }
+
+    public async Task<GroupChat?> GetByIdWithMemberAsync(int userId, int groupId)
+    {
+        return await _efDbContext.GroupChats
+            .Where(g => g.Id == groupId)
+            .Include(g => g.Members.Where(m => m.MemberId == userId))
+            .SingleOrDefaultAsync();
+    }
+
+    public async Task<GroupChat?> GetByIdWithMembersAsync(int groupId)
     {
         return await _efDbContext.GroupChats
             .Where(g => g.Id == groupId)
             .Include(g => g.Members)
-            .FirstAsync();
+            .SingleOrDefaultAsync();
+    }
+
+    public async Task<GroupChatUser?> GetMemberAsync(int groupId, int memberId)
+    {
+        return await _efDbContext.GroupChatUsers
+            .Where(g => g.GroupChatId == groupId && g.MemberId == memberId)
+            .SingleOrDefaultAsync();
+    }
+
+    public async Task<bool> IsExistsAsync(string groupname)
+    {
+        return await _efDbContext.GroupChats.AnyAsync(u => u.Groupname == groupname);
+    }
+
+    public async Task<bool> IsMemberExistsAsync(int groupId, int memberId)
+    {
+        return await _efDbContext.GroupChatUsers
+            .AnyAsync(g => g.GroupChatId == groupId && g.MemberId == memberId);
     }
 }

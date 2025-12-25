@@ -91,7 +91,11 @@ public class DevelopSeed
                     new() { Text = "Welcome to MASsenger!", Sender = admin }
                 }
             };
-            await dbContext.PrivateChats.AddAsync(privateChat);
+            var chatBotPrivateChat = new PrivateChat()
+            {
+                Members = new List<User> { admin, chatBot },
+            };
+            await dbContext.PrivateChats.AddRangeAsync(privateChat, chatBotPrivateChat);
             await dbContext.SaveChangesAsync();
 
             var groupChat = new GroupChat()

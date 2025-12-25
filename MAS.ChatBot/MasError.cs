@@ -4,9 +4,6 @@ namespace MAS.ChatBot;
 
 public class MasError
 {
-    [JsonPropertyName("ok")]
-    public bool Ok { get; set; }
-
     [JsonPropertyName("error")]
     public ErrorType Error { get; set; }
 

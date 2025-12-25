@@ -8,7 +8,7 @@ namespace MAS.Core.Entities.UserEntities;
 public class User : BaseEntity
 {
     public string DisplayName { get; set; } = string.Empty;
-    public string Username { get; set; } = string.Empty;
+    public string? Username { get; set; }
     public string? Bio { get; set; }
     public byte[]? Avatar { get; set; }
     public byte[] PasswordHash { get; set; } = Array.Empty<byte>();
