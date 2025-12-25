@@ -2,6 +2,7 @@ using MAS.Application.Commands.SessionCommands;
 using MAS.Application.Dtos.UserDtos;
 using MAS.Application.Interfaces;
 using MAS.Application.Results;
+using MAS.Application.Services;
 using MAS.Core.Entities.UserEntities;
 using Moq;
 using System.Security.Cryptography;
@@ -13,6 +14,7 @@ namespace MAS.Test.UnitTests.CommandsTests.SessionCommands
         private readonly Mock<IUserRepository> _userRepositoryMock;
         private readonly Mock<ISessionRepository> _sessionRepositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<IHashService> _hashServiceMock;
         private readonly Mock<IJwtService> _jwtServiceMock;
         private LoginCommandValidator _validator;
         public LoginCommandTests() 
@@ -20,6 +22,7 @@ namespace MAS.Test.UnitTests.CommandsTests.SessionCommands
             _userRepositoryMock = new();
             _sessionRepositoryMock = new();
             _unitOfWorkMock = new();
+            _hashServiceMock = new();
             _jwtServiceMock = new();
             _validator = new LoginCommandValidator();
         }
@@ -81,18 +84,22 @@ namespace MAS.Test.UnitTests.CommandsTests.SessionCommands
             };
             var query = new LoginCommand(userLoginDto);
 
-            var salt = new byte[] { 1, 2, 3, 4 };
-            using var hmac = new HMACSHA512(salt);
+            var hashService = new HashService();
+            var passwordHash = hashService.HashPassword("truePass");
+
             _userRepositoryMock.Setup(x => x.GetByUsernameAsync(It.IsAny<string>()))
                 .ReturnsAsync(new User()
                 {
-                    PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("truePass")),
-                    PasswordSalt = salt
+                    PasswordHash = passwordHash.Hash,
+                    PasswordSalt = passwordHash.Salt
                 });
+
+            _hashServiceMock.Setup(x => x.VerifyPassword(userLoginDto.Password, passwordHash))
+                .Returns(hashService.VerifyPassword(userLoginDto.Password, passwordHash));
 
             var handler = new LoginCommandHandler(
                 _userRepositoryMock.Object, _sessionRepositoryMock.Object,
-                _unitOfWorkMock.Object, _jwtServiceMock.Object);
+                _unitOfWorkMock.Object, _hashServiceMock.Object, _jwtServiceMock.Object);
 
             // Act
             Result result = await handler.Handle(query, default);
