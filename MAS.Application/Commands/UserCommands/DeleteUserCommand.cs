@@ -23,7 +23,14 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Resul
         if (user == null)
             return Result.Failure(StatusCodes.Status404NotFound, ErrorType.UserNotFound);
 
-        _userRepository.Delete(user);
+        user.IsDeleted = true;
+        user.DisplayName = "Deleted account";
+        user.Username = null;
+        user.Bio = null;
+        user.Avatar = null;
+        user.UpdatedAt = DateTime.UtcNow;
+
+        _userRepository.Update(user);
         await _unitOfWork.SaveAsync();
 
         return Result.Success(StatusCodes.Status200OK);

@@ -10,7 +10,7 @@ public class GroupChat : BaseChat
 
     // equivalent to username for a user, must be unique.
     // it should have different structures for public and private groups
-    public string Groupname { get; set; } = string.Empty;
+    public string? Groupname { get; set; }
 
     public string? Description { get; set; }
     public byte[]? Avatar { get; set; }

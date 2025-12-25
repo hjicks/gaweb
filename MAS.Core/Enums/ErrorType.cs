@@ -17,5 +17,6 @@ public enum ErrorType
     InvalidOrExpiredRefreshToken,
     PermissionDenied,
     ActiveSessionAvailable,
-    ChatIsEmpty
+    ChatIsEmpty,
+    GroupMemberAlreadyJoinedOrIsBanned
 }

@@ -21,6 +21,7 @@ public class ResponseMessages
         { ErrorType.InvalidOrExpiredRefreshToken, "Your refresh token is invalid or expired." },
         { ErrorType.PermissionDenied, "You are not authorized to perform this action." },
         { ErrorType.ActiveSessionAvailable, "Please log out from your other session first." },
-        { ErrorType.ChatIsEmpty, "Chat have no message." }
+        { ErrorType.ChatIsEmpty, "Chat have no message." },
+        { ErrorType.GroupMemberAlreadyJoinedOrIsBanned, "Member is either already joined the group or banned from it." }
     };
 }
