@@ -1,9 +1,9 @@
-﻿using MAS.Core.Entities.ChatEntities;
+﻿using MAS.Application.Services;
+using MAS.Core.Entities.ChatEntities;
 using MAS.Core.Entities.JoinEntities;
 using MAS.Core.Entities.MessageEntities;
 using MAS.Core.Entities.UserEntities;
 using MAS.Core.Enums;
-using System.Security.Cryptography;
 
 namespace MAS.Infrastracture.Database;
 
@@ -14,75 +14,127 @@ public class DevelopSeed
 {
     public static async Task Seed(EfDbContext dbContext)
     {
-        using var hmac = new HMACSHA512();
+        HashService hashService = new();
 
         if (!dbContext.Users.Any())
         {
+            /* system user and bot ahead */
+            var passwordHash = hashService.HashPassword("sysadmin");
+            var tokenHash = hashService.CreateAndHashRefreshToken();
             var admin = new User()
             {
                 /* ken */
                 DisplayName = "Admin",
                 Username = "Admin",
-                PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("sysadmin")),
-                PasswordSalt = hmac.Key,
+                PasswordHash = passwordHash.Hash,
+                PasswordSalt = passwordHash.Salt,
                 Bio = "Behold, this is the Admin.",
                 IsVerified = true,
-                Sessions = new List<Session> { new() { ClientName = "mMAS", OS = "Plan 9 from Bell Labs" } }
+                Sessions = new List<Session> 
+                { 
+                    new() 
+                    { 
+                        TokenHash = tokenHash.Hash,
+                        ExpiresAt = DateTime.UtcNow.AddDays(7),
+                        ClientName = "mMAS",
+                        OS = "Plan 9 from Bell Labs"
+                    }
+                }
             };
+
+            passwordHash = hashService.HashPassword("MASBOT1234");
             var chatBot = new User()
             {
                 DisplayName = "MAS ChatBot",
                 Username = "MASChatBot",
-                PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("MASBOT1234")),
-                PasswordSalt = hmac.Key,
+                PasswordHash = passwordHash.Hash,
+                PasswordSalt = passwordHash.Salt,
                 Bio = "This bot is connected to a LLM. Feel free to chat.",
                 IsBot = true,
                 IsVerified = true
             };
+
+            /* test users ahead */
+            passwordHash = hashService.HashPassword("12345678");
+            tokenHash = hashService.CreateAndHashRefreshToken();
             var tester = new User()
             {
                 DisplayName = "Tester",    // this is a random user, nothing fancy
                 Username = "tester",
-                PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("12345678")),
-                PasswordSalt = hmac.Key,
+                PasswordHash = passwordHash.Hash,
+                PasswordSalt = passwordHash.Salt,
                 Bio = "Behold, this is the Tester.",
-                Sessions = new List<Session> { new() { ClientName = "HexMAS", OS = "DuskOS" } }
+                Sessions = new List<Session>
+                { 
+                    new() 
+                    { 
+                        TokenHash = tokenHash.Hash,
+                        ExpiresAt = DateTime.UtcNow.AddDays(7),
+                        ClientName = "HexMAS",
+                        OS = "DuskOS" 
+                    } 
+                }
             };
 
+            passwordHash = hashService.HashPassword("12345678");
+            tokenHash = hashService.CreateAndHashRefreshToken();
             var lonelydog = new User()
             {
                 DisplayName = "dog",    /* used to test for cases where a message should not be recivied */
-                Username = "lonelydog", /* cont'd, i.e: this dog must not be in same group with others   */
-                PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("12345678")),
-                PasswordSalt = hmac.Key, /* cont'd: or get messages from other private chats             */
+                Username = "lonelydog", /* cont'd, i.e: this dog must not be in same group with others */
+                PasswordHash = passwordHash.Hash,
+                PasswordSalt = passwordHash.Salt, /* cont'd: or get messages from other private chats */
                 Bio = "I'm just a dog, nobody loves me.",
-                Sessions = new List<Session> { new() { ClientName = "Massi", OS = "OpenBSD" } }
+                Sessions = new List<Session>
+                { 
+                    new() 
+                    {
+                        TokenHash = tokenHash.Hash,
+                        ExpiresAt = DateTime.UtcNow.AddDays(7),
+                        ClientName = "Massi",
+                        OS = "OpenBSD"
+                    }
+                }
             };
 
-            /* bots ahead */
+            /* test bots ahead */
+            passwordHash = hashService.HashPassword("12345678");
+            tokenHash = hashService.CreateAndHashRefreshToken();
             var vsaeed = new User()
             {
                 DisplayName = "virtual saeed",
                 Username = "vsaeed",
-                PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("12345678")),
-                PasswordSalt = hmac.Key,
+                PasswordHash = passwordHash.Hash,
+                PasswordSalt = passwordHash.Salt,
                 Bio = "mildly bored",
                 IsBot = true,
-                Sessions = new List<Session> { new() { ClientName = "xmas", OS = "OpenBSD" } }
+                Sessions = new List<Session>
+                {
+                    new()
+                    {
+                        TokenHash = tokenHash.Hash,
+                        ExpiresAt = DateTime.UtcNow.AddDays(7),
+                        ClientName = "xmas",
+                        OS = "OpenBSD"
+                    }
+                }
             };
 
+            passwordHash = hashService.HashPassword("thisisatoken");
             var bot = new User()
             {
                 DisplayName = "Test Bot",
                 Username = "testbot",
-                PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes("thisisatoken")),
-                PasswordSalt = hmac.Key,
+                PasswordHash = passwordHash.Hash,
+                PasswordSalt = passwordHash.Salt,
                 Bio = "Behold, this the Test bot.",
                 IsBot = true
             };
+
             await dbContext.Users.AddRangeAsync(admin, chatBot, tester, lonelydog, vsaeed);
             await dbContext.SaveChangesAsync();
 
+            /* test chats ahead */
             var privateChat = new PrivateChat()
             {
                 Members = new List<User> { admin, tester },
@@ -91,10 +143,12 @@ public class DevelopSeed
                     new() { Text = "Welcome to MASsenger!", Sender = admin }
                 }
             };
+
             var chatBotPrivateChat = new PrivateChat()
             {
                 Members = new List<User> { admin, chatBot },
             };
+
             await dbContext.PrivateChats.AddRangeAsync(privateChat, chatBotPrivateChat);
             await dbContext.SaveChangesAsync();
 
@@ -122,6 +176,7 @@ public class DevelopSeed
                     }
                 }
             };
+
             await dbContext.GroupChats.AddAsync(groupChat);
             await dbContext.SaveChangesAsync();
 
@@ -129,9 +184,11 @@ public class DevelopSeed
             var adminActiveSession = admin.Sessions.Where(s => s.IsRevoked == false).Single();
             adminActiveSession.IsRevoked = true;
             adminActiveSession.RevokedAt = DateTime.UtcNow;
+
             var testerActiveSession = tester.Sessions.Where(s => s.IsRevoked == false).Single();
             testerActiveSession.IsRevoked = true;
             testerActiveSession.RevokedAt = DateTime.UtcNow;
+
             dbContext.Sessions.UpdateRange(adminActiveSession, testerActiveSession);
             await dbContext.SaveChangesAsync();
         }

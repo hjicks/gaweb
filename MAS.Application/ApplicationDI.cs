@@ -66,8 +66,10 @@ public static class ApplicationDI
             return new JwtService(provider.GetRequiredService<IOptionsSnapshot<JwtOptions>>().Value);
         });
 
+        services.AddScoped<IHashService, HashService>();
 
         services.AddSingleton<ChatHub>();
+
         return services;
     }
 }

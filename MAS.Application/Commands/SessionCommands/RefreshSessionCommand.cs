@@ -4,37 +4,37 @@ using MAS.Application.Results;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System.Security.Cryptography;
 
 namespace MAS.Application.Commands.SessionCommands;
 
-public record RefreshSessionCommand(string RefreshToken) : IRequest<Result>;
+public record RefreshSessionCommand(SessionRefreshTokenDto TokenDto) : IRequest<Result>;
 public class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionCommand, Result>
 {
     private readonly ISessionRepository _sessionRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IHashService _hashService;
     private readonly IJwtService _jwtService;
 
     public RefreshSessionCommandHandler(ISessionRepository sessionRepository, IUnitOfWork unitOfWork,
-        IJwtService jwtService)
+        IHashService hashService, IJwtService jwtService)
     {
         _sessionRepository = sessionRepository;
         _unitOfWork = unitOfWork;
+        _hashService = hashService;
         _jwtService = jwtService;
     }
     public async Task<Result> Handle(RefreshSessionCommand request, CancellationToken cancellationToken)
     {
-        var session = await _sessionRepository.GetByTokenAsync(request.RefreshToken);
+        var session = await _sessionRepository.GetByTokenAsync(
+            _hashService.HashRefreshToken(request.TokenDto.RefreshToken));
         if (session == null)
             return Result.Failure(StatusCodes.Status404NotFound, ErrorType.SessionNotFound);
-
-        if (session.Token != request.RefreshToken)
-            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidOrExpiredRefreshToken);
 
         if (session.ExpiresAt < DateTime.Now || session.IsRevoked == true)
             return Result.Failure(StatusCodes.Status419AuthenticationTimeout, ErrorType.InvalidOrExpiredRefreshToken);
 
-        session.Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+        var tokenHash = _hashService.CreateAndHashRefreshToken();
+        session.TokenHash = tokenHash.Hash;
         session.ExpiresAt = DateTime.UtcNow.AddDays(7);
         session.UpdatedAt = DateTime.UtcNow;
         _sessionRepository.Update(session);
@@ -45,7 +45,7 @@ public class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionComman
             new SessionRefreshDto
             {
                 Jwt = _jwtService.GetJwt(session.UserId, roles),
-                RefreshToken = session.Token.ToString()
+                RefreshToken = tokenHash.RefreshToken
             });
     }
 }

@@ -2,11 +2,11 @@
 using MAS.Application.Dtos.UserDtos;
 using MAS.Application.Interfaces;
 using MAS.Application.Results;
+using MAS.Application.Services;
 using MAS.Core.Entities.UserEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System.Security.Cryptography;
 
 namespace MAS.Application.Commands.SessionCommands;
 
@@ -16,13 +16,15 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result>
     private readonly IUserRepository _userRepository;
     private readonly ISessionRepository _sessionRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IHashService _hashService;
     private readonly IJwtService _jwtService;
     public LoginCommandHandler(IUserRepository userRepository, ISessionRepository sessionRepository,
-        IUnitOfWork unitOfWork, IJwtService jwtService)
+        IUnitOfWork unitOfWork, IHashService hashService, IJwtService jwtService)
     {
         _userRepository = userRepository;
         _sessionRepository = sessionRepository;
         _unitOfWork = unitOfWork;
+        _hashService = hashService;
         _jwtService = jwtService;
     }
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -31,9 +33,9 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result>
         if (dbUser == null)
             return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidCredentials);
 
-        using var hmac = new HMACSHA512(dbUser.PasswordSalt);
-        var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(request.User.Password));
-        if (!computedHash.SequenceEqual(dbUser.PasswordHash))
+        var passwordHash = new PasswordHash(dbUser.PasswordHash, dbUser.PasswordSalt);
+        var isPasswordCorrect = _hashService.VerifyPassword(request.User.Password, passwordHash);
+        if (!isPasswordCorrect)
             return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidCredentials);
 
 #if !DEBUG
@@ -42,8 +44,11 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result>
         if (hasActiveSession == true)
             return Result.Failure(StatusCodes.Status409Conflict, ErrorType.ActiveSessionAvailable);
 #endif
+        var refreshTokenHash = _hashService.CreateAndHashRefreshToken();
         var session = new Session
         {
+            TokenHash = refreshTokenHash.Hash,
+            ExpiresAt = DateTime.UtcNow.AddDays(7),
             User = dbUser,
             ClientName = request.User.ClientName,
             OS = request.User.OS
@@ -56,7 +61,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result>
             new SessionRefreshDto
             {
                 Jwt = _jwtService.GetJwt(dbUser.Id, roles),
-                RefreshToken = session.Token.ToString()
+                RefreshToken = refreshTokenHash.RefreshToken
             });
     }
 }

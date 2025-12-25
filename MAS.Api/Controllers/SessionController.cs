@@ -1,4 +1,5 @@
 ﻿using MAS.Application.Commands.SessionCommands;
+using MAS.Application.Dtos.SessionDtos;
 using MAS.Application.Dtos.UserDtos;
 using MAS.Application.Queries.SessionQueries;
 using MediatR;
@@ -51,16 +52,16 @@ public class SessionController : BaseController
         return StatusCode(result.StatusCode, result);
     }
 
-    [HttpPost("refresh/{refreshToken}"), AllowAnonymous]
-    public async Task<IActionResult> RefreshJwtAsync(string refreshToken)
+    [HttpPost("refresh"), AllowAnonymous]
+    public async Task<IActionResult> RefreshJwtAsync(SessionRefreshTokenDto tokenDto)
     {
-        var result = await _sender.Send(new RefreshSessionCommand(refreshToken));
+        var result = await _sender.Send(new RefreshSessionCommand(tokenDto));
         if (result.Ok)
         {
-            Log.Information($"Jwt of session with token {refreshToken} renewed.");
+            Log.Information($"Jwt of a session renewed.");
             return StatusCode(result.StatusCode, result);
         }
-        Log.Information($"Unsuccessful attempt to refresh session with token {refreshToken}.");
+        Log.Information($"Unsuccessful attempt to refresh a session.");
         return StatusCode(result.StatusCode, result);
     }
 }

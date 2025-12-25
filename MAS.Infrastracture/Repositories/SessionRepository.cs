@@ -22,11 +22,15 @@ public class SessionRepository : BaseRepository<Session>, ISessionRepository
 
     public async Task<bool> GetActiveAsync(int userId)
     {
-        return await _efDbContext.Sessions.Where(s => s.UserId == userId && s.IsRevoked == false).AnyAsync();
+        return await _efDbContext.Sessions
+            .Where(s => s.UserId == userId && s.IsRevoked == false)
+            .AnyAsync();
     }
 
-    public async Task<Session?> GetByTokenAsync(string sessionToken)
+    public async Task<Session?> GetByTokenAsync(byte[] sessionRefreshTokenHash)
     {
-        return await _efDbContext.Sessions.Where(s => s.Token == sessionToken && s.IsDeleted == false).SingleOrDefaultAsync();
+        return await _efDbContext.Sessions
+            .Where(s => s.TokenHash == sessionRefreshTokenHash && s.IsDeleted == false)
+            .SingleOrDefaultAsync();
     }
 }
