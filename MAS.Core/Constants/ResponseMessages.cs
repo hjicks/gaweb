@@ -13,6 +13,7 @@ public class ResponseMessages
         { ErrorType.UserNotFound, "User not found in the system." },
         { ErrorType.SessionNotFound, "Session not found in the system." },
         { ErrorType.ChatNotFound, "Chat not found in the system." },
+        { ErrorType.MemberNotFound, "Member not found in the chat." },
         { ErrorType.MessageNotFound, "Message not found in the system." },
         { ErrorType.UsernameAlreadyExists, "Username is already taken. Please choose another." },
         { ErrorType.GroupnameAlreadyExists, "Groupname is already taken. Please choose another." },
@@ -22,6 +23,6 @@ public class ResponseMessages
         { ErrorType.PermissionDenied, "You are not authorized to perform this action." },
         { ErrorType.ActiveSessionAvailable, "Please log out from your other session first." },
         { ErrorType.ChatIsEmpty, "Chat have no message." },
-        { ErrorType.GroupMemberAlreadyJoinedOrIsBanned, "Member is either already joined the group or banned from it." }
+        { ErrorType.MemberAlreadyJoinedOrIsBanned, "Member is either already joined the group or banned from it." }
     };
 }

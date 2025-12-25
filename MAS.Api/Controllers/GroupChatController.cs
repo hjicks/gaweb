@@ -48,7 +48,7 @@ public class GroupChatController : BaseController
         return StatusCode(result.StatusCode, result);
     }
 
-    [HttpGet("members/{groupChatId}")]
+    [HttpGet("{groupChatId}/members")]
     public async Task<IActionResult> GetGroupChatMembersAsync(int groupChatId)
     {
         var result = await _sender.Send(new GetGroupChatMembersQuery(groupChatId));
@@ -88,10 +88,76 @@ public class GroupChatController : BaseController
     [HttpDelete("{groupChatId}")]
     public async Task<IActionResult> DeleteGroupChatAsync(int groupChatId)
     {
-        var result = await _sender.Send(new DeleteGroupChatCommand(groupChatId));
+        var ownerId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var result = await _sender.Send(new DeleteGroupChatCommand(ownerId, groupChatId));
         if (result.Ok)
         {
             Log.Information($"Group chat {groupChatId} deleted.");
+            return StatusCode(result.StatusCode, result);
+        }
+        return StatusCode(result.StatusCode, result);
+    }
+
+    [HttpPost("{groupChatId}/members/join")]
+    public async Task<IActionResult> JoinGroupChatAsync(int groupChatId)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var result = await _sender.Send(new JoinGroupChatCommand(userId, groupChatId));
+        if (result.Ok)
+        {
+            Log.Information($"User {userId} joined group {groupChatId}.");
+            return StatusCode(result.StatusCode, result);
+        }
+        return StatusCode(result.StatusCode, result);
+    }
+
+    [HttpDelete("{groupChatId}/members/leave")]
+    public async Task<IActionResult> LeaveGroupChatAsync(int groupChatId)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var result = await _sender.Send(new LeaveGroupChatCommand(userId, groupChatId));
+        if (result.Ok)
+        {
+            Log.Information($"User {userId} left group {groupChatId}.");
+            return StatusCode(result.StatusCode, result);
+        }
+        return StatusCode(result.StatusCode, result);
+    }
+
+    [HttpPost("{groupChatId}/members/{memberId}/add")]
+    public async Task<IActionResult> AddGroupMemberAsync(int groupChatId, int memberId)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var result = await _sender.Send(new AddGroupMemberCommand(userId, groupChatId, memberId));
+        if (result.Ok)
+        {
+            Log.Information($"User {userId} added member {memberId} to group {groupChatId}.");
+            return StatusCode(result.StatusCode, result);
+        }
+        return StatusCode(result.StatusCode, result);
+    }
+
+    [HttpPut("{groupChatId}/members/{memberId}/promote")]
+    public async Task<IActionResult> PromoteOrDemoteGroupMemberAsync(int groupChatId, int memberId)
+    {
+        var ownerId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var result = await _sender.Send(new PromoteOrDemoteGroupMemberCommand(ownerId, groupChatId, memberId));
+        if (result.Ok)
+        {
+            Log.Information($"Owner {ownerId} of group {groupChatId} changed role of member {memberId}.");
+            return StatusCode(result.StatusCode, result);
+        }
+        return StatusCode(result.StatusCode, result);
+    }
+
+    [HttpPut("{groupChatId}/members/{memberId}/ban")]
+    public async Task<IActionResult> BanOrUnbanGroupMemberAsync(int groupChatId, int memberId)
+    {
+        var adminId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var result = await _sender.Send(new BanOrUnbanGroupMemberCommand(adminId, groupChatId, memberId));
+        if (result.Ok)
+        {
+            Log.Information($"Admin {adminId} of group {groupChatId} banned or unbanned member {memberId}.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);

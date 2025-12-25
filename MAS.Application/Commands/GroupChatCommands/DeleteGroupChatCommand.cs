@@ -3,10 +3,11 @@ using MAS.Application.Results;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MAS.Application.Commands.GroupChatCommands;
 
-public record DeleteGroupChatCommand(int GroupChatId) : IRequest<Result>;
+public record DeleteGroupChatCommand(int UserId, int GroupChatId) : IRequest<Result>;
 public class DeleteGroupChatCommandHandler : IRequestHandler<DeleteGroupChatCommand, Result>
 {
     private readonly IGroupChatRepository _groupChatRepository;
@@ -19,9 +20,12 @@ public class DeleteGroupChatCommandHandler : IRequestHandler<DeleteGroupChatComm
 
     public async Task<Result> Handle(DeleteGroupChatCommand request, CancellationToken cancellationToken)
     {
-        var groupChat = await _groupChatRepository.GetByIdAsync(request.GroupChatId);
+        var groupChat = await _groupChatRepository.GetByIdWithMemberAsync(request.UserId, request.GroupChatId);
         if (groupChat == null)
             return Result.Failure(StatusCodes.Status404NotFound, ErrorType.ChatNotFound);
+
+        if (groupChat.Members.IsNullOrEmpty() || groupChat.Members.Single().Role != GroupChatRole.Owner)
+            return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied);
 
         groupChat.IsDeleted = true;
         groupChat.DisplayName = "Deleted group";

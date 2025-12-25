@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using MAS.Application.Interfaces;
 using MAS.Core.Entities.ChatEntities;
+using MAS.Core.Entities.JoinEntities;
 using MAS.Infrastracture.Database;
 using MAS.Infrastracture.Repositories.Base;
 using Microsoft.EntityFrameworkCore;
@@ -53,8 +54,21 @@ public class GroupChatRepository : BaseRepository<GroupChat>, IGroupChatReposito
             .SingleOrDefaultAsync();
     }
 
+    public async Task<GroupChatUser?> GetMemberAsync(int groupId, int memberId)
+    {
+        return await _efDbContext.GroupChatUsers
+            .Where(g => g.GroupChatId == groupId && g.MemberId == memberId)
+            .SingleOrDefaultAsync();
+    }
+
     public async Task<bool> IsExistsAsync(string groupname)
     {
         return await _efDbContext.GroupChats.AnyAsync(u => u.Groupname == groupname);
+    }
+
+    public async Task<bool> IsMemberExistsAsync(int groupId, int memberId)
+    {
+        return await _efDbContext.GroupChatUsers
+            .AnyAsync(g => g.GroupChatId == groupId && g.MemberId == memberId);
     }
 }
