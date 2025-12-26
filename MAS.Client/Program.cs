@@ -44,23 +44,69 @@ internal class Program
             IEnumerable<string> s = input!.Split(" ").ToList();
             string cmd = s.First();
 
-
+            /*
+             * this is the worst and yet most common form of parser.
+             * I'm sorry.
+             */
             switch (cmd)
             {
-                case "":
-                    break;
+                case "/invite":
+                    {
+                        s = s.Skip(1);
+                        int gp = Convert.ToInt32(s.First());
+                        s = s.Skip(1);
+                        int uid = Convert.ToInt32(s.First());
+                        Console.WriteLine(c.Invite(gp, uid));
+                        break;
+                    }
                 case "/list":
-                    Console.WriteLine(c.List().ToString());
-                    break;
+                    {
+                        Console.WriteLine(c.List().ToString());
+                        break;
+                    }
+                case "/lusers":
+                    {
+                        Console.WriteLine(c.Lusers().ToString());
+                        break;
+                    }
+                case "/names":
+                    {
+                        s = s.Skip(1);
+                        int gp = Convert.ToInt32(s.First());
+                        Console.WriteLine(c.Names(gp).ToString());
+                        break;
+                    }
+                case "/ban":
+                    {
+                        s = s.Skip(1);
+                        int gp = Convert.ToInt32(s.First());
+                        s = s.Skip(1);
+                        int uid = Convert.ToInt32(s.First());
+                        Console.WriteLine(c.Ban(gp, uid).ToString());
+                        break;
+                    }
+                case "/part":
+                    {
+                        s = s.Skip(1);
+                        int gp = Convert.ToInt32(s.First());
+                        //Console.WriteLine(c.Leave().ToString());
+                        c.Leave(gp);
+                        break;
+                    }
                 case "/ref":
+                    c.Refresh();
                     break;
                 case "/msg":
-                    s = s.Skip(1);
-                    goto default;
+                    {
+                        s = s.Skip(1);
+                        int dst = Convert.ToInt32(s.First());
+                        string text = string.Join(" ", s.Skip(1));
+                        c.SendMessage(dst, text);
+                        break;
+                    }
+                case "":
+                    /* Fall through */
                 default:
-                    int dst = Convert.ToInt32(s.First());
-                    string text = string.Join(" ", s.Skip(1));
-                    c.SendMessage(dst, text);
                     break;
             }
 
