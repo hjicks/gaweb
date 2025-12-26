@@ -23,7 +23,7 @@ internal class Program
         clientName = "MASCli";
         os = System.Runtime.InteropServices.RuntimeInformation.OSDescription;
 
-        Client c = new(baseurl, username, password);
+        Client c = new(baseurl, username, password, clientName, os);
         Console.WriteLine($"Authenticating as {username}");
         c.Login();
 
@@ -31,7 +31,7 @@ internal class Program
         Console.WriteLine("Connecting to the hub, waiting for events...");
         var connectionSignalR = new HubConnectionBuilder().WithUrl(baseurl + "/hub", options =>
         {
-            options.AccessTokenProvider = () => Task.FromResult<string?>(c.Token);
+            options.AccessTokenProvider = () => Task.FromResult<string?>(c.token);
         }).Build();
         connectionSignalR.StartAsync().Wait();
 
