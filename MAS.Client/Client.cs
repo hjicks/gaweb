@@ -80,10 +80,14 @@ public class Client
         return JsonSerializer.Deserialize<JsonElement>(response);
     }
 
+    /* GroupChat */
+    /**
+     *  <summary>
+     *  Returns list of groups
+     *  </summary>
+     */
     public JsonElement List()
     {
-        HttpClient c = new HttpClient { BaseAddress = new Uri(this._url) };
-        c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.Token);
         var response = c.GetFromJsonAsync<JsonElement>("/api/group-chats/all").Result;
         return response;
     }
