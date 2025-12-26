@@ -41,6 +41,12 @@ internal class Program
         connectionSignalR.On<int>("AddGroupMemberCommand",
             gpid => Console.WriteLine($"Welcome to group {gpid}"));
 
+        connectionSignalR.On<GroupChatMemberGetDto, int>("JoinGroupChat",
+            (gcm, gid) => Console.WriteLine($"d{gid} -> u{gcm.MemberId} joins."));
+
+        connectionSignalR.On<int, int>("LeaveGroupChat",
+            (gpid, uid) => Console.WriteLine($"d{gpid} <- u{uid} parts."));
+        
         connectionSignalR.On<int, bool>("BanOrUnbanGroupMemberCommand",
             (gpid, isBanned) => Console.WriteLine($"You are now {(isBanned ? "banned" : "unbanned")} from group {gpid}"));
 
