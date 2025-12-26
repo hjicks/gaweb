@@ -6,11 +6,11 @@ public class LogoutCommandValidator : AbstractValidator<LogoutCommand>
 {
     public LogoutCommandValidator() 
     {
-        RuleFor(c => c.SessionId)
+        RuleFor(s => s.TokenDto.RefreshToken)
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
-            .WithMessage("SessionId is required.")
-            .GreaterThan(0)
-            .WithMessage("SessionId must be greater than zero.");
+            .WithMessage("RefreshToken is required.")
+            .Length(44)
+            .WithMessage("RefreshToken must be exactly 44 characters long.");
     }
 }

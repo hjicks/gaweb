@@ -18,6 +18,7 @@ public class ResponseMessages
         { ErrorType.ChatNotFound, "Chat not found in the system." },
         { ErrorType.MemberNotFound, "Member not found in the chat." },
         { ErrorType.MessageNotFound, "Message not found in the system." },
+        { ErrorType.FileContentNotFound, "There is no file content for the provided message." },
         { ErrorType.UsernameAlreadyExists, "Username is already taken. Please choose another." },
         { ErrorType.GroupnameAlreadyExists, "Groupname is already taken. Please choose another." },
         { ErrorType.ChatAlreadyExists, "Chat already exists in the system." },

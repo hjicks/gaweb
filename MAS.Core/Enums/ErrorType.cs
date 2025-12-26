@@ -11,6 +11,7 @@ public enum ErrorType
     ChatNotFound,
     MemberNotFound,
     MessageNotFound,
+    FileContentNotFound,
     UsernameAlreadyExists,
     GroupnameAlreadyExists,
     ChatAlreadyExists,

@@ -58,7 +58,7 @@ public class UserController : BaseController
     Summary = "Update user last seen",
     Description = "Updates the last seen information of the authenticated user."
     )]
-    [HttpPut("last-seen")]
+    [HttpPatch("last-seen")]
     public async Task<IActionResult> UpdateUserLastSeenAsync(UserLastSeenUpdateDto user)
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
