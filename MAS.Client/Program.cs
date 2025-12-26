@@ -111,7 +111,6 @@ internal class Program
                     {
                         s = s.Skip(1);
                         int gp = Convert.ToInt32(s.First());
-                        //Console.WriteLine(c.Leave().ToString());
                         c.Leave(gp);
                         break;
                     }
@@ -127,8 +126,9 @@ internal class Program
                         break;
                     }
                 case "":
-                    /* Fall through */
+                    break;
                 default:
+                    Console.WriteLine("Unknown command");
                     break;
             }
 
