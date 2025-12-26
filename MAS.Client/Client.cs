@@ -65,10 +65,11 @@ public class Client
         c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.token);
     }
 
+
+    
+    /* Message */
     public JsonElement SendMessage(int destinationId, string text)
     {
-        HttpClient c = new HttpClient { BaseAddress = new Uri(this._url) };
-        c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.Token);
         MessageAddDto msg = new()
         {
             DestinationId = destinationId,
