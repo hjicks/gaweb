@@ -15,6 +15,7 @@ public class Client
 
     public string? /* JWT */ token;
     public string? /* JWT */ refreshToken;
+    private Timer? timer;
     public Client(string url, string username, string passwd, string clientName, string os)
     {
         this.url = url;
@@ -45,6 +46,7 @@ public class Client
         this.token =  jsonresponse.GetProperty("jwt").ToString();
         this.refreshToken = jsonresponse.GetProperty("refreshToken").ToString();
         c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.token);
+        this.timer = new Timer((state) => Refresh(), null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
     }
 
     /**
@@ -68,6 +70,11 @@ public class Client
 
     
     /* Message */
+    /**
+     * <summary>
+     * sends a message to a destination
+     * </summary>
+     */
     public JsonElement SendMessage(int destinationId, string text)
     {
         MessageAddDto msg = new()
@@ -81,6 +88,17 @@ public class Client
     }
 
     /* GroupChat */
+    /**
+     * <summary>
+     * Joins to a group with given gpid
+     * </summary>
+     */
+    public JsonElement Join(int gpid)
+    {
+        var response = c.PostAsync($"/api/group-chats/{gpid}/members/join", null).Result
+            .Content.ReadAsStringAsync().Result;
+        return JsonSerializer.Deserialize<JsonElement>(response);
+    }
     /**
      *  <summary>
      *  Returns list of groups
@@ -132,7 +150,7 @@ public class Client
      */
     public void Leave(int gpid)
     {
-        var response = c.DeleteAsync($"/api/group-chats/{gpid}/members/").Result;
+        var response = c.DeleteAsync($"/api/group-chats/{gpid}/members/leave").Result;
         // return response;
     }
 

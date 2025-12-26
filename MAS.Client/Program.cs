@@ -1,6 +1,7 @@
-﻿using MAS.Application.Dtos.MessageDtos;
-using Microsoft.AspNetCore.SignalR.Client;
+﻿using MAS.Application.Dtos.GroupChatDtos;
+using MAS.Application.Dtos.MessageDtos;
 using MAS.Client;
+using Microsoft.AspNetCore.SignalR.Client;
 
 internal class Program
 {
@@ -35,11 +36,17 @@ internal class Program
         connectionSignalR.StartAsync().Wait();
 
         connectionSignalR.On<MessageGetDto>("AddMessage",
-            msg => Console.WriteLine($"\nS{msg.SenderId} -> D{msg.DestinationId}: {msg.Text}"));
+            msg => Console.WriteLine($"\nu{msg.SenderId} -> d{msg.DestinationId}: {msg.Text}"));
 
         connectionSignalR.On<int>("AddGroupMemberCommand",
             gpid => Console.WriteLine($"Welcome to group {gpid}"));
 
+        connectionSignalR.On<GroupChatMemberGetDto, int>("JoinGroupChat",
+            (gcm, gid) => Console.WriteLine($"d{gid} -> u{gcm.MemberId} joins."));
+
+        connectionSignalR.On<int, int>("LeaveGroupChat",
+            (gpid, uid) => Console.WriteLine($"d{gpid} <- u{uid} parts."));
+        
         connectionSignalR.On<int, bool>("BanOrUnbanGroupMemberCommand",
             (gpid, isBanned) => Console.WriteLine($"You are now {(isBanned ? "banned" : "unbanned")} from group {gpid}"));
 
@@ -91,11 +98,19 @@ internal class Program
                         Console.WriteLine(c.Ban(gp, uid).ToString());
                         break;
                     }
+                case "/j":
+                case "/join":
+                    {
+                        s = s.Skip(1);
+                        int gp = Convert.ToInt32(s.First());
+                        Console.WriteLine(c.Join(gp));
+                        break;
+                    }
+                case "/p":
                 case "/part":
                     {
                         s = s.Skip(1);
                         int gp = Convert.ToInt32(s.First());
-                        //Console.WriteLine(c.Leave().ToString());
                         c.Leave(gp);
                         break;
                     }
@@ -111,8 +126,9 @@ internal class Program
                         break;
                     }
                 case "":
-                    /* Fall through */
+                    break;
                 default:
+                    Console.WriteLine("Unknown command");
                     break;
             }
 
