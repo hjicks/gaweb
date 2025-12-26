@@ -103,6 +103,7 @@ internal class Program
                         string text = string.Join(" ", s.Skip(1));
                         c.SendMessage(dst, text);
                         break;
+                        goto default;
                     }
                 case "":
                     /* Fall through */
