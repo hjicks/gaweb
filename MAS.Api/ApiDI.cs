@@ -51,6 +51,8 @@ public static class ApiDI
             });
 
             options.OperationFilter<SecurityRequirementsOperationFilter>();
+
+            options.EnableAnnotations();
         });
 
         services.AddSingleton<IConfigureOptions<CorsOptions>>(provider =>

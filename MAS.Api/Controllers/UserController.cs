@@ -4,6 +4,7 @@ using MAS.Application.Queries.UserQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 
 namespace MAS.Api.Controllers;
@@ -18,6 +19,10 @@ public class UserController : BaseController
 
     }
 
+    [SwaggerOperation(
+    Summary = "Get all users",
+    Description = "Returns all users in the system. Accessible only by admins."
+    )]
     [HttpGet("all")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetAllUsersAsync()
@@ -26,6 +31,10 @@ public class UserController : BaseController
         return StatusCode(result.StatusCode, result);
     }
 
+    [SwaggerOperation(
+    Summary = "Add a user",
+    Description = "Creates a new user."
+    )]
     [HttpPost, AllowAnonymous]
     public async Task<IActionResult> AddUserAsync([FromBody] UserAddDto user)
     {
@@ -33,6 +42,10 @@ public class UserController : BaseController
         return StatusCode(result.StatusCode, result);
     }
 
+    [SwaggerOperation(
+    Summary = "Update a user",
+    Description = "Updates the details of the authenticated user."
+    )]
     [HttpPut]
     public async Task<IActionResult> UpdateUserAsync(UserUpdateDto user)
     {
@@ -41,6 +54,10 @@ public class UserController : BaseController
         return StatusCode(result.StatusCode, result);
     }
 
+    [SwaggerOperation(
+    Summary = "Update user last seen",
+    Description = "Updates the last seen information of the authenticated user."
+    )]
     [HttpPut("last-seen")]
     public async Task<IActionResult> UpdateUserLastSeenAsync(UserLastSeenUpdateDto user)
     {
@@ -49,6 +66,10 @@ public class UserController : BaseController
         return StatusCode(result.StatusCode, result);
     }
 
+    [SwaggerOperation(
+    Summary = "Delete a user",
+    Description = "Deletes the authenticated user."
+    )]
     [HttpDelete]
     public async Task<IActionResult> DeleteUserAsync()
     {

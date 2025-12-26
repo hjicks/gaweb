@@ -5,6 +5,7 @@ using MAS.Application.Queries.SessionQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace MAS.Api.Controllers;
 
@@ -18,6 +19,10 @@ public class SessionController : BaseController
 
     }
 
+    [SwaggerOperation(
+    Summary = "Get all sessions",
+    Description = "Returns all active sessions in the system. Accessible only by admins."
+    )]
     [HttpGet("all")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetAllSessionsAsync()
@@ -26,6 +31,10 @@ public class SessionController : BaseController
         return StatusCode(result.StatusCode, result);
     }
 
+    [SwaggerOperation(
+    Summary = "Login",
+    Description = "Authenticates a user and creates a new session."
+    )]
     [HttpPost("login"), AllowAnonymous]
     public async Task<IActionResult> LoginAsync(UserLoginDto userCred)
     {
@@ -33,6 +42,10 @@ public class SessionController : BaseController
         return StatusCode(result.StatusCode, result);
     }
 
+    [SwaggerOperation(
+    Summary = "Logout",
+    Description = "Ends the specified session."
+    )]
     [HttpPut("logout/{sessionId}")]
     public async Task<IActionResult> LogoutAsync(int sessionId)
     {
@@ -40,6 +53,10 @@ public class SessionController : BaseController
         return StatusCode(result.StatusCode, result);
     }
 
+    [SwaggerOperation(
+    Summary = "Refresh JWT",
+    Description = "Generates a new JWT using a refresh token."
+    )]
     [HttpPost("refresh"), AllowAnonymous]
     public async Task<IActionResult> RefreshJwtAsync(SessionRefreshTokenDto tokenDto)
     {
