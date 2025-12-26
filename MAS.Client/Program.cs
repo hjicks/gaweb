@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using MAS.Application.Dtos.MessageDtos;
+﻿using MAS.Application.Dtos.MessageDtos;
 using Microsoft.AspNetCore.SignalR.Client;
 using MAS.Client;
 
@@ -36,7 +35,14 @@ internal class Program
         connectionSignalR.StartAsync().Wait();
 
         connectionSignalR.On<MessageGetDto>("AddMessage",
-            (msg) => Console.WriteLine($"\nS{msg.SenderId} -> D{msg.DestinationId}: {msg.Text}"));
+            msg => Console.WriteLine($"\nS{msg.SenderId} -> D{msg.DestinationId}: {msg.Text}"));
+
+        connectionSignalR.On<int>("AddGroupMemberCommand",
+            gpid => Console.WriteLine($"Welcome to group {gpid}"));
+
+        connectionSignalR.On<int, bool>("BanOrUnbanGroupMemberCommand",
+            (gpid, isBanned) => Console.WriteLine($"You are now {(isBanned ? "banned" : "unbanned")} from group {gpid}"));
+
         while (true)
         {
             Console.Write("> ");
@@ -103,7 +109,6 @@ internal class Program
                         string text = string.Join(" ", s.Skip(1));
                         c.SendMessage(dst, text);
                         break;
-                        goto default;
                     }
                 case "":
                     /* Fall through */
