@@ -150,7 +150,7 @@ public class Client
      */
     public void Leave(int gpid)
     {
-        var response = c.DeleteAsync($"/api/group-chats/{gpid}/members/").Result;
+        var response = c.DeleteAsync($"/api/group-chats/{gpid}/members/leave").Result;
         // return response;
     }
 
