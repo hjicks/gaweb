@@ -36,8 +36,7 @@ internal class Program
         connectionSignalR.StartAsync().Wait();
 
         connectionSignalR.On<MessageGetDto>("AddMessage",
-            (msg) => Console.WriteLine($"\nS{msg.SenderId} -> D{msg.DestinationId}: {msg.Text}\n" +
-            $"Text: {msg.Text}"));
+            (msg) => Console.WriteLine($"\nS{msg.SenderId} -> D{msg.DestinationId}: {msg.Text}"));
         while (true)
         {
             Console.Write("> ");
