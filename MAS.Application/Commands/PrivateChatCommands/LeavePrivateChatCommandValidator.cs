@@ -1,10 +1,11 @@
 ﻿using FluentValidation;
+using MAS.Application.Commands.GroupChatCommands;
 
 namespace MAS.Application.Commands.PrivateChatCommands;
 
-public class DeletePrivateChatCommandValidator : AbstractValidator<DeletePrivateChatCommand>
+public class LeavePrivateChatCommandValidator : AbstractValidator<LeavePrivateChatCommand>
 {
-    public DeletePrivateChatCommandValidator() 
+    public LeavePrivateChatCommandValidator()
     {
         RuleFor(c => c.PrivateChatId)
             .Cascade(CascadeMode.Stop)

@@ -2,10 +2,17 @@
 
 namespace MAS.Application.Commands.GroupChatCommands;
 
-public class AddGroupChatCommandValidator : AbstractValidator<AddGroupChatCommand>
+public class UpdateGroupChatCommandValidator : AbstractValidator<UpdateGroupChatCommand>
 {
-    public AddGroupChatCommandValidator()
+    public UpdateGroupChatCommandValidator()
     {
+        RuleFor(g => g.GroupChat.Id)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .WithMessage("Id is required.")
+                .GreaterThan(0)
+                .WithMessage("Id must be greater than zero.");
+
         RuleFor(g => g.GroupChat.DisplayName)
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
