@@ -15,12 +15,14 @@ public class JoinGroupChatCommandHandler : IRequestHandler<JoinGroupChatCommand,
     private readonly IGroupChatRepository _groupChatRepository;
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ISystemMsgService _systemMsgService;
     public JoinGroupChatCommandHandler(IGroupChatRepository groupChatRepository, IUserRepository userRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork, ISystemMsgService systemMsgService)
     {
         _groupChatRepository = groupChatRepository;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _systemMsgService = systemMsgService;
     }
     public async Task<Result> Handle(JoinGroupChatCommand request, CancellationToken cancellationToken)
     {
@@ -48,6 +50,7 @@ public class JoinGroupChatCommandHandler : IRequestHandler<JoinGroupChatCommand,
         _groupChatRepository.Update(groupChat);
         await _unitOfWork.SaveAsync();
 
+        await _systemMsgService.SendSystemMsgAsync(groupChat.Id, "Join", user.Username!);
         Log.Information($"User {user.Id} joined group {groupChat.Id}.");
         return Result.Success(StatusCodes.Status200OK, new GroupChatMemberGetDto
         {

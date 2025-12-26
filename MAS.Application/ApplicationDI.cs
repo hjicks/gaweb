@@ -68,6 +68,8 @@ public static class ApplicationDI
 
         services.AddScoped<IBlobService, BlobService>();
 
+        services.AddScoped<ISystemMsgService, SystemMsgService>();
+
         services.AddSignalR();
 
         services.AddSingleton<ChatHub>();
