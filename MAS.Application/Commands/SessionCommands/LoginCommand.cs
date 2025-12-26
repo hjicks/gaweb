@@ -5,8 +5,10 @@ using MAS.Application.Results;
 using MAS.Application.Services;
 using MAS.Core.Entities.UserEntities;
 using MAS.Core.Enums;
+using MAS.Core.Options;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Serilog;
 
 namespace MAS.Application.Commands.SessionCommands;
@@ -19,14 +21,17 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result>
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHashService _hashService;
     private readonly IJwtService _jwtService;
+    private readonly TokenOptions _tokenOptions;
     public LoginCommandHandler(IUserRepository userRepository, ISessionRepository sessionRepository,
-        IUnitOfWork unitOfWork, IHashService hashService, IJwtService jwtService)
+        IUnitOfWork unitOfWork, IHashService hashService, IJwtService jwtService,
+        IOptions<TokenOptions> tokenOptions)
     {
         _userRepository = userRepository;
         _sessionRepository = sessionRepository;
         _unitOfWork = unitOfWork;
         _hashService = hashService;
         _jwtService = jwtService;
+        _tokenOptions = tokenOptions.Value;
     }
     public async Task<Result> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
@@ -53,7 +58,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result>
         var session = new Session
         {
             TokenHash = refreshTokenHash.Hash,
-            ExpiresAt = DateTime.UtcNow.AddDays(7),
+            ExpiresAt = DateTime.UtcNow.AddDays(_tokenOptions.RefreshToken.ExpiryInDays),
             User = dbUser,
             ClientName = request.User.ClientName,
             OS = request.User.OS

@@ -2,15 +2,15 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MAS.Core
+namespace MAS.Core;
+
+public static class CoreDI
 {
-    public static class CoreDI
+    public static IServiceCollection AddCoreDI(this IServiceCollection services, IConfiguration configurtion)
     {
-        public static IServiceCollection AddCoreDI(this IServiceCollection services, IConfiguration configurtion)
-        {
-            services.Configure<ConnectionStringOptions>(configurtion.GetSection(ConnectionStringOptions.SectionName));
-            services.Configure<JwtOptions>(configurtion.GetSection(JwtOptions.SectionName));
-            return services;
-        }
+        services.Configure<ConnectionStringOptions>(configurtion.GetSection(ConnectionStringOptions.SectionName));
+        services.Configure<TokenOptions>(configurtion.GetSection(TokenOptions.SectionName));
+        services.Configure<MasCorsOptions>(configurtion.GetSection(MasCorsOptions.SectionName));
+        return services;
     }
 }
