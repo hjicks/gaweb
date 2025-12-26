@@ -9,7 +9,7 @@ public class Client
     private readonly string _url;
     private readonly string _username;
     private readonly string _passwd;
-    public string /* JWT */ Token;
+    public string? /* JWT */ Token;
     public Client(string url, string username, string passwd)
     {
         this._url = url;
