@@ -6,7 +6,7 @@ public record UserAddDto
     public string Username { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
     public string? Bio { get; set; }
-    public byte[]? Avatar { get; set; }
+    public string? Avatar { get; set; }
     public string ClientName { get; set; } = string.Empty;
     public string OS {  get; set; } = string.Empty;
 }

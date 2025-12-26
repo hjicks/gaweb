@@ -11,9 +11,11 @@ public record GetAllUserGroupChatsQuery(int UserId) : IRequest<Result>;
 public class GetAllUserGroupChatsQueryHandler : IRequestHandler<GetAllUserGroupChatsQuery, Result>
 {
     private readonly IGroupChatRepository _groupChatRepository;
-    public GetAllUserGroupChatsQueryHandler(IGroupChatRepository groupChatRepository)
+    private readonly IBlobService _blobService;
+    public GetAllUserGroupChatsQueryHandler(IGroupChatRepository groupChatRepository, IBlobService blobService)
     {
         _groupChatRepository = groupChatRepository;
+        _blobService = blobService;
     }
     public async Task<Result> Handle(GetAllUserGroupChatsQuery request, CancellationToken cancellationToken)
     {
@@ -24,7 +26,7 @@ public class GetAllUserGroupChatsQueryHandler : IRequestHandler<GetAllUserGroupC
             DisplayName = g.DisplayName,
             Groupname = g.Groupname!,
             Description = g.Description,
-            Avatar = g.Avatar,
+            Avatar = _blobService.EncodeBlobToBase64(g.Avatar!),
             MsgPermissionType = g.MsgPermissionType,
             CreatedAt = g.CreatedAt
         }).ToList();

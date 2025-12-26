@@ -4,6 +4,7 @@ using MAS.Application.Results;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 namespace MAS.Application.Commands.UserCommands;
@@ -14,12 +15,14 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHashService _hashService;
+    private readonly IBlobService _blobService;
     public UpdateUserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork,
-        IHashService hashService)
+        IHashService hashService, IBlobService blobService)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
         _hashService = hashService;
+        _blobService = blobService;
     }
     public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
@@ -27,13 +30,23 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
         if (user == null)
             return Result.Failure(StatusCodes.Status404NotFound, ErrorType.UserNotFound);
 
+        byte[] blob = null!;
+        if (request.User.Avatar != null)
+        {
+            blob = _blobService.DecodeBase64Blob(request.User.Avatar);
+            if (blob.IsNullOrEmpty())
+                return Result.Failure(StatusCodes.Status422UnprocessableEntity, ErrorType.UnableToDecodeFileContent);
+            if (!_blobService.ValidateImageBlob(blob))
+                return Result.Failure(StatusCodes.Status422UnprocessableEntity, ErrorType.AvatarIsNotValid);
+        }
+
         var passwordHash = _hashService.HashPassword(request.User.Password);
         user.DisplayName = request.User.DisplayName;
         user.Username = request.User.Username;
         user.PasswordHash = passwordHash.Hash;
         user.PasswordSalt = passwordHash.Salt;
         user.Bio = request.User.Bio;
-        user.Avatar = request.User.Avatar;
+        user.Avatar = blob;
         _userRepository.Update(user);
         await _unitOfWork.SaveAsync();
 
@@ -45,7 +58,7 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
                 DisplayName = user.DisplayName,
                 Username = user.Username,
                 Bio = user.Bio,
-                Avatar = user.Avatar,
+                Avatar = request.User.Avatar,
                 IsVerified = user.IsVerified,
                 IsBot = user.IsBot,
                 LastSeenAt = user.LastSeenAt

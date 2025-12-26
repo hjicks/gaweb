@@ -6,6 +6,6 @@ public record MessageAddDto
     public string? Text { get; set; }
     public string? FileName { get; set; }
     public ulong? FileSize { get; set; }
-    public byte[]? Content { get; set; }
+    public string? Content { get; set; }
     public string? FileContentType { get; set; }
 }
