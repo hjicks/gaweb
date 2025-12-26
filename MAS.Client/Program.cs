@@ -98,6 +98,15 @@ internal class Program
                         Console.WriteLine(c.Ban(gp, uid).ToString());
                         break;
                     }
+                case "/j":
+                case "/join":
+                    {
+                        s = s.Skip(1);
+                        int gp = Convert.ToInt32(s.First());
+                        Console.WriteLine(c.Join(gp));
+                        break;
+                    }
+                case "/p":
                 case "/part":
                     {
                         s = s.Skip(1);
