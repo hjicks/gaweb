@@ -10,20 +10,18 @@ internal class Program
         string username, password, clientName, os, baseurl;
 
         baseurl = "https://localhost:7088";
-        if (args.Length == 4)
+        if (args.Length == 2)
         {
             username = args[0];
             password = args[1];
-            clientName = args[2];
-            os = args[3];
         }
         else
         {
             username = "Admin";
             password = "sysadmin";
-            clientName = "CLI client";
-            os = "Windows 11";
         }
+        clientName = "MASCli";
+        os = System.Runtime.InteropServices.RuntimeInformation.OSDescription;
 
         Client c = new(baseurl, username, password);
         Console.WriteLine($"Authenticating as {username}");
