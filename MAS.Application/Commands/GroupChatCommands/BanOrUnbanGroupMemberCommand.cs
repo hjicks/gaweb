@@ -5,6 +5,7 @@ using MAS.Core.Entities.JoinEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Commands.GroupChatCommands;
 
@@ -42,6 +43,7 @@ public class BanOrUnbanGroupMemberCommandHandler : IRequestHandler<BanOrUnbanGro
         _groupChatUserRepository.Update(member);
         await _unitOfWork.SaveAsync();
 
+        Log.Information($"Admin {request.UserId} of group {groupChat.Id} banned or unbanned member {member.MemberId}.");
         return Result.Success(StatusCodes.Status200OK, new GroupChatMemberGetDto
         {
             MemberId = member.MemberId,

@@ -4,6 +4,7 @@ using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
 namespace MAS.Application.Commands.GroupChatCommands;
 
@@ -45,6 +46,7 @@ public class LeavePrivateChatCommandHandler : IRequestHandler<LeavePrivateChatCo
         _privateChatRepository.Update(privateChat);
         await _unitOfWork.SaveAsync();
 
+        Log.Information($"User {member.Id} left private chat {privateChat.Id}.");
         return Result.Success(StatusCodes.Status200OK, "Member removed from the chat successfully.");
     }
 }

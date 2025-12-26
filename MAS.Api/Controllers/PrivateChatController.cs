@@ -4,7 +4,6 @@ using MAS.Application.Queries.PrivateChatQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 using System.Security.Claims;
 
 namespace MAS.Api.Controllers;
@@ -43,7 +42,6 @@ public class PrivateChatController : BaseController
         var result = await _sender.Send(new AddPrivateChatCommand(starterId, receiverId));
         if (result.Ok)
         {
-            Log.Information($"Private chat with starter id {starterId} and receiver id {receiverId} added.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
@@ -56,7 +54,6 @@ public class PrivateChatController : BaseController
         var result = await _sender.Send(new DeletePrivateChatCommand(privateChatId));
         if (result.Ok)
         {
-            Log.Information($"Private chat {privateChatId} deleted.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
@@ -69,7 +66,6 @@ public class PrivateChatController : BaseController
         var result = await _sender.Send(new LeavePrivateChatCommand(userId, privateChatId));
         if (result.Ok)
         {
-            Log.Information($"User {userId} left private chat {privateChatId}.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);

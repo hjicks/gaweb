@@ -4,6 +4,7 @@ using MAS.Application.Results;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Commands.UserCommands;
 
@@ -36,6 +37,7 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
         _userRepository.Update(user);
         await _unitOfWork.SaveAsync();
 
+        Log.Information($"User {user.Id} data updated.");
         return Result.Success(StatusCodes.Status200OK,
             new UserGetDto
             {

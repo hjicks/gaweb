@@ -1,10 +1,8 @@
-﻿using MAS.Application.Interfaces;
-using MAS.Core.Entities.ChatEntities;
+﻿using MAS.Core.Entities.ChatEntities;
 
-namespace MAS.Application.Interfaces
+namespace MAS.Application.Interfaces;
+
+public interface IBaseChatRepository : IBaseRepository<BaseChat>
 {
-    public interface IBaseChatRepository : IBaseRepository<BaseChat>
-    {
-        Task<string> GetTypeByIdAsync(Int32 entityId);
-    }
+    Task<int> GetTypeByIdAsync(int entityId);
 }

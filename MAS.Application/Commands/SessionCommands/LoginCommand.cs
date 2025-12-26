@@ -7,6 +7,7 @@ using MAS.Core.Entities.UserEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Commands.SessionCommands;
 
@@ -36,7 +37,11 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result>
         var passwordHash = new PasswordHash(dbUser.PasswordHash, dbUser.PasswordSalt);
         var isPasswordCorrect = _hashService.VerifyPassword(request.User.Password, passwordHash);
         if (!isPasswordCorrect)
+        {
+            Log.Warning($"Unsuccessful login attempt for user {dbUser.Id}.");
             return Result.Failure(StatusCodes.Status409Conflict, ErrorType.InvalidCredentials);
+        }
+            
 
 #if !DEBUG
     /* seems this is really troublesome if the client crashes..., let's disable it for now */
@@ -57,6 +62,8 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result>
         await _unitOfWork.SaveAsync();
 
         var roles = dbUser.Id == 1 ? new List<string> { "Admin", "User" } : new List<string> { "User" };
+
+        Log.Information($"User {dbUser.Id} logged in.");
         return Result.Success(StatusCodes.Status200OK,
             new SessionRefreshDto
             {

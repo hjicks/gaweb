@@ -5,6 +5,7 @@ using MAS.Core.Entities.JoinEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Commands.GroupChatCommands;
 
@@ -45,6 +46,7 @@ public class PromoteOrDemoteGroupMemberCommandHandler : IRequestHandler<PromoteO
         _groupChatUserRepository.Update(member);
         await _unitOfWork.SaveAsync();
 
+        Log.Information($"Owner {request.UserId} of group {groupChat.Id} changed role of member {member.MemberId}.");
         return Result.Success(StatusCodes.Status200OK, new GroupChatMemberGetDto
         {
             MemberId = member.MemberId,

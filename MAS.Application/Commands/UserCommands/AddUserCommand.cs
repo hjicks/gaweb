@@ -5,6 +5,7 @@ using MAS.Core.Entities.UserEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Commands.UserCommands;
 
@@ -57,6 +58,8 @@ public class AddUserCommandHandler : IRequestHandler<AddUserCommand, Result>
         await _unitOfWork.SaveAsync();
 
         var roles = newUser.Id == 1 ? new List<string> { "Admin", "User" } : new List<string> { "User" };
+
+        Log.Information($"User {newUser.Id} added.");
         return Result.Success(StatusCodes.Status201Created,
             new UserTokenDto
             {

@@ -4,6 +4,7 @@ using MAS.Application.Results;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Commands.UserCommands;
 
@@ -28,6 +29,7 @@ public class UpdateUserLastSeenCommandHandler : IRequestHandler<UpdateUserLastSe
         _userRepository.Update(user);
         await _unitOfWork.SaveAsync();
 
+        Log.Information($"User {user.Id} last seen updated.");
         return Result.Success(StatusCodes.Status200OK,
             new UserLastSeenUpdateDto
             {

@@ -4,7 +4,6 @@ using MAS.Application.Queries.UserQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 using System.Security.Claims;
 
 namespace MAS.Api.Controllers;
@@ -33,7 +32,6 @@ public class UserController : BaseController
         var result = await _sender.Send(new AddUserCommand(user));
         if (result.Ok)
         {
-            Log.Information($"User {user.Username} added.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
@@ -46,7 +44,6 @@ public class UserController : BaseController
         var result = await _sender.Send(new UpdateUserCommand(userId, user));
         if (result.Ok)
         {
-            Log.Information($"User {userId} updated.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
@@ -59,7 +56,6 @@ public class UserController : BaseController
         var result = await _sender.Send(new UpdateUserLastSeenCommand(userId, user));
         if (result.Ok)
         {
-            Log.Information($"User {userId} last seen updated.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
@@ -72,7 +68,6 @@ public class UserController : BaseController
         var result = await _sender.Send(new DeleteUserCommand(userId));
         if (result.Ok)
         {
-            Log.Information($"User {userId} deleted.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);

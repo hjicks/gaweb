@@ -5,6 +5,7 @@ using MAS.Core.Entities.JoinEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Commands.GroupChatCommands;
 
@@ -47,6 +48,7 @@ public class JoinGroupChatCommandHandler : IRequestHandler<JoinGroupChatCommand,
         _groupChatRepository.Update(groupChat);
         await _unitOfWork.SaveAsync();
 
+        Log.Information($"User {user.Id} joined group {groupChat.Id}.");
         return Result.Success(StatusCodes.Status200OK, new GroupChatMemberGetDto
         {
             MemberId = groupChatUser.MemberId,

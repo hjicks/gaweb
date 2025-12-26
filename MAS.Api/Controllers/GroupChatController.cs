@@ -4,7 +4,6 @@ using MAS.Application.Queries.GroupChatQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 using System.Security.Claims;
 
 namespace MAS.Api.Controllers;
@@ -42,7 +41,6 @@ public class GroupChatController : BaseController
         var result = await _sender.Send(new GetGroupChatQuery(userId, groupChatId));
         if (result.Ok)
         {
-            Log.Information($"Group chat {groupChatId} information fetched.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
@@ -54,7 +52,6 @@ public class GroupChatController : BaseController
         var result = await _sender.Send(new GetGroupChatMembersQuery(groupChatId));
         if (result.Ok)
         {
-            Log.Information($"Members of group chat {groupChatId} fetched.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
@@ -67,7 +64,6 @@ public class GroupChatController : BaseController
         var result = await _sender.Send(new AddGroupChatCommand(ownerId, groupChat));
         if (result.Ok)
         {
-            Log.Information($"User {ownerId} added group {groupChat.Groupname}.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
@@ -76,10 +72,10 @@ public class GroupChatController : BaseController
     [HttpPut]
     public async Task<IActionResult> UpdateGroupChatAsync(GroupChatUpdateDto groupChat)
     {
-        var result = await _sender.Send(new UpdateGroupChatCommand(groupChat));
+        var adminId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var result = await _sender.Send(new UpdateGroupChatCommand(adminId, groupChat));
         if (result.Ok)
         {
-            Log.Information($"Group {groupChat.Id} information updated.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
@@ -92,7 +88,6 @@ public class GroupChatController : BaseController
         var result = await _sender.Send(new DeleteGroupChatCommand(ownerId, groupChatId));
         if (result.Ok)
         {
-            Log.Information($"Group chat {groupChatId} deleted.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
@@ -105,7 +100,6 @@ public class GroupChatController : BaseController
         var result = await _sender.Send(new JoinGroupChatCommand(userId, groupChatId));
         if (result.Ok)
         {
-            Log.Information($"User {userId} joined group {groupChatId}.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
@@ -118,7 +112,6 @@ public class GroupChatController : BaseController
         var result = await _sender.Send(new LeaveGroupChatCommand(userId, groupChatId));
         if (result.Ok)
         {
-            Log.Information($"User {userId} left group {groupChatId}.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
@@ -131,7 +124,6 @@ public class GroupChatController : BaseController
         var result = await _sender.Send(new AddGroupMemberCommand(userId, groupChatId, memberId));
         if (result.Ok)
         {
-            Log.Information($"User {userId} added member {memberId} to group {groupChatId}.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
@@ -144,7 +136,6 @@ public class GroupChatController : BaseController
         var result = await _sender.Send(new PromoteOrDemoteGroupMemberCommand(ownerId, groupChatId, memberId));
         if (result.Ok)
         {
-            Log.Information($"Owner {ownerId} of group {groupChatId} changed role of member {memberId}.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
@@ -157,7 +148,6 @@ public class GroupChatController : BaseController
         var result = await _sender.Send(new BanOrUnbanGroupMemberCommand(adminId, groupChatId, memberId));
         if (result.Ok)
         {
-            Log.Information($"Admin {adminId} of group {groupChatId} banned or unbanned member {memberId}.");
             return StatusCode(result.StatusCode, result);
         }
         return StatusCode(result.StatusCode, result);
