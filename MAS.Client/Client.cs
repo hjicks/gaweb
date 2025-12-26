@@ -6,25 +6,63 @@ using MAS.Application.Dtos.MessageDtos;
 namespace MAS.Client;
 public class Client
 {
-    private readonly string _url;
-    private readonly string _username;
-    private readonly string _passwd;
-    public string? /* JWT */ Token;
-    public Client(string url, string username, string passwd)
+    private readonly string url;
+    private readonly string username;
+    private readonly string password;
+    private readonly string clientName;
+    private readonly string os;
+    private HttpClient c;
+
+    public string? /* JWT */ token;
+    public string? /* JWT */ refreshToken;
+    public Client(string url, string username, string passwd, string clientName, string os)
     {
-        this._url = url;
-        this._username = username;
-        this._passwd = passwd;
+        this.url = url;
+        this.username = username;
+        this.password = passwd;
+        this.clientName = clientName;
+        this.os = os;
+        c = new HttpClient { BaseAddress = new Uri(this.url) };
     }
 
-    /* TODO: better typing would be appericated */
+    /* Session */
+
+    /**
+     * <summary>
+     * Logs user in with information given by the constructor
+     * </summary>
+     */
     public void Login()
     {
-        HttpClient c = new HttpClient { BaseAddress = new Uri(this._url) };
-        var msg = new { this._username, this._passwd };
-        var response = c.PostAsJsonAsync("/api/sessions/login", msg).Result
+        c.DefaultRequestHeaders.Authorization = null;
+
+        /* better typing would be appericated */
+        var msg = new { this.username, this.password, this.clientName, this.os };
+        string response = c.PostAsJsonAsync("/api/sessions/login", msg).Result
             .Content.ReadAsStringAsync().Result;
-        Token =  JsonSerializer.Deserialize<JsonElement>(response).GetProperty("response").GetProperty("jwt").ToString();
+
+        JsonElement jsonresponse = JsonSerializer.Deserialize<JsonElement>(response).GetProperty("response");
+        this.token =  jsonresponse.GetProperty("jwt").ToString();
+        this.refreshToken = jsonresponse.GetProperty("refreshToken").ToString();
+        c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.token);
+    }
+
+    /**
+     * <summary>
+     * Refreshes user's token
+     * </summary>
+     */
+    public void Refresh()
+    {
+        c.DefaultRequestHeaders.Authorization = null;
+        var msg = new { this.refreshToken };
+        var response = c.PostAsJsonAsync("/api/sessions/refresh", msg).Result
+            .Content.ReadAsStringAsync().Result;
+
+        JsonElement jsonresponse = JsonSerializer.Deserialize<JsonElement>(response).GetProperty("response");
+        this.token = jsonresponse.GetProperty("jwt").ToString();
+        this.refreshToken = jsonresponse.GetProperty("refreshToken").ToString();
+        c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.token);
     }
 
     public JsonElement SendMessage(int destinationId, string text)
