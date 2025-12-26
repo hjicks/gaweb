@@ -48,6 +48,8 @@ public static class ApiDI
             });
 
             options.OperationFilter<SecurityRequirementsOperationFilter>();
+
+            options.EnableAnnotations();
         });
 
         Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
