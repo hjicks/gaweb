@@ -12,9 +12,11 @@ public record GetAllUserPrivateChatsQuery(int UserId) : IRequest<Result>;
 public class GetAllUserPrivateChatsQueryHandler : IRequestHandler<GetAllUserPrivateChatsQuery, Result>
 {
     private readonly IPrivateChatRepository _privateChatRepository;
-    public GetAllUserPrivateChatsQueryHandler(IPrivateChatRepository privateChatRepository)
+    private readonly IBlobService _blobService;
+    public GetAllUserPrivateChatsQueryHandler(IPrivateChatRepository privateChatRepository, IBlobService blobService)
     {
         _privateChatRepository = privateChatRepository;
+        _blobService = blobService;
     }
     public async Task<Result> Handle(GetAllUserPrivateChatsQuery request, CancellationToken cancellationToken)
     {
@@ -27,7 +29,7 @@ public class GetAllUserPrivateChatsQueryHandler : IRequestHandler<GetAllUserPriv
                 DisplayName = p.Members.Single().DisplayName,
                 Username = p.Members.Single().Username!,
                 Bio = p.Members.Single().Bio,
-                Avatar = p.Members.Single().Avatar,
+                Avatar = _blobService.EncodeBlobToBase64(p.Members.Single().Avatar!),
                 IsVerified = p.Members.Single().IsVerified,
                 IsBot = p.Members.Single().IsBot,
                 LastSeenAt = p.Members.Single().LastSeenAt

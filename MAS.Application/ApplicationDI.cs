@@ -66,6 +66,8 @@ public static class ApplicationDI
 
         services.AddScoped<IHashService, HashService>();
 
+        services.AddScoped<IBlobService, BlobService>();
+
         services.AddSignalR();
 
         services.AddSingleton<ChatHub>();

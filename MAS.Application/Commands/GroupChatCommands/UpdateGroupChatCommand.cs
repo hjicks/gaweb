@@ -4,6 +4,7 @@ using MAS.Application.Results;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 namespace MAS.Application.Commands.GroupChatCommands
@@ -13,10 +14,13 @@ namespace MAS.Application.Commands.GroupChatCommands
     {
         private readonly IGroupChatRepository _groupChatRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public UpdateGroupChatCommandHandler(IGroupChatRepository groupChatRepository, IUnitOfWork unitOfWork)
+        private readonly IBlobService _blobService;
+        public UpdateGroupChatCommandHandler(IGroupChatRepository groupChatRepository, IUnitOfWork unitOfWork,
+            IBlobService blobService)
         {
             _groupChatRepository = groupChatRepository;
             _unitOfWork = unitOfWork;
+            _blobService = blobService;
         }
         public async Task<Result> Handle(UpdateGroupChatCommand request, CancellationToken cancellationToken)
         {
@@ -26,6 +30,16 @@ namespace MAS.Application.Commands.GroupChatCommands
 
             if (groupChat.Members.Single().Role == GroupChatRole.Member)
                 return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied);
+
+            byte[] blob = null!;
+            if (request.GroupChat.Avatar != null)
+            {
+                blob = _blobService.DecodeBase64Blob(request.GroupChat.Avatar);
+                if (blob.IsNullOrEmpty())
+                    return Result.Failure(StatusCodes.Status422UnprocessableEntity, ErrorType.UnableToDecodeFileContent);
+                if (!_blobService.ValidateImageBlob(blob))
+                    return Result.Failure(StatusCodes.Status422UnprocessableEntity, ErrorType.AvatarIsNotValid);
+            }
 
             bool IsPublic = false;
 
@@ -38,7 +52,7 @@ namespace MAS.Application.Commands.GroupChatCommands
             groupChat.DisplayName = request.GroupChat.DisplayName;
             groupChat.Groupname = IsPublic ? request.GroupChat.Groupname! : Guid.NewGuid().ToString();
             groupChat.Description = request.GroupChat.Description;
-            groupChat.Avatar = request.GroupChat.Avatar;
+            groupChat.Avatar = blob;
             groupChat.MsgPermissionType = request.GroupChat.MsgPermissionType;
 
             _groupChatRepository.Update(groupChat);
@@ -51,7 +65,7 @@ namespace MAS.Application.Commands.GroupChatCommands
                 DisplayName = groupChat.DisplayName,
                 Groupname = groupChat.Groupname,
                 Description = groupChat.Description,
-                Avatar = groupChat.Avatar,
+                Avatar = request.GroupChat.Avatar,
                 IsPublic = groupChat.IsPublic,
                 MsgPermissionType = groupChat.MsgPermissionType,
                 CreatedAt = groupChat.CreatedAt

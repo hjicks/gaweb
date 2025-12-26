@@ -7,6 +7,7 @@ using MAS.Core.Options;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 namespace MAS.Application.Commands.UserCommands;
@@ -19,16 +20,18 @@ public class AddUserCommandHandler : IRequestHandler<AddUserCommand, Result>
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHashService _hashService;
     private readonly IJwtService _jwtService;
+    private readonly IBlobService _blobService;
     private readonly TokenOptions _tokenOptions;
     public AddUserCommandHandler(IUserRepository userRepository, ISessionRepository sessionRepository,
         IUnitOfWork unitOfWork, IHashService hashService, IJwtService jwtService,
-        IOptions<TokenOptions> tokenOptions)
+        IBlobService blobService, IOptions<TokenOptions> tokenOptions)
     {
         _userRepository = userRepository;
         _sessionRepository = sessionRepository;
         _unitOfWork = unitOfWork;
         _hashService = hashService;
         _jwtService = jwtService;
+        _blobService = blobService;
         _tokenOptions = tokenOptions.Value;
     }
     public async Task<Result> Handle(AddUserCommand request, CancellationToken cancellationToken)
@@ -36,6 +39,16 @@ public class AddUserCommandHandler : IRequestHandler<AddUserCommand, Result>
         var userExists = await _userRepository.IsExistsAsync(request.User.Username);
         if (userExists)
             return Result.Failure(StatusCodes.Status422UnprocessableEntity, ErrorType.UsernameAlreadyExists);
+
+        byte[] blob = null!;
+        if (request.User.Avatar != null)
+        {
+            blob = _blobService.DecodeBase64Blob(request.User.Avatar);
+            if (blob.IsNullOrEmpty())
+                return Result.Failure(StatusCodes.Status422UnprocessableEntity, ErrorType.UnableToDecodeFileContent);
+            if (!_blobService.ValidateImageBlob(blob))
+                return Result.Failure(StatusCodes.Status422UnprocessableEntity, ErrorType.AvatarIsNotValid);
+        }
 
         var passwordHash = _hashService.HashPassword(request.User.Password);
         var newUser = new User
@@ -45,7 +58,7 @@ public class AddUserCommandHandler : IRequestHandler<AddUserCommand, Result>
             PasswordHash = passwordHash.Hash,
             PasswordSalt = passwordHash.Salt,
             Bio = request.User.Bio,
-            Avatar = request.User.Avatar
+            Avatar = blob
         };
         await _userRepository.AddAsync(newUser);
 
@@ -72,7 +85,7 @@ public class AddUserCommandHandler : IRequestHandler<AddUserCommand, Result>
                 DisplayName = newUser.DisplayName,
                 Username = newUser.Username,
                 Bio = newUser.Bio,
-                Avatar = newUser.Avatar,
+                Avatar = request.User.Avatar,
                 IsVerified = newUser.IsVerified,
                 IsBot = newUser.IsBot,
                 Jwt = _jwtService.GetJwt(newUser.Id, roles),

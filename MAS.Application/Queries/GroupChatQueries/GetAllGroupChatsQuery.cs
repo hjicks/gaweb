@@ -10,9 +10,11 @@ public record GetAllGroupChatsQuery() : IRequest<Result>;
 public class GetAllGroupChatsQueryHandler : IRequestHandler<GetAllGroupChatsQuery, Result>
 {
     private readonly IGroupChatRepository _groupChatRepository;
-    public GetAllGroupChatsQueryHandler(IGroupChatRepository groupChatRepository)
+    private readonly IBlobService _blobService;
+    public GetAllGroupChatsQueryHandler(IGroupChatRepository groupChatRepository, IBlobService blobService)
     {
         _groupChatRepository = groupChatRepository;
+        _blobService = blobService;
     }
     public async Task<Result> Handle(GetAllGroupChatsQuery request, CancellationToken cancellationToken)
     {
@@ -20,9 +22,9 @@ public class GetAllGroupChatsQueryHandler : IRequestHandler<GetAllGroupChatsQuer
         {
             Id = g.Id,
             DisplayName = g.DisplayName,
-            Groupname = g.Groupname,
+            Groupname = g.Groupname!,
             Description = g.Description,
-            Avatar = g.Avatar,
+            Avatar = _blobService.EncodeBlobToBase64(g.Avatar!),
             IsPublic = g.IsPublic,
             MsgPermissionType = g.MsgPermissionType,
             CreatedAt = g.CreatedAt

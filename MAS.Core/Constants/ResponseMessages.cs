@@ -23,6 +23,8 @@ public class ResponseMessages
         { ErrorType.PermissionDenied, "You are not authorized to perform this action." },
         { ErrorType.ActiveSessionAvailable, "Please log out from your other session first." },
         { ErrorType.ChatIsEmpty, "Chat have no message." },
-        { ErrorType.MemberAlreadyJoinedOrIsBanned, "Member is either already joined the group or banned from it." }
+        { ErrorType.MemberAlreadyJoinedOrIsBanned, "Member is either already joined the group or banned from it." },
+        { ErrorType.UnableToDecodeFileContent, "Unable to decode file content. The content is either invalid or larger than 50 MB." },
+        { ErrorType.AvatarIsNotValid, "Avatar is not a valid image. Send a valid image between 1 KB and 2 MB." }
     };
 }
