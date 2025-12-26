@@ -20,5 +20,7 @@ public enum ErrorType
     ActiveSessionAvailable,
     ChatIsEmpty,
     MemberAlreadyJoinedOrIsBanned,
-    MemberIsBanned
+    MemberIsBanned,
+    UnableToDecodeFileContent,
+    AvatarIsNotValid
 }

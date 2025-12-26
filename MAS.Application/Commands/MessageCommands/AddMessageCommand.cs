@@ -10,6 +10,7 @@ using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 namespace MAS.Application.Commands.MessageCommands;
@@ -23,12 +24,13 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
     private readonly IPrivateChatRepository _privateChatRepository;
     private readonly IGroupChatRepository _groupChatRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IBlobService _blobService;
     private readonly IHubContext<ChatHub> _hubContext;
 
     public AddMessageCommandHandler(IMessageRepository messageRepository,
         IUserRepository userRepository, IBaseChatRepository baseChatRepository,
         IPrivateChatRepository privateChatRepository, IGroupChatRepository groupChatRepository,
-        IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext)
+        IUnitOfWork unitOfWork, IBlobService blobService, IHubContext<ChatHub> hubContext)
     {
         _messageRepository = messageRepository;
         _userRepository = userRepository;
@@ -36,6 +38,7 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
         _privateChatRepository = privateChatRepository;
         _groupChatRepository = groupChatRepository;
         _unitOfWork = unitOfWork;
+        _blobService = blobService;
         _hubContext = hubContext;
     }
     public async Task<Result> Handle(AddMessageCommand request, CancellationToken cancellationToken)
@@ -71,6 +74,14 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
                 return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied);
         }
 
+        byte[] blob = null!;
+        if (request.Message.Content != null)
+        {
+            blob = _blobService.DecodeBase64Blob(request.Message.Content);
+            if (blob.IsNullOrEmpty())
+                return Result.Failure(StatusCodes.Status422UnprocessableEntity, ErrorType.UnableToDecodeFileContent);
+        }
+
         var newMessage = new Message
         {
             Sender = sender!,
@@ -82,7 +93,7 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
             newMessage.FileName = request.Message.FileName;
             newMessage.FileSize = request.Message.FileSize;
             newMessage.FileContentType = request.Message.FileContentType;
-            newMessage.FileContent = new FileContent { Content = request.Message.Content };
+            newMessage.FileContent = new FileContent { Content = blob };
         }
 
         await _messageRepository.AddAsync(newMessage);

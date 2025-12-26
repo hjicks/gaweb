@@ -6,6 +6,7 @@ using MAS.Core.Entities.JoinEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
 namespace MAS.Application.Commands.GroupChatCommands;
@@ -16,12 +17,14 @@ public class AddGroupChatCommandHandler : IRequestHandler<AddGroupChatCommand, R
     private readonly IGroupChatRepository _groupChatRepository;
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IBlobService _blobService;
     public AddGroupChatCommandHandler(IGroupChatRepository groupChatRepository, IUserRepository userRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork, IBlobService blobService)
     {
         _groupChatRepository = groupChatRepository;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _blobService = blobService;
     }
 
     public async Task<Result> Handle(AddGroupChatCommand request, CancellationToken cancellationToken)
@@ -40,13 +43,23 @@ public class AddGroupChatCommandHandler : IRequestHandler<AddGroupChatCommand, R
             IsPublic = true;
         }
 
+        byte[] blob = null!;
+        if (request.GroupChat.Avatar != null)
+        {
+            blob = _blobService.DecodeBase64Blob(request.GroupChat.Avatar);
+            if (blob.IsNullOrEmpty())
+                return Result.Failure(StatusCodes.Status422UnprocessableEntity, ErrorType.UnableToDecodeFileContent);
+            if (!_blobService.ValidateImageBlob(blob))
+                return Result.Failure(StatusCodes.Status422UnprocessableEntity, ErrorType.AvatarIsNotValid);
+        }
+
         var newGroupChat = new GroupChat
         {
             IsPublic = IsPublic,
             DisplayName = request.GroupChat.DisplayName,
             Groupname = IsPublic ? request.GroupChat.Groupname! : Guid.NewGuid().ToString(),
             Description = request.GroupChat.Description,
-            Avatar = request.GroupChat.Avatar,
+            Avatar = blob,
             MsgPermissionType = request.GroupChat.MsgPermissionType,
             Members = new List<GroupChatUser>
             {
@@ -64,7 +77,7 @@ public class AddGroupChatCommandHandler : IRequestHandler<AddGroupChatCommand, R
             DisplayName = newGroupChat.DisplayName,
             Groupname = newGroupChat.Groupname,
             Description = newGroupChat.Description,
-            Avatar = newGroupChat.Avatar,
+            Avatar = request.GroupChat.Avatar,
             IsPublic = newGroupChat.IsPublic,
             MsgPermissionType = newGroupChat.MsgPermissionType,
             CreatedAt = newGroupChat.CreatedAt
