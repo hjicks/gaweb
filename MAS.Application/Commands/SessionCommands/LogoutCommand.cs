@@ -3,6 +3,7 @@ using MAS.Application.Results;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Commands.SessionCommands;
 
@@ -29,6 +30,7 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, Result>
         _sessionRepository.Update(dbSession);
         await _unitOfWork.SaveAsync();
 
+        Log.Information($"Session with id {dbSession.Id} is revoked.");
         return Result.Success(StatusCodes.Status200OK);
     }
 }

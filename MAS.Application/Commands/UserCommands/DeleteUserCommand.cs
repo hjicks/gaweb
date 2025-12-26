@@ -4,6 +4,7 @@ using MAS.Core.Entities.JoinEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Commands.UserCommands;
 
@@ -51,6 +52,7 @@ public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Resul
 
         await _unitOfWork.SaveAsync();
 
+        Log.Information($"User {user.Id} deleted.");
         return Result.Success(StatusCodes.Status200OK);
     }
 }

@@ -3,6 +3,7 @@ using MAS.Application.Interfaces;
 using MAS.Application.Results;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Queries.GroupChatQueries;
 
@@ -21,13 +22,14 @@ public class GetAllUserGroupChatsQueryHandler : IRequestHandler<GetAllUserGroupC
             Id = g.Id,
             IsPublic = g.IsPublic,
             DisplayName = g.DisplayName,
-            Groupname = g.Groupname,
+            Groupname = g.Groupname!,
             Description = g.Description,
             Avatar = g.Avatar,
             MsgPermissionType = g.MsgPermissionType,
             CreatedAt = g.CreatedAt
         }).ToList();
 
+        Log.Information($"All group chats of user {request.UserId} fetched.");
         return Result.Success(StatusCodes.Status200OK, groupChats);
     }
 }

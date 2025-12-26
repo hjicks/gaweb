@@ -42,13 +42,14 @@ public class GroupChatRepository : BaseRepository<GroupChat>, IGroupChatReposito
 
     public async Task<GroupChat?> GetByGroupnameAsync(string groupname)
     {
-        return await _efDbContext.GroupChats.SingleOrDefaultAsync(g => g.Groupname == groupname);
+        return await _efDbContext.GroupChats
+            .SingleOrDefaultAsync(g => g.Groupname == groupname && g.IsDeleted == false);
     }
 
     public async Task<GroupChat?> GetByIdWithMemberAsync(int userId, int groupId)
     {
         return await _efDbContext.GroupChats
-            .Where(g => g.Id == groupId)
+            .Where(g => g.Id == groupId && g.IsDeleted == false)
             .Include(g => g.Members.Where(m => m.MemberId == userId))
             .SingleOrDefaultAsync();
     }
@@ -56,7 +57,7 @@ public class GroupChatRepository : BaseRepository<GroupChat>, IGroupChatReposito
     public async Task<GroupChat?> GetByIdWithMembersAsync(int groupId)
     {
         return await _efDbContext.GroupChats
-            .Where(g => g.Id == groupId)
+            .Where(g => g.Id == groupId && g.IsDeleted == false)
             .Include(g => g.Members)
             .SingleOrDefaultAsync();
     }
@@ -70,7 +71,8 @@ public class GroupChatRepository : BaseRepository<GroupChat>, IGroupChatReposito
 
     public async Task<bool> IsExistsAsync(string groupname)
     {
-        return await _efDbContext.GroupChats.AnyAsync(u => u.Groupname == groupname);
+        return await _efDbContext.GroupChats
+            .AnyAsync(g => g.Groupname == groupname && g.IsDeleted == false);
     }
 
     public async Task<bool> IsMemberExistsAsync(int groupId, int memberId)

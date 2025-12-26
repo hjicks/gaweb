@@ -10,6 +10,7 @@ using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
+using Serilog;
 
 namespace MAS.Application.Commands.MessageCommands;
 
@@ -67,8 +68,7 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
             var pvMember = pv!.Members.Where(m => m.Id == request.SenderId).SingleOrDefault();
 
             if (pvMember == null)
-                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied,
-                    new[] { "You have not started a private chat with this user yet." });
+                return Result.Failure(StatusCodes.Status409Conflict, ErrorType.PermissionDenied);
         }
 
         var newMessage = new Message
@@ -100,7 +100,7 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
             CreatedAt = newMessage.CreatedAt
         };
 
-        if (_baseChatRepository.GetTypeByIdAsync(request.Message.DestinationId).Result == ((int)ChatType.Private).ToString())
+        if (_baseChatRepository.GetTypeByIdAsync(request.Message.DestinationId).Result == (int)ChatType.Private)
         {
             PrivateChat pc = await _privateChatRepository.GetByIdAsync(destination.Id);
             int dstUserId = sender!.Id == pc.Members.First<User>().Id ? pc.Members.Last<User>().Id : pc.Members.First<User>().Id;
@@ -108,7 +108,7 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
             await _hubContext.Clients.User(u.Id.ToString()).SendAsync("AddMessage",
                 msg, cancellationToken: cancellationToken);
         }
-        else if (_baseChatRepository.GetTypeByIdAsync(request.Message.DestinationId).Result == ((int)ChatType.Group).ToString())
+        else if (_baseChatRepository.GetTypeByIdAsync(request.Message.DestinationId).Result == (int)ChatType.Group)
         {
             GroupChat gc = await _groupChatRepository.GetByIdAsync(destination.Id);
             foreach(GroupChatUser gcu in gc.Members)
@@ -122,6 +122,7 @@ public class AddMessageCommandHandler : IRequestHandler<AddMessageCommand, Resul
             }
         }
 
+        Log.Information($"User {sender!.Id} added message {newMessage.Id} to chat {destination.Id}.");
         return Result.Success(StatusCodes.Status201Created, msg);
     }
 }

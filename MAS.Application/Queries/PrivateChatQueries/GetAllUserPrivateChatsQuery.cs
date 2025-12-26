@@ -4,6 +4,7 @@ using MAS.Application.Interfaces;
 using MAS.Application.Results;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Queries.PrivateChatQueries;
 
@@ -17,23 +18,24 @@ public class GetAllUserPrivateChatsQueryHandler : IRequestHandler<GetAllUserPriv
     }
     public async Task<Result> Handle(GetAllUserPrivateChatsQuery request, CancellationToken cancellationToken)
     {
-        var privateChats = (await _privateChatRepository.GetAllUserAsync(request.UserId)).Select(c => new PrivateChatGetDto
+        var privateChats = (await _privateChatRepository.GetAllUserAsync(request.UserId)).Select(p => new PrivateChatGetDto
         {
-            Id = c.Id,
+            Id = p.Id,
             Receiver = new UserGetDto
             {
-                Id = c.Members.Single().Id,
-                DisplayName = c.Members.Single().DisplayName,
-                Username = c.Members.Single().Username,
-                Bio = c.Members.Single().Bio,
-                Avatar = c.Members.Single().Avatar,
-                IsVerified = c.Members.Single().IsVerified,
-                IsBot = c.Members.Single().IsBot,
-                LastSeenAt = c.Members.Single().LastSeenAt
+                Id = p.Members.Single().Id,
+                DisplayName = p.Members.Single().DisplayName,
+                Username = p.Members.Single().Username!,
+                Bio = p.Members.Single().Bio,
+                Avatar = p.Members.Single().Avatar,
+                IsVerified = p.Members.Single().IsVerified,
+                IsBot = p.Members.Single().IsBot,
+                LastSeenAt = p.Members.Single().LastSeenAt
             },
-            CreatedAt = c.CreatedAt
+            CreatedAt = p.CreatedAt
         }).ToList();
 
+        Log.Information($"All private chats of user {request.UserId} fetched.");
         return Result.Success(StatusCodes.Status200OK, privateChats);
     }
 }

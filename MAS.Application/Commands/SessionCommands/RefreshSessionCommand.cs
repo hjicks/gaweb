@@ -4,6 +4,7 @@ using MAS.Application.Results;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Commands.SessionCommands;
 
@@ -28,7 +29,11 @@ public class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionComman
         var session = await _sessionRepository.GetByTokenAsync(
             _hashService.HashRefreshToken(request.TokenDto.RefreshToken));
         if (session == null)
+        {
+            Log.Warning($"Unsuccessful attempt to refresh a session, token used: {request.TokenDto.RefreshToken}");
             return Result.Failure(StatusCodes.Status404NotFound, ErrorType.SessionNotFound);
+        }
+            
 
         if (session.ExpiresAt < DateTime.Now || session.IsRevoked == true)
             return Result.Failure(StatusCodes.Status419AuthenticationTimeout, ErrorType.InvalidOrExpiredRefreshToken);
@@ -41,6 +46,8 @@ public class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionComman
         await _unitOfWork.SaveAsync();
 
         var roles = session.UserId == 1 ? new List<string> { "Admin", "User" } : new List<string> { "User" };
+
+        Log.Information($"Jwt of session {session.Id} renewed.");
         return Result.Success(StatusCodes.Status200OK,
             new SessionRefreshDto
             {

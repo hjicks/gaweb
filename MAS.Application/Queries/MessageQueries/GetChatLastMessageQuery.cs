@@ -5,6 +5,7 @@ using MAS.Core.Entities.ChatEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Queries.MessageQueries;
 
@@ -28,6 +29,7 @@ public class GetChatLastMessageQueryHandler : IRequestHandler<GetChatLastMessage
         if (message == null)
             return Result.Failure(StatusCodes.Status409Conflict, ErrorType.ChatIsEmpty);
 
+        Log.Information($"Chat {chat.Id} last message with id {message.Id} fetched.");
         return Result.Success(StatusCodes.Status200OK, new MessageGetDto
         {
             Id = message.Id,

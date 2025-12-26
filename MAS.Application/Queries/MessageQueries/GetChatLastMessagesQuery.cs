@@ -4,6 +4,7 @@ using MAS.Application.Results;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Queries.MessageQueries;
 
@@ -21,7 +22,8 @@ public class GetChatLastMessagesQueryHandler : IRequestHandler<GetChatLastMessag
         if (message == null)
             return Result.Failure(StatusCodes.Status404NotFound, ErrorType.MessageNotFound);
 
-        var messages = (await _messageRepository.GetChatLastMessagesAsync(message.DestinationId, message.CreatedAt, 20))
+        ushort msgCount = 20;
+        var messages = (await _messageRepository.GetChatLastMessagesAsync(message.DestinationId, message.CreatedAt, msgCount))
             .Select(m => new MessageGetDto
             {
                 Id = m.Id,
@@ -34,6 +36,7 @@ public class GetChatLastMessagesQueryHandler : IRequestHandler<GetChatLastMessag
                 CreatedAt = m.CreatedAt
             }).ToList(); ;
 
+        Log.Information($"Last {msgCount} messages before message {message.Id} fetched from chat {message.DestinationId}.");
         return Result.Success(StatusCodes.Status200OK, messages);
     }
 }

@@ -4,6 +4,7 @@ using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
 namespace MAS.Application.Commands.GroupChatCommands;
 
@@ -44,6 +45,7 @@ public class DeleteGroupChatCommandHandler : IRequestHandler<DeleteGroupChatComm
 
         await _unitOfWork.SaveAsync();
 
+        Log.Information($"Group chat {groupChat.Id} deleted by user {request.UserId}.");
         return Result.Success(StatusCodes.Status200OK, "Chat deleted successfully.");
     }
 }

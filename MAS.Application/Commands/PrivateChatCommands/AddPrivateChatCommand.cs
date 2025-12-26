@@ -8,6 +8,7 @@ using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
+using Serilog;
 
 namespace MAS.Application.Commands.PrivateChatCommands;
 
@@ -69,6 +70,7 @@ public class AddPrivateChatCommandHandler : IRequestHandler<AddPrivateChatComman
 
         await _hubContext.Clients.User(receiver.Id.ToString()).SendAsync("AddPrivateChatCommand", pc, cancellationToken: cancellationToken);
 
+        Log.Information($"Private chat with starter user {starter.Id} and receiver user {receiver.Id} added.");
         return Result.Success(StatusCodes.Status201Created, pc);
     }
 }

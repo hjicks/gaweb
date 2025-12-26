@@ -4,6 +4,7 @@ using MAS.Application.Results;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Queries.GroupChatQueries;
 
@@ -30,6 +31,7 @@ public class GetGroupChatMembersQueryHandler : IRequestHandler<GetGroupChatMembe
             JoinedAt = m.JoinedAt
         }).ToList();
 
+        Log.Information($"Members of group chat {groupChat.Id} fetched.");
         return Result.Success(StatusCodes.Status200OK, groupMembers);
     }
 }

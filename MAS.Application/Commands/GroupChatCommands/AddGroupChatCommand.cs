@@ -6,6 +6,7 @@ using MAS.Core.Entities.JoinEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Commands.GroupChatCommands;
 
@@ -55,7 +56,8 @@ public class AddGroupChatCommandHandler : IRequestHandler<AddGroupChatCommand, R
 
         await _groupChatRepository.AddAsync(newGroupChat);
         await _unitOfWork.SaveAsync();
-        
+
+        Log.Information($"User {owner.Id} added group {newGroupChat.Id}.");
         return Result.Success(StatusCodes.Status200OK, new GroupChatGetDto
         {
             Id = newGroupChat.Id,

@@ -5,7 +5,6 @@ using MAS.Application.Queries.SessionQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 
 namespace MAS.Api.Controllers;
 
@@ -31,12 +30,6 @@ public class SessionController : BaseController
     public async Task<IActionResult> LoginAsync(UserLoginDto userCred)
     {
         var result = await _sender.Send(new LoginCommand(userCred));
-        if (result.Ok)
-        {
-            Log.Information($"User {userCred.Username} logged in.");
-            return StatusCode(result.StatusCode, result);
-        }
-        Log.Information($"Unsuccessful login attempt with username {userCred.Username}.");
         return StatusCode(result.StatusCode, result);
     }
 
@@ -44,11 +37,6 @@ public class SessionController : BaseController
     public async Task<IActionResult> LogoutAsync(int sessionId)
     {
         var result = await _sender.Send(new LogoutCommand(sessionId));
-        if (result.Ok)
-        {
-            Log.Information($"Session with id {sessionId} is expired.");
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -56,12 +44,6 @@ public class SessionController : BaseController
     public async Task<IActionResult> RefreshJwtAsync(SessionRefreshTokenDto tokenDto)
     {
         var result = await _sender.Send(new RefreshSessionCommand(tokenDto));
-        if (result.Ok)
-        {
-            Log.Information($"Jwt of a session renewed.");
-            return StatusCode(result.StatusCode, result);
-        }
-        Log.Information($"Unsuccessful attempt to refresh a session.");
         return StatusCode(result.StatusCode, result);
     }
 }

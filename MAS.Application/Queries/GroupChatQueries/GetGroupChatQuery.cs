@@ -4,6 +4,7 @@ using MAS.Application.Results;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Queries.GroupChatQueries;
 
@@ -22,11 +23,12 @@ public class GetGroupChatQueryHandler : IRequestHandler<GetGroupChatQuery, Resul
         if (groupChat == null || groupChat.Members.Single().IsBanned == true)
             return Result.Failure(StatusCodes.Status404NotFound, ErrorType.ChatNotFound);
 
+        Log.Information($"Group chat {groupChat.Id} information fetched.");
         return Result.Success(StatusCodes.Status200OK, new GroupChatGetDto
         {
             Id = groupChat.Id,
             DisplayName = groupChat.DisplayName,
-            Groupname = groupChat.Groupname,
+            Groupname = groupChat.Groupname!,
             Description = groupChat.Description,
             Avatar = groupChat.Avatar,
             IsPublic = groupChat.IsPublic,

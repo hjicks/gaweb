@@ -3,6 +3,7 @@ using MAS.Application.Results;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Commands.PrivateChatCommands;
 
@@ -26,6 +27,7 @@ public class DeletePrivateChatCommandHandler : IRequestHandler<DeletePrivateChat
         _privateChatRepository.Delete(privateChat);
         await _unitOfWork.SaveAsync();
 
+        Log.Information($"Private chat {privateChat.Id} deleted.");
         return Result.Success(StatusCodes.Status200OK);
     }
 }

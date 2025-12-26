@@ -1,9 +1,9 @@
-﻿using MAS.Application.Dtos.GroupChatDtos;
-using MAS.Application.Interfaces;
+﻿using MAS.Application.Interfaces;
 using MAS.Application.Results;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Serilog;
 
 namespace MAS.Application.Commands.GroupChatCommands;
 
@@ -32,6 +32,7 @@ public class LeaveGroupChatCommandHandler : IRequestHandler<LeaveGroupChatComman
         _groupChatRepository.Update(groupChat);
         await _unitOfWork.SaveAsync();
 
+        Log.Information($"User {member.MemberId} left group {groupChat.Id}.");
         return Result.Success(StatusCodes.Status200OK, "Member removed from the group successfully.");
     }
 }
