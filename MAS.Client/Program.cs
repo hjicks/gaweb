@@ -1,48 +1,15 @@
-﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text.Json;
+﻿using System.Text.Json;
 using MAS.Application.Dtos.MessageDtos;
 using Microsoft.AspNetCore.SignalR.Client;
+using MAS.Client;
 
 internal class Program
 {
     private static void Main(string[] args)
     {
-        string baseurl = "https://localhost:7088";
-        JsonElement r;
-        string username, password, clientName, os;
+        string username, password, clientName, os, baseurl;
 
-        JsonElement Login(string username, string password, string clientName, string os)
-        {
-            HttpClient c = new HttpClient { BaseAddress = new Uri(baseurl) };
-            var msg = new { username, password, clientName, os };
-            var response = c.PostAsJsonAsync("/api/sessions/login", msg).Result
-                .Content.ReadAsStringAsync().Result;
-            return JsonSerializer.Deserialize<JsonElement>(response);
-        }
-
-        JsonElement SendMessage(int destinationId, string text, string token)
-        {
-            HttpClient c = new HttpClient { BaseAddress = new Uri(baseurl) };
-            c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            MessageAddDto msg = new()
-            {
-                DestinationId = destinationId,
-                Text = text,
-            };
-            var response = c.PostAsJsonAsync("/api/messages", msg).Result
-                .Content.ReadAsStringAsync().Result;
-            return JsonSerializer.Deserialize<JsonElement>(response);
-        }
-
-        JsonElement List(string token)
-        {
-            HttpClient c = new HttpClient { BaseAddress = new Uri(baseurl) };
-            c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = c.GetFromJsonAsync<JsonElement>("/api/group-chats/all").Result;
-            return response;
-        }
-
+        baseurl = "https://localhost:7088";
         if (args.Length == 4)
         {
             username = args[0];
@@ -57,35 +24,36 @@ internal class Program
             clientName = "CLI client";
             os = "Windows 11";
         }
+
+        Client c = new(baseurl, username, password);
         Console.WriteLine($"Authenticating as {username}");
-        r = Login(username, password, clientName, os);
-        
-        string jwt = r.GetProperty("response").GetProperty("jwt").ToString();
-        Console.WriteLine($"Auth successed..., jwt token is {jwt}");
+        c.Login();
+
+        Console.WriteLine($"Logged in");
         Console.WriteLine("Connecting to the hub, waiting for events...");
         var connectionSignalR = new HubConnectionBuilder().WithUrl(baseurl + "/hub", options =>
-            {
-                options.AccessTokenProvider = () => Task.FromResult<string?>(jwt);
-            }).Build();
+        {
+            options.AccessTokenProvider = () => Task.FromResult<string?>(c.Token);
+        }).Build();
         connectionSignalR.StartAsync().Wait();
 
         connectionSignalR.On<MessageGetDto>("AddMessage",
-            (msg) => Console.WriteLine($"\n====New msg=====\nFrom: {msg.SenderId}\nTo: {msg.DestinationId}\n" +
+            (msg) => Console.WriteLine($"\nS{msg.SenderId} -> D{msg.DestinationId}: {msg.Text}\n" +
             $"Text: {msg.Text}"));
         while (true)
         {
             Console.Write("> ");
-            string input = Console.ReadLine();
-            IEnumerable<string> s = input.Split(" ").ToList();
+            string? input = Console.ReadLine();
+            IEnumerable<string> s = input!.Split(" ").ToList();
             string cmd = s.First();
-            
+
 
             switch (cmd)
             {
                 case "":
                     break;
                 case "/list":
-                    Console.WriteLine(List(jwt).ToString());
+                    Console.WriteLine(c.List().ToString());
                     break;
                 case "/ref":
                     break;
@@ -95,10 +63,9 @@ internal class Program
                 default:
                     int dst = Convert.ToInt32(s.First());
                     string text = string.Join(" ", s.Skip(1));
-                    SendMessage(dst, text, jwt);
+                    c.SendMessage(dst, text);
                     break;
             }
-
 
         }
     }
