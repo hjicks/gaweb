@@ -10,6 +10,7 @@ public static class CoreDI
     {
         services.Configure<ConnectionStringOptions>(configurtion.GetSection(ConnectionStringOptions.SectionName));
         services.Configure<TokenOptions>(configurtion.GetSection(TokenOptions.SectionName));
+        services.Configure<MasCorsOptions>(configurtion.GetSection(MasCorsOptions.SectionName));
         return services;
     }
 }

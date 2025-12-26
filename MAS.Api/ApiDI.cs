@@ -2,7 +2,10 @@
 using MAS.Application.Results;
 using MAS.Core.Constants;
 using MAS.Core.Enums;
+using MAS.Core.Options;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Swashbuckle.AspNetCore.Filters;
@@ -48,6 +51,24 @@ public static class ApiDI
             });
 
             options.OperationFilter<SecurityRequirementsOperationFilter>();
+        });
+
+        services.AddSingleton<IConfigureOptions<CorsOptions>>(provider =>
+        {
+            return new ConfigureOptions<CorsOptions>(options =>
+            {
+                var corsOptions = provider.GetRequiredService<IOptions<MasCorsOptions>>().Value;
+
+                options.AddPolicy("MASCorsPolicy", builder =>
+                {
+                    builder.WithOrigins(corsOptions.AllowedOrigins)
+                        .WithMethods(corsOptions.AllowedMethods.ToArray())
+                        .WithHeaders(corsOptions.AllowedHeaders.ToArray())
+                        .SetPreflightMaxAge(TimeSpan.FromSeconds(corsOptions.MaxAge));
+                    if (corsOptions.AllowCredentials)
+                        builder.AllowCredentials();
+                });
+            });
         });
 
         Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
