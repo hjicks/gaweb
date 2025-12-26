@@ -40,10 +40,6 @@ public class PrivateChatController : BaseController
     {
         var starterId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new AddPrivateChatCommand(starterId, receiverId));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -52,10 +48,6 @@ public class PrivateChatController : BaseController
     public async Task<IActionResult> DeletePrivateChatAsync(int privateChatId)
     {
         var result = await _sender.Send(new DeletePrivateChatCommand(privateChatId));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -64,10 +56,6 @@ public class PrivateChatController : BaseController
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new LeavePrivateChatCommand(userId, privateChatId));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 }

@@ -30,10 +30,6 @@ public class MessageController : BaseController
     public async Task<IActionResult> GetChatLastMessageAsync(int chatId)
     {
         var result = await _sender.Send(new GetChatLastMessageQuery(chatId));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -41,22 +37,14 @@ public class MessageController : BaseController
     public async Task<IActionResult> GetChatLastMessagesAsync(int messageId)
     {
         var result = await _sender.Send(new GetChatLastMessagesQuery(messageId));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddMessageAsync([FromBody] MessageAddDto message)
+    public async Task<IActionResult> AddMessageAsync(MessageAddDto message)
     {
         var senderId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new AddMessageCommand(senderId, message));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -65,10 +53,6 @@ public class MessageController : BaseController
     {
         var senderId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new DeleteMessageCommand(senderId, messageId));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 }

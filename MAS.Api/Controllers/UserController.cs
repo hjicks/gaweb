@@ -30,10 +30,6 @@ public class UserController : BaseController
     public async Task<IActionResult> AddUserAsync([FromBody] UserAddDto user)
     {
         var result = await _sender.Send(new AddUserCommand(user));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -42,10 +38,6 @@ public class UserController : BaseController
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new UpdateUserCommand(userId, user));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -54,10 +46,6 @@ public class UserController : BaseController
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new UpdateUserLastSeenCommand(userId, user));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -66,10 +54,6 @@ public class UserController : BaseController
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new DeleteUserCommand(userId));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 }

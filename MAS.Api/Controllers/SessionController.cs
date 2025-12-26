@@ -30,10 +30,6 @@ public class SessionController : BaseController
     public async Task<IActionResult> LoginAsync(UserLoginDto userCred)
     {
         var result = await _sender.Send(new LoginCommand(userCred));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -41,10 +37,6 @@ public class SessionController : BaseController
     public async Task<IActionResult> LogoutAsync(int sessionId)
     {
         var result = await _sender.Send(new LogoutCommand(sessionId));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -52,10 +44,6 @@ public class SessionController : BaseController
     public async Task<IActionResult> RefreshJwtAsync(SessionRefreshTokenDto tokenDto)
     {
         var result = await _sender.Send(new RefreshSessionCommand(tokenDto));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 }

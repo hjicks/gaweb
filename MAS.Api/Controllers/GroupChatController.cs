@@ -39,10 +39,6 @@ public class GroupChatController : BaseController
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new GetGroupChatQuery(userId, groupChatId));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -50,10 +46,6 @@ public class GroupChatController : BaseController
     public async Task<IActionResult> GetGroupChatMembersAsync(int groupChatId)
     {
         var result = await _sender.Send(new GetGroupChatMembersQuery(groupChatId));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -62,10 +54,6 @@ public class GroupChatController : BaseController
     {
         var ownerId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new AddGroupChatCommand(ownerId, groupChat));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -74,10 +62,6 @@ public class GroupChatController : BaseController
     {
         var adminId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new UpdateGroupChatCommand(adminId, groupChat));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -86,10 +70,6 @@ public class GroupChatController : BaseController
     {
         var ownerId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new DeleteGroupChatCommand(ownerId, groupChatId));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -98,10 +78,6 @@ public class GroupChatController : BaseController
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new JoinGroupChatCommand(userId, groupChatId));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -110,10 +86,6 @@ public class GroupChatController : BaseController
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new LeaveGroupChatCommand(userId, groupChatId));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -122,10 +94,6 @@ public class GroupChatController : BaseController
     {
         var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new AddGroupMemberCommand(userId, groupChatId, memberId));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -134,10 +102,6 @@ public class GroupChatController : BaseController
     {
         var ownerId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new PromoteOrDemoteGroupMemberCommand(ownerId, groupChatId, memberId));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 
@@ -146,10 +110,6 @@ public class GroupChatController : BaseController
     {
         var adminId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var result = await _sender.Send(new BanOrUnbanGroupMemberCommand(adminId, groupChatId, memberId));
-        if (result.Ok)
-        {
-            return StatusCode(result.StatusCode, result);
-        }
         return StatusCode(result.StatusCode, result);
     }
 }
