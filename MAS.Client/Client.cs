@@ -15,6 +15,7 @@ public class Client
 
     public string? /* JWT */ token;
     public string? /* JWT */ refreshToken;
+    private Timer? timer;
     public Client(string url, string username, string passwd, string clientName, string os)
     {
         this.url = url;
@@ -45,6 +46,7 @@ public class Client
         this.token =  jsonresponse.GetProperty("jwt").ToString();
         this.refreshToken = jsonresponse.GetProperty("refreshToken").ToString();
         c.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.token);
+        this.timer = new Timer((state) => Refresh(), null, TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(5));
     }
 
     /**
