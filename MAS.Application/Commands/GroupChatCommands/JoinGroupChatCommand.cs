@@ -1,10 +1,15 @@
-﻿using MAS.Application.Dtos.GroupChatDtos;
+﻿using System.Reflection;
+using MAS.Application.Dtos.GroupChatDtos;
+using MAS.Application.Hubs;
 using MAS.Application.Interfaces;
 using MAS.Application.Results;
+using MAS.Core.Entities.ChatEntities;
 using MAS.Core.Entities.JoinEntities;
+using MAS.Core.Entities.UserEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Serilog;
 
 namespace MAS.Application.Commands.GroupChatCommands;
@@ -15,12 +20,14 @@ public class JoinGroupChatCommandHandler : IRequestHandler<JoinGroupChatCommand,
     private readonly IGroupChatRepository _groupChatRepository;
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IHubContext<ChatHub> _hubContext;
     public JoinGroupChatCommandHandler(IGroupChatRepository groupChatRepository, IUserRepository userRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext)
     {
         _groupChatRepository = groupChatRepository;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _hubContext = hubContext;
     }
     public async Task<Result> Handle(JoinGroupChatCommand request, CancellationToken cancellationToken)
     {
@@ -48,13 +55,32 @@ public class JoinGroupChatCommandHandler : IRequestHandler<JoinGroupChatCommand,
         _groupChatRepository.Update(groupChat);
         await _unitOfWork.SaveAsync();
 
-        Log.Information($"User {user.Id} joined group {groupChat.Id}.");
-        return Result.Success(StatusCodes.Status200OK, new GroupChatMemberGetDto
+        GroupChatMemberGetDto msg = new()
         {
             MemberId = groupChatUser.MemberId,
             Role = groupChatUser.Role,
             JoinedAt = groupChatUser.JoinedAt,
             IsBanned = groupChatUser.IsBanned
-        });
+        };
+
+        /*
+         * Assuming everything went well so far,
+         * Inevitability we had to fetch list of group members somewhere, sooner or later
+         * (note the *s* on end of function's name)
+         */
+        groupChat = await _groupChatRepository.GetByIdWithMembersAsync(request.GroupChatId);
+        foreach (GroupChatUser gcu in groupChat.Members)
+        {
+            /* you don't want to send that message to sender, do you? */
+        if (gcu.MemberId == user!.Id)
+                continue;
+
+            await _hubContext.Clients.User(gcu.MemberId.ToString()).SendAsync("JoinGroupChat",
+                msg, groupChat.Id, cancellationToken: cancellationToken);
+        }
+
+
+        Log.Information($"User {user.Id} joined group {groupChat.Id}.");
+        return Result.Success(StatusCodes.Status200OK, msg);
     }
 }
