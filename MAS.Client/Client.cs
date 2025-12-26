@@ -70,6 +70,11 @@ public class Client
 
     
     /* Message */
+    /**
+     * <summary>
+     * sends a message to a destination
+     * </summary>
+     */
     public JsonElement SendMessage(int destinationId, string text)
     {
         MessageAddDto msg = new()
