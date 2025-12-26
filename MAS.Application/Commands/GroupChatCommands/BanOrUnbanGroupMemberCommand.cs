@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using MAS.Application.Dtos.GroupChatDtos;
+﻿using MAS.Application.Dtos.GroupChatDtos;
 using MAS.Application.Hubs;
 using MAS.Application.Interfaces;
 using MAS.Application.Results;
@@ -18,13 +17,16 @@ public class BanOrUnbanGroupMemberCommandHandler : IRequestHandler<BanOrUnbanGro
     private readonly IGroupChatRepository _groupChatRepository;
     private readonly IBaseRepository<GroupChatUser> _groupChatUserRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ISystemMsgService _systemMsgService;
     private readonly IHubContext<ChatHub> _hubContext;
     public BanOrUnbanGroupMemberCommandHandler(IGroupChatRepository groupChatRepository,
-        IBaseRepository<GroupChatUser> groupChatUserRepository, IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext)
+        IBaseRepository<GroupChatUser> groupChatUserRepository, IUnitOfWork unitOfWork, 
+        ISystemMsgService systemMsgService, IHubContext<ChatHub> hubContext)
     {
         _groupChatRepository = groupChatRepository;
         _groupChatUserRepository = groupChatUserRepository;
         _unitOfWork = unitOfWork;
+        _systemMsgService = systemMsgService;
         _hubContext = hubContext;
     }
     public async Task<Result> Handle(BanOrUnbanGroupMemberCommand request, CancellationToken cancellationToken)
@@ -52,6 +54,8 @@ public class BanOrUnbanGroupMemberCommandHandler : IRequestHandler<BanOrUnbanGro
         await _hubContext.Clients.User(request.MemberId.ToString()).SendAsync("BanOrUnbanGroupMemberCommand",
            request.GroupChatId, member.IsBanned, cancellationToken: cancellationToken);
 
+        if (member.IsBanned)
+            await _systemMsgService.SendSystemMsgAsync(groupChat.Id, MasEvent.Ban, member.MemberId);
         Log.Information($"Admin {request.UserId} of group {groupChat.Id} {(member.IsBanned ? "banned" : "unbanned")} member {member.MemberId}.");
         return Result.Success(StatusCodes.Status200OK, new GroupChatMemberGetDto
         {

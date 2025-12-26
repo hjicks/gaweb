@@ -53,7 +53,7 @@ public sealed class HashService : IHashService
         var refreshToken = Convert.ToBase64String(
             RandomNumberGenerator.GetBytes(refreshTokenSizeBeforeEncode));
 
-        using var hmac = new HMACSHA512(
+        using var hmac = new HMACSHA256(
             Encoding.UTF8.GetBytes(_tokenOptions.RefreshToken.Key));
         var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(refreshToken));
 
@@ -62,7 +62,7 @@ public sealed class HashService : IHashService
 
     public byte[] HashRefreshToken(string refreshToken)
     {
-        using var hmac = new HMACSHA512(
+        using var hmac = new HMACSHA256(
             Encoding.UTF8.GetBytes(_tokenOptions.RefreshToken.Key));
         var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(refreshToken));
 

@@ -47,9 +47,9 @@ public class SessionController : BaseController
     Description = "Ends the specified session."
     )]
     [HttpPut("logout/{sessionId}")]
-    public async Task<IActionResult> LogoutAsync(int sessionId)
+    public async Task<IActionResult> LogoutAsync(SessionRefreshTokenDto tokenDto)
     {
-        var result = await _sender.Send(new LogoutCommand(sessionId));
+        var result = await _sender.Send(new LogoutCommand(tokenDto));
         return StatusCode(result.StatusCode, result);
     }
 

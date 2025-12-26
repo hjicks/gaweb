@@ -1,5 +1,6 @@
 ﻿using MAS.Application.Interfaces;
 using MAS.Core.Entities.MessageEntities;
+using MAS.Core.Enums;
 
 namespace MAS.Application.Services;
 
@@ -19,22 +20,26 @@ public class SystemMsgService : ISystemMsgService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task SendSystemMsgAsync(int chatId, string masEvent, string username)
+    public async Task SendSystemMsgAsync(int chatId, MasEvent masEvent, int userId)
     {
+        var username = await _userRepository.GetUsernameByIdAsync(userId);
         string message = string.Empty;
         switch (masEvent)
         {
-            case "Join":
+            case MasEvent.Join:
                 message = $"{username} joined the group.";
                 break;
-            case "Leave":
+            case MasEvent.Leave:
                 message = $"{username} left the group.";
                 break;
-            case "Ban":
+            case MasEvent.Ban:
                 message = $"{username} is banned from the group.";
                 break;
-            case "Promote":
+            case MasEvent.Promote:
                 message = $"{username} is now admin of the group.";
+                break;
+            case MasEvent.Demote:
+                message = $"{username} is no longer admin of the group.";
                 break;
         }
 

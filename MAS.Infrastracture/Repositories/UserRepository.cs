@@ -20,6 +20,12 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         return (await _dapperDbContext.GetConnection().QueryAsync<User>(query)).ToList();
     }
 
+    public async Task<string?> GetUsernameByIdAsync(int userId)
+    {
+        string query = $"SELECT Username FROM Users WHERE Id == {userId}";
+        return (await _dapperDbContext.GetConnection().QuerySingleOrDefaultAsync<string>(query));
+    }
+
     public async Task<User?> GetByUsernameAsync(string username)
     {
         return await _efDbContext.Users.SingleOrDefaultAsync(u => u.Username == username);
