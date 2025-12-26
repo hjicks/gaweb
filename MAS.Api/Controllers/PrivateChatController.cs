@@ -4,6 +4,7 @@ using MAS.Application.Queries.PrivateChatQueries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using System.Security.Claims;
 
 namespace MAS.Api.Controllers;
@@ -19,6 +20,10 @@ public class PrivateChatController : BaseController
 
     }
 
+    [SwaggerOperation(
+    Summary = "Get all private chats",
+    Description = "Returns all private chats in the system. Accessible only by admins."
+    )]
     [HttpGet("all")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetAllPrivateChatsAsync()
@@ -27,6 +32,10 @@ public class PrivateChatController : BaseController
         return StatusCode(result.StatusCode, result);
     }
 
+    [SwaggerOperation(
+    Summary = "Get user's private chats",
+    Description = "Returns all private chats of the authenticated user."
+    )]
     [HttpGet]
     public async Task<IActionResult> GetAllUserChatsAsync()
     {
@@ -35,6 +44,10 @@ public class PrivateChatController : BaseController
         return StatusCode(result.StatusCode, result);
     }
 
+    [SwaggerOperation(
+    Summary = "Create a private chat",
+    Description = "Creates a new private chat between the authenticated user and the specified user."
+    )]
     [HttpPost("{receiverId}")]
     public async Task<IActionResult> AddPrivateChatAsync(int receiverId)
     {
@@ -43,6 +56,10 @@ public class PrivateChatController : BaseController
         return StatusCode(result.StatusCode, result);
     }
 
+    [SwaggerOperation(
+    Summary = "Delete a private chat",
+    Description = "Deletes the specified private chat. Accessible only by admins."
+    )]
     [HttpDelete("{privateChatId}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeletePrivateChatAsync(int privateChatId)
@@ -51,6 +68,10 @@ public class PrivateChatController : BaseController
         return StatusCode(result.StatusCode, result);
     }
 
+    [SwaggerOperation(
+    Summary = "Leave a private chat",
+    Description = "Removes the authenticated user from the specified private chat."
+    )]
     [HttpDelete("{privateChatId}/members")]
     public async Task<IActionResult> LeavePrivateChatAsync(int privateChatId)
     {
