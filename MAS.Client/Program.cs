@@ -1,6 +1,7 @@
-﻿using MAS.Application.Dtos.MessageDtos;
-using Microsoft.AspNetCore.SignalR.Client;
+﻿using MAS.Application.Dtos.GroupChatDtos;
+using MAS.Application.Dtos.MessageDtos;
 using MAS.Client;
+using Microsoft.AspNetCore.SignalR.Client;
 
 internal class Program
 {
@@ -35,7 +36,7 @@ internal class Program
         connectionSignalR.StartAsync().Wait();
 
         connectionSignalR.On<MessageGetDto>("AddMessage",
-            msg => Console.WriteLine($"\nS{msg.SenderId} -> D{msg.DestinationId}: {msg.Text}"));
+            msg => Console.WriteLine($"\nu{msg.SenderId} -> d{msg.DestinationId}: {msg.Text}"));
 
         connectionSignalR.On<int>("AddGroupMemberCommand",
             gpid => Console.WriteLine($"Welcome to group {gpid}"));
