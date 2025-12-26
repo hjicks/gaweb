@@ -1,5 +1,6 @@
 ﻿using MAS.Application.Interfaces;
 using MAS.Application.Results;
+using MAS.Core.Constants;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -47,6 +48,7 @@ public class LeavePrivateChatCommandHandler : IRequestHandler<LeavePrivateChatCo
         await _unitOfWork.SaveAsync();
 
         Log.Information($"User {member.Id} left private chat {privateChat.Id}.");
-        return Result.Success(StatusCodes.Status200OK, "Member removed from the chat successfully.");
+        return Result.Success(StatusCodes.Status200OK,
+            ResponseMessages.Success[SuccessType.LeaveSuccessful]);
     }
 }
