@@ -1,4 +1,6 @@
 ﻿using MAS.Application.Interfaces;
+using MAS.Core.Options;
+using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -13,8 +15,13 @@ public sealed class HashService : IHashService
     private const int passwordHashSize = 32;
     private const int refreshTokenSizeBeforeEncode = 32;
     private const int pbkdf2Iterations = 100_000;
-    private const string Hmacsha512Key = "MASVeryVerySecretKeyIn2026";
     private static readonly HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA256;
+    private readonly TokenOptions _tokenOptions;
+
+    public HashService(IOptions<TokenOptions> tokenOptions)
+    {
+        _tokenOptions = tokenOptions.Value;
+    }
 
     public PasswordHash HashPassword(string password)
     {
@@ -46,7 +53,8 @@ public sealed class HashService : IHashService
         var refreshToken = Convert.ToBase64String(
             RandomNumberGenerator.GetBytes(refreshTokenSizeBeforeEncode));
 
-        using var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(Hmacsha512Key));
+        using var hmac = new HMACSHA512(
+            Encoding.UTF8.GetBytes(_tokenOptions.RefreshToken.Key));
         var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(refreshToken));
 
         return new TokenHash(hash, refreshToken);
@@ -54,7 +62,8 @@ public sealed class HashService : IHashService
 
     public byte[] HashRefreshToken(string refreshToken)
     {
-        using var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(Hmacsha512Key));
+        using var hmac = new HMACSHA512(
+            Encoding.UTF8.GetBytes(_tokenOptions.RefreshToken.Key));
         var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(refreshToken));
 
         return hash;

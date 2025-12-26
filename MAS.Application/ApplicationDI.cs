@@ -33,14 +33,14 @@ public static class ApplicationDI
         {
             return new ConfigureNamedOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
             {
-                var jwtOptions = provider.GetRequiredService<IOptions<JwtOptions>>().Value;
-                if (string.IsNullOrWhiteSpace(jwtOptions.Key))
+                var tokenOptions = provider.GetRequiredService<IOptions<TokenOptions>>().Value;
+                if (string.IsNullOrWhiteSpace(tokenOptions.AccessToken.Key))
                     throw new InvalidOperationException("Jwt key is not configured.");
 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenOptions.AccessToken.Key)),
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
@@ -58,18 +58,20 @@ public static class ApplicationDI
                 };
             });
         });
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer();
 
-        services.AddScoped<IJwtService, JwtService>(provider =>
-        {
-            return new JwtService(provider.GetRequiredService<IOptionsSnapshot<JwtOptions>>().Value);
-        });
+        services.AddScoped<IJwtService, JwtService>();
 
         services.AddScoped<IHashService, HashService>();
 
+        services.AddSignalR();
+
         services.AddSingleton<ChatHub>();
 
+        services.AddMemoryCache();
+        
         return services;
     }
 }

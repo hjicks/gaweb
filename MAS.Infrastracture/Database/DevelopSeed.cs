@@ -1,4 +1,4 @@
-﻿using MAS.Application.Services;
+﻿using MAS.Application.Interfaces;
 using MAS.Core.Entities.ChatEntities;
 using MAS.Core.Entities.JoinEntities;
 using MAS.Core.Entities.MessageEntities;
@@ -12,10 +12,8 @@ namespace MAS.Infrastracture.Database;
  */
 public class DevelopSeed
 {
-    public static async Task Seed(EfDbContext dbContext)
+    public static async Task Seed(EfDbContext dbContext, IHashService hashService)
     {
-        HashService hashService = new();
-
         if (!dbContext.Users.Any())
         {
             /* system user and bot ahead */
