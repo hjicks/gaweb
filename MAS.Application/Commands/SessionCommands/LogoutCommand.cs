@@ -1,5 +1,6 @@
 ﻿using MAS.Application.Interfaces;
 using MAS.Application.Results;
+using MAS.Core.Constants;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -31,6 +32,7 @@ public class LogoutCommandHandler : IRequestHandler<LogoutCommand, Result>
         await _unitOfWork.SaveAsync();
 
         Log.Information($"Session with id {dbSession.Id} is revoked.");
-        return Result.Success(StatusCodes.Status200OK);
+        return Result.Success(StatusCodes.Status200OK,
+            ResponseMessages.Success[SuccessType.LogoutSuccessful]);
     }
 }

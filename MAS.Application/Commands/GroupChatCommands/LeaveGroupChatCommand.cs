@@ -1,5 +1,6 @@
 ﻿using MAS.Application.Interfaces;
 using MAS.Application.Results;
+using MAS.Core.Constants;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -33,6 +34,7 @@ public class LeaveGroupChatCommandHandler : IRequestHandler<LeaveGroupChatComman
         await _unitOfWork.SaveAsync();
 
         Log.Information($"User {member.MemberId} left group {groupChat.Id}.");
-        return Result.Success(StatusCodes.Status200OK, "Member removed from the group successfully.");
+        return Result.Success(StatusCodes.Status200OK,
+            ResponseMessages.Success[SuccessType.LeaveSuccessful]);
     }
 }
