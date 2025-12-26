@@ -40,6 +40,8 @@ app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
+app.UseCors("MASCorsPolicy");
+
 app.UseAuthentication();
 
 app.UseAuthorization();
