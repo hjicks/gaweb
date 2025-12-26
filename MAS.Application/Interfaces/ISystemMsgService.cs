@@ -1,7 +1,8 @@
-﻿namespace MAS.Application.Interfaces
+﻿using MAS.Core.Enums;
+
+namespace MAS.Application.Interfaces;
+
+public interface ISystemMsgService
 {
-    public interface ISystemMsgService
-    {
-        Task SendSystemMsgAsync(int chatId, string masEvent, string username);
-    }
+    Task SendSystemMsgAsync(int chatId, MasEvent masEvent, int userId);
 }

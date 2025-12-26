@@ -15,12 +15,15 @@ public class PromoteOrDemoteGroupMemberCommandHandler : IRequestHandler<PromoteO
     private readonly IGroupChatRepository _groupChatRepository;
     private readonly IBaseRepository<GroupChatUser> _groupChatUserRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ISystemMsgService _systemMsgService;
     public PromoteOrDemoteGroupMemberCommandHandler(IGroupChatRepository groupChatRepository,
-        IBaseRepository<GroupChatUser> groupChatUserRepository, IUnitOfWork unitOfWork)
+        IBaseRepository<GroupChatUser> groupChatUserRepository, IUnitOfWork unitOfWork,
+        ISystemMsgService systemMsgService)
     {
         _groupChatRepository = groupChatRepository;
         _groupChatUserRepository = groupChatUserRepository;
         _unitOfWork = unitOfWork;
+        _systemMsgService = systemMsgService;
     }
     public async Task<Result> Handle(PromoteOrDemoteGroupMemberCommand request, CancellationToken cancellationToken)
     {
@@ -42,10 +45,12 @@ public class PromoteOrDemoteGroupMemberCommandHandler : IRequestHandler<PromoteO
             return Result.Failure(StatusCodes.Status409Conflict, ErrorType.MemberIsBanned);
 
         member.Role = member.Role == GroupChatRole.Member ? GroupChatRole.Admin : GroupChatRole.Member;
+        var masEvent = member.Role == GroupChatRole.Member ? MasEvent.Promote : MasEvent.Demote;
 
         _groupChatUserRepository.Update(member);
         await _unitOfWork.SaveAsync();
 
+        await _systemMsgService.SendSystemMsgAsync(groupChat.Id, masEvent, member.MemberId);
         Log.Information($"Owner {request.UserId} of group {groupChat.Id} changed role of member {member.MemberId}.");
         return Result.Success(StatusCodes.Status200OK, new GroupChatMemberGetDto
         {

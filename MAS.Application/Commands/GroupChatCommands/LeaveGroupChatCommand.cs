@@ -1,9 +1,8 @@
 ﻿using MAS.Application.Hubs;
 using MAS.Application.Interfaces;
 using MAS.Application.Results;
-using MAS.Core.Entities.JoinEntities;
-using MAS.Core.Entities.UserEntities;
 using MAS.Core.Constants;
+using MAS.Core.Entities.JoinEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -17,11 +16,14 @@ public class LeaveGroupChatCommandHandler : IRequestHandler<LeaveGroupChatComman
 {
     private readonly IGroupChatRepository _groupChatRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ISystemMsgService _systemMsgService;
     private readonly IHubContext<ChatHub> _hubContext;
-    public LeaveGroupChatCommandHandler(IGroupChatRepository groupChatRepository, IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext)
+    public LeaveGroupChatCommandHandler(IGroupChatRepository groupChatRepository, IUnitOfWork unitOfWork,
+        ISystemMsgService systemMsgService, IHubContext<ChatHub> hubContext)
     {
         _groupChatRepository = groupChatRepository;
         _unitOfWork = unitOfWork;
+        _systemMsgService = systemMsgService;
         _hubContext = hubContext;
     }
     public async Task<Result> Handle(LeaveGroupChatCommand request, CancellationToken cancellationToken)
@@ -51,6 +53,7 @@ public class LeaveGroupChatCommandHandler : IRequestHandler<LeaveGroupChatComman
                 request.GroupChatId, request.UserId, cancellationToken: cancellationToken);
         }
 
+        await _systemMsgService.SendSystemMsgAsync(groupChat.Id, MasEvent.Leave, member.MemberId);
         Log.Information($"User {member.MemberId} left group {groupChat.Id}.");
         return Result.Success(StatusCodes.Status200OK,
             ResponseMessages.Success[SuccessType.LeaveSuccessful]);

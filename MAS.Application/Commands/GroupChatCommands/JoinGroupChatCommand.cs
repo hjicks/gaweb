@@ -1,11 +1,8 @@
-﻿using System.Reflection;
-using MAS.Application.Dtos.GroupChatDtos;
+﻿using MAS.Application.Dtos.GroupChatDtos;
 using MAS.Application.Hubs;
 using MAS.Application.Interfaces;
 using MAS.Application.Results;
-using MAS.Core.Entities.ChatEntities;
 using MAS.Core.Entities.JoinEntities;
-using MAS.Core.Entities.UserEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -20,13 +17,16 @@ public class JoinGroupChatCommandHandler : IRequestHandler<JoinGroupChatCommand,
     private readonly IGroupChatRepository _groupChatRepository;
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ISystemMsgService _systemMsgService;
     private readonly IHubContext<ChatHub> _hubContext;
+  
     public JoinGroupChatCommandHandler(IGroupChatRepository groupChatRepository, IUserRepository userRepository,
-        IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext)
+        IUnitOfWork unitOfWork, ISystemMsgService systemMsgService, IHubContext<ChatHub> hubContext)
     {
         _groupChatRepository = groupChatRepository;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _systemMsgService = systemMsgService;
         _hubContext = hubContext;
     }
     public async Task<Result> Handle(JoinGroupChatCommand request, CancellationToken cancellationToken)
@@ -79,7 +79,7 @@ public class JoinGroupChatCommandHandler : IRequestHandler<JoinGroupChatCommand,
                 msg, groupChat.Id, cancellationToken: cancellationToken);
         }
 
-
+        await _systemMsgService.SendSystemMsgAsync(groupChat.Id, MasEvent.Join, user.Id!);
         Log.Information($"User {user.Id} joined group {groupChat.Id}.");
         return Result.Success(StatusCodes.Status200OK, msg);
     }
