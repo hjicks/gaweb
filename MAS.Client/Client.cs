@@ -89,6 +89,17 @@ public class Client
 
     /* GroupChat */
     /**
+     * <summary>
+     * Joins to a group with given gpid
+     * </summary>
+     */
+    public JsonElement Join(int gpid)
+    {
+        var response = c.PostAsync($"/api/group-chats/{gpid}/members/join", null).Result
+            .Content.ReadAsStringAsync().Result;
+        return JsonSerializer.Deserialize<JsonElement>(response);
+    }
+    /**
      *  <summary>
      *  Returns list of groups
      *  </summary>
