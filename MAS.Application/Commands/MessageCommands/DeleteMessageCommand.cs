@@ -1,5 +1,6 @@
 ﻿using MAS.Application.Interfaces;
 using MAS.Application.Results;
+using MAS.Core.Constants;
 using MAS.Core.Entities.JoinEntities;
 using MAS.Core.Enums;
 using MediatR;
@@ -49,6 +50,7 @@ public class DeleteMessageCommandHandler : IRequestHandler<DeleteMessageCommand,
         await _unitOfWork.SaveAsync();
 
         Log.Information($"User {request.UserId} deleted message {message.Id}.");
-        return Result.Success(StatusCodes.Status200OK);
+        return Result.Success(StatusCodes.Status200OK,
+            ResponseMessages.Success[SuccessType.DeleteSuccessful]);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using MAS.Application.Interfaces;
 using MAS.Application.Results;
+using MAS.Core.Constants;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -28,6 +29,7 @@ public class DeletePrivateChatCommandHandler : IRequestHandler<DeletePrivateChat
         await _unitOfWork.SaveAsync();
 
         Log.Information($"Private chat {privateChat.Id} deleted.");
-        return Result.Success(StatusCodes.Status200OK);
+        return Result.Success(StatusCodes.Status200OK,
+            ResponseMessages.Success[SuccessType.DeleteSuccessful]);
     }
 }

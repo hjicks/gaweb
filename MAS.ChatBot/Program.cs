@@ -1,4 +1,5 @@
 ﻿using MAS.Application.Dtos.MessageDtos;
+using MAS.Application.Dtos.SessionDtos;
 using Microsoft.AspNetCore.SignalR.Client;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -82,7 +83,11 @@ internal class Program
         void RefreshSession()
         {
             HttpClient client = new() { BaseAddress = new Uri(masUrl) };
-            var response = client.PostAsync($"api/sessions/refresh/{refreshToken}", null).Result
+            SessionRefreshTokenDto refreshTokenDto = new()
+            {
+                RefreshToken = refreshToken
+            };
+            var response = client.PostAsJsonAsync($"api/sessions/refresh", refreshTokenDto).Result
                 .Content.ReadAsStringAsync().Result;
             var masResponse = JsonSerializer.Deserialize<MasResponse>(response);
             jwt = masResponse!.Response.Jwt;

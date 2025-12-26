@@ -1,10 +1,13 @@
 ﻿using MAS.Core.Enums;
+using System.Collections.Immutable;
 
 namespace MAS.Core.Constants;
 
 public class ResponseMessages
 {
-    public static readonly Dictionary<ErrorType, string> Error = new()
+    public static ImmutableDictionary<ErrorType, string> Error => MutableError.ToImmutableDictionary();
+
+    private static readonly Dictionary<ErrorType, string> MutableError = new()
     {
         { ErrorType.Exception, "Server error." },
         { ErrorType.Unauthorized, "User not authorized, please login." },
@@ -26,5 +29,14 @@ public class ResponseMessages
         { ErrorType.MemberAlreadyJoinedOrIsBanned, "Member is either already joined the group or banned from it." },
         { ErrorType.UnableToDecodeFileContent, "Unable to decode file content. The content is either invalid or larger than 50 MB." },
         { ErrorType.AvatarIsNotValid, "Avatar is not a valid image. Send a valid image between 1 KB and 2 MB." }
+    };
+
+    public static ImmutableDictionary<SuccessType, string> Success => MutableSuccess.ToImmutableDictionary();
+
+    private static readonly Dictionary<SuccessType, string> MutableSuccess = new()
+    {
+        { SuccessType.DeleteSuccessful, "Resource deleted successfully." },
+        { SuccessType.LeaveSuccessful, "User left the chat successfully." },
+        { SuccessType.LogoutSuccessful, "Log out successful." }
     };
 }

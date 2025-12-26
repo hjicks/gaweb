@@ -1,5 +1,6 @@
 ﻿using MAS.Application.Interfaces;
 using MAS.Application.Results;
+using MAS.Core.Constants;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -46,6 +47,7 @@ public class DeleteGroupChatCommandHandler : IRequestHandler<DeleteGroupChatComm
         await _unitOfWork.SaveAsync();
 
         Log.Information($"Group chat {groupChat.Id} deleted by user {request.UserId}.");
-        return Result.Success(StatusCodes.Status200OK, "Chat deleted successfully.");
+        return Result.Success(StatusCodes.Status200OK,
+            ResponseMessages.Success[SuccessType.DeleteSuccessful]);
     }
 }
