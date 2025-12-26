@@ -1,5 +1,8 @@
-﻿using MAS.Application.Dtos.GroupChatDtos;
+﻿using System.Reflection;
+using MAS.Application.Dtos.GroupChatDtos;
+using MAS.Application.Hubs;
 using MAS.Application.Interfaces;
+using MAS.Application.Queries.GroupChatQueries;
 using MAS.Application.Results;
 using MAS.Core.Entities.ChatEntities;
 using MAS.Core.Entities.JoinEntities;
@@ -7,6 +10,7 @@ using MAS.Core.Entities.UserEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Serilog;
 
 namespace MAS.Application.Commands.GroupChatCommands;
@@ -17,12 +21,15 @@ public class AddGroupMemberCommandHandler : IRequestHandler<AddGroupMemberComman
     private readonly IGroupChatRepository _groupChatRepository;
     private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IHubContext<ChatHub> _hubContext;
     public AddGroupMemberCommandHandler(IGroupChatRepository groupChatRepository, IUserRepository userRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext)
     {
         _groupChatRepository = groupChatRepository;
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
+        _hubContext = hubContext;
+
     }
     public async Task<Result> Handle(AddGroupMemberCommand request, CancellationToken cancellationToken)
     {
@@ -54,13 +61,31 @@ public class AddGroupMemberCommandHandler : IRequestHandler<AddGroupMemberComman
         _groupChatRepository.Update(groupChat);
         await _unitOfWork.SaveAsync();
 
-        Log.Information($"User {request.UserId} added member {member.Id} to group {groupChat.Id}.");
-        return Result.Success(StatusCodes.Status200OK, new GroupChatMemberGetDto
+        GroupChatMemberGetDto msg = new()
         {
             MemberId = groupChatUser.MemberId,
             Role = groupChatUser.Role,
             JoinedAt = groupChatUser.JoinedAt,
             IsBanned = groupChatUser.IsBanned
-        });
+        };
+
+        /*
+         * TODO:
+         * we can't use GroupChatMemberGetDto here, since the person who got added right now has no idea which group he added to
+         * it's not the best solution we have, but we are running short of time.
+         */
+        await _hubContext.Clients.User(request.MemberId.ToString()).SendAsync("AddGroupMemberCommand",
+                request.GroupChatId, cancellationToken: cancellationToken);
+        /*
+        foreach (GroupChatUser gcu in groupChat.Members)
+        {
+            // TODO: should we send a message again?
+            if (gcu.MemberId == request.UserId) continue;
+            await _hubContext.Clients.User(gcu.MemberId.ToString()).SendAsync("AddGroupMemberCommand", msg);
+        }
+        */
+        Log.Information($"User {request.UserId} added member {member.Id} to group {groupChat.Id}.");
+
+        return Result.Success(StatusCodes.Status200OK, msg);
     }
 }
