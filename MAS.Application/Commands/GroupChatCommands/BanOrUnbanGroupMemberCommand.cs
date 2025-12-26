@@ -1,10 +1,13 @@
-﻿using MAS.Application.Dtos.GroupChatDtos;
+﻿using System.Runtime.CompilerServices;
+using MAS.Application.Dtos.GroupChatDtos;
+using MAS.Application.Hubs;
 using MAS.Application.Interfaces;
 using MAS.Application.Results;
 using MAS.Core.Entities.JoinEntities;
 using MAS.Core.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.SignalR;
 using Serilog;
 
 namespace MAS.Application.Commands.GroupChatCommands;
@@ -15,12 +18,14 @@ public class BanOrUnbanGroupMemberCommandHandler : IRequestHandler<BanOrUnbanGro
     private readonly IGroupChatRepository _groupChatRepository;
     private readonly IBaseRepository<GroupChatUser> _groupChatUserRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IHubContext<ChatHub> _hubContext;
     public BanOrUnbanGroupMemberCommandHandler(IGroupChatRepository groupChatRepository,
-        IBaseRepository<GroupChatUser> groupChatUserRepository, IUnitOfWork unitOfWork)
+        IBaseRepository<GroupChatUser> groupChatUserRepository, IUnitOfWork unitOfWork, IHubContext<ChatHub> hubContext)
     {
         _groupChatRepository = groupChatRepository;
         _groupChatUserRepository = groupChatUserRepository;
         _unitOfWork = unitOfWork;
+        _hubContext = hubContext;
     }
     public async Task<Result> Handle(BanOrUnbanGroupMemberCommand request, CancellationToken cancellationToken)
     {
@@ -43,7 +48,11 @@ public class BanOrUnbanGroupMemberCommandHandler : IRequestHandler<BanOrUnbanGro
         _groupChatUserRepository.Update(member);
         await _unitOfWork.SaveAsync();
 
-        Log.Information($"Admin {request.UserId} of group {groupChat.Id} banned or unbanned member {member.MemberId}.");
+        /* TODO: do we need more information to provide to the client? */
+        await _hubContext.Clients.User(request.MemberId.ToString()).SendAsync("BanOrUnbanGroupMemberCommand",
+           request.GroupChatId, member.IsBanned, cancellationToken: cancellationToken);
+
+        Log.Information($"Admin {request.UserId} of group {groupChat.Id} {(member.IsBanned ? "banned" : "unbanned")} member {member.MemberId}.");
         return Result.Success(StatusCodes.Status200OK, new GroupChatMemberGetDto
         {
             MemberId = member.MemberId,
