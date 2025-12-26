@@ -2,6 +2,7 @@ using MAS.Api;
 using MAS.Api.Middlewares;
 using MAS.Application;
 using MAS.Application.Hubs;
+using MAS.Application.Interfaces;
 using MAS.Core;
 using MAS.Infrastracture;
 using MAS.Infrastracture.Database;
@@ -16,8 +17,6 @@ builder.Services.AddCoreDI(builder.Configuration)
     .AddApiDI(builder.Configuration);
 
 builder.Host.UseSerilog();
-builder.Services.AddSignalR();
-builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
@@ -32,8 +31,9 @@ if (app.Environment.IsDevelopment())
 
     using var seedScope = app.Services.CreateScope();
     var dbContext = seedScope.ServiceProvider.GetRequiredService<EfDbContext>();
+    var hashService = seedScope.ServiceProvider.GetRequiredService<IHashService>();
     await dbContext.Database.EnsureCreatedAsync();
-    await DevelopSeed.Seed(dbContext);
+    await DevelopSeed.Seed(dbContext, hashService);
 }
 
 app.UseSerilogRequestLogging();
@@ -47,6 +47,7 @@ app.UseAuthorization();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
+
 app.MapHub<ChatHub>("/hub");
 
 app.Run();

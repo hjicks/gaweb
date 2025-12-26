@@ -2,8 +2,10 @@
 using MAS.Application.Interfaces;
 using MAS.Application.Results;
 using MAS.Core.Enums;
+using MAS.Core.Options;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Serilog;
 
 namespace MAS.Application.Commands.SessionCommands;
@@ -15,14 +17,16 @@ public class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionComman
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHashService _hashService;
     private readonly IJwtService _jwtService;
+    private readonly TokenOptions _tokenOptions;
 
     public RefreshSessionCommandHandler(ISessionRepository sessionRepository, IUnitOfWork unitOfWork,
-        IHashService hashService, IJwtService jwtService)
+        IHashService hashService, IJwtService jwtService, IOptions<TokenOptions> tokenOptions)
     {
         _sessionRepository = sessionRepository;
         _unitOfWork = unitOfWork;
         _hashService = hashService;
         _jwtService = jwtService;
+        _tokenOptions = tokenOptions.Value;
     }
     public async Task<Result> Handle(RefreshSessionCommand request, CancellationToken cancellationToken)
     {
@@ -40,7 +44,7 @@ public class RefreshSessionCommandHandler : IRequestHandler<RefreshSessionComman
 
         var tokenHash = _hashService.CreateAndHashRefreshToken();
         session.TokenHash = tokenHash.Hash;
-        session.ExpiresAt = DateTime.UtcNow.AddDays(7);
+        session.ExpiresAt = DateTime.UtcNow.AddDays(_tokenOptions.RefreshToken.ExpiryInDays);
         session.UpdatedAt = DateTime.UtcNow;
         _sessionRepository.Update(session);
         await _unitOfWork.SaveAsync();
